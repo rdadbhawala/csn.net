@@ -28,5 +28,22 @@ using System;
 		/// </summary>
 		/// <param name="pValue">DateTime value to write.</param>
 		void WriteFieldDateTime(DateTime pValue);
+
+		/// <summary>
+		/// WriteFieldBool writes a field with boolean value.
+		/// </summary>
+		/// <param name="pValue">Boolean value to write.</param>
+		void WriteFieldBool(bool pValue);
+
+		/// <summary>
+		/// WriteFieldDouble writes a field with double value.
+		/// </summary>
+		/// <param name="pValue">Double value to write.</param>
+		void WriteFieldDouble(double pValue);
+
+		/// <summary>
+		/// WriteFieldNull writes a field with null value.
+		/// </summary>
+		void WriteFieldNull();
     }
 }
