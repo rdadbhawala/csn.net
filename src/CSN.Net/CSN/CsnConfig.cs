@@ -7,7 +7,7 @@ namespace Abstraction.Csn
 	/// <summary>
 	/// CsnConfig declares CSN Configuration parameters.
 	/// </summary>
-    public class CsnConfig
+    public class CsnConfig : ICsnConfig
     {
 		/// <summary>
 		/// Gets or sets a character used as a Field Separator.
@@ -18,5 +18,24 @@ namespace Abstraction.Csn
 		/// Gets or sets a character used as a Record Separator.
 		/// </summary>
 		public char RecordSeparator { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the ICsnWriter should write a Version Record upon initialization.
+		/// </summary>
+		public bool WriteVersionRecord { get; set; }
+
+		/// <summary>
+		/// Create a new instance of a default CSN Configuration.
+		/// </summary>
+		/// <returns>An instance of CsnConfig</returns>
+		public static CsnConfig CreateDefaultConfig()
+		{
+			return new CsnConfig
+			{
+				FieldSeparator = Constants.DefaultFieldSeparator,
+				RecordSeparator = Constants.DefaultRecordSeparator,
+				WriteVersionRecord = true
+			};
+		}
 	}
 }

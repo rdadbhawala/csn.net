@@ -12,38 +12,45 @@ using System;
 	public interface ICsnWriter
     {
 		/// <summary>
-		/// WriteFieldString writes a field with string value.
+		/// Write the Version Record to the Stream.
 		/// </summary>
-		/// <param name="pValue">String value to write.</param>
-		void WriteFieldString(string pValue);
+		void WriteVersionRecord();
 
-		/// <summary>
-		/// WriteFieldLong writes a field with a long value.
-		/// </summary>
-		/// <param name="pValue">Long value to write.</param>
-		void WriteFieldLong(long pValue);
+		/*
+		///// <summary>
+		///// WriteFieldString writes a field with string value.
+		///// </summary>
+		///// <param name="pValue">String value to write.</param>
+		//void WriteFieldString(string pValue);
 
-		/// <summary>
-		/// WriteFieldDateTime writes a field with a DateTime value.
-		/// </summary>
-		/// <param name="pValue">DateTime value to write.</param>
-		void WriteFieldDateTime(DateTime pValue);
+		///// <summary>
+		///// WriteFieldLong writes a field with a long value.
+		///// </summary>
+		///// <param name="pValue">Long value to write.</param>
+		//void WriteFieldLong(long pValue);
 
-		/// <summary>
-		/// WriteFieldBool writes a field with boolean value.
-		/// </summary>
-		/// <param name="pValue">Boolean value to write.</param>
-		void WriteFieldBool(bool pValue);
+		///// <summary>
+		///// WriteFieldDateTime writes a field with a DateTime value.
+		///// </summary>
+		///// <param name="pValue">DateTime value to write.</param>
+		//void WriteFieldDateTime(DateTime pValue);
 
-		/// <summary>
-		/// WriteFieldDouble writes a field with double value.
-		/// </summary>
-		/// <param name="pValue">Double value to write.</param>
-		void WriteFieldDouble(double pValue);
+		///// <summary>
+		///// WriteFieldBool writes a field with boolean value.
+		///// </summary>
+		///// <param name="pValue">Boolean value to write.</param>
+		//void WriteFieldBool(bool pValue);
 
-		/// <summary>
-		/// WriteFieldNull writes a field with null value.
-		/// </summary>
-		void WriteFieldNull();
+		///// <summary>
+		///// WriteFieldDouble writes a field with double value.
+		///// </summary>
+		///// <param name="pValue">Double value to write.</param>
+		//void WriteFieldDouble(double pValue);
+
+		///// <summary>
+		///// WriteFieldNull writes a field with null value.
+		///// </summary>
+		//void WriteFieldNull();
+		*/
     }
 }
