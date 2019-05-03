@@ -1,4 +1,4 @@
-﻿// <copyright file="ICsnWriter.cs" company="Abstraction">
+﻿// <copyright file="IWriter.cs" company="Abstraction">
 // Copyright (c) Abstraction. All rights reserved.
 // </copyright>
 
@@ -9,7 +9,7 @@ using System;
 	/// <summary>
 	/// ICsnWriter is the raw CSN Writer.
 	/// </summary>
-	public interface ICsnWriter
+	public interface IWriter
     {
 		/// <summary>
 		/// Write the Version Record to the Stream.

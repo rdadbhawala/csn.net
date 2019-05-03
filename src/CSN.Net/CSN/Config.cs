@@ -1,4 +1,4 @@
-﻿// <copyright file="CsnConfig.cs" company="Abstraction">
+﻿// <copyright file="Config.cs" company="Abstraction">
 // Copyright (c) Abstraction. All rights reserved.
 // </copyright>
 
@@ -7,7 +7,7 @@ namespace Abstraction.Csn
 	/// <summary>
 	/// CsnConfig declares CSN Configuration parameters.
 	/// </summary>
-    public class CsnConfig : ICsnConfig
+    public class Config : IConfig
     {
 		/// <summary>
 		/// Gets or sets a character used as a Field Separator.
@@ -28,9 +28,9 @@ namespace Abstraction.Csn
 		/// Create a new instance of a default CSN Configuration.
 		/// </summary>
 		/// <returns>An instance of CsnConfig</returns>
-		public static CsnConfig CreateDefaultConfig()
+		public static Config CreateDefaultConfig()
 		{
-			return new CsnConfig
+			return new Config
 			{
 				FieldSeparator = Constants.DefaultFieldSeparator,
 				RecordSeparator = Constants.DefaultRecordSeparator,

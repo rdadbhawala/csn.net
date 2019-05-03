@@ -14,8 +14,8 @@ namespace Abstraction.Csn.Test
 			MemoryStream mstream = new MemoryStream();
 
 			// setup the CSN Parser
-			CsnConfig cfg = CsnConfig.CreateDefaultConfig();
-			CsnWriter csnw = new CsnWriter(mstream, cfg);
+			Config cfg = Config.CreateDefaultConfig();
+			Writer csnw = new Writer(mstream, cfg);
 
 			// 
 		}

@@ -1,4 +1,4 @@
-﻿// <copyright file="CsnWriter.cs" company="Abstraction">
+﻿// <copyright file="Writer.cs" company="Abstraction">
 // Copyright (c) Abstraction. All rights reserved.
 // </copyright>
 
@@ -10,19 +10,19 @@ namespace Abstraction.Csn
 	/// <summary>
 	/// CsnWriter is an implementation of ICsnWriter
 	/// </summary>
-	public class CsnWriter : ICsnWriter
+	public class Writer : IWriter
 	{
 		// private readonly Stream stream = null;
 		private readonly StreamWriter writer = null;
-		private readonly CsnConfig config = null;
+		private readonly Config config = null;
 		private int recordCounter = 0;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="CsnWriter"/> class.
+		/// Initializes a new instance of the <see cref="Writer"/> class.
 		/// </summary>
 		/// <param name="pStream">The IO Stream on which to write the CSN Payload.</param>
 		/// <param name="pConfig">Configuration parameters for CSN.</param>
-		public CsnWriter(Stream pStream, CsnConfig pConfig)
+		public Writer(Stream pStream, Config pConfig)
 		{
 			this.writer = new StreamWriter(pStream);
 			this.config = pConfig;
