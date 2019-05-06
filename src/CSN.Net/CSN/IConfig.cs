@@ -18,10 +18,5 @@ namespace Abstraction.Csn
 		/// Gets the character used as a Record Separator.
 		/// </summary>
 		char RecordSeparator { get; }
-
-		/// <summary>
-		/// Gets a value indicating whether the CsnWriter should write a Version Record upon initialization.
-		/// </summary>
-		bool WriteVersionRecord { get; }
 	}
 }

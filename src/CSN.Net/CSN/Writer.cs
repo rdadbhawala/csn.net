@@ -22,19 +22,12 @@ namespace Abstraction.Csn
 		/// </summary>
 		/// <param name="pStream">The IO Stream on which to write the CSN Payload.</param>
 		/// <param name="pConfig">Configuration parameters for CSN.</param>
-		public Writer(Stream pStream, Config pConfig)
+		public Writer(StreamWriter pStream, Config pConfig)
 		{
-			this.writer = new StreamWriter(pStream);
+			this.writer = pStream;
 			this.config = pConfig;
 
-			if (this.config.WriteVersionRecord)
-			{
-				this.WriteVersionRecord();
-			}
-			else
-			{
-				this.recordCounter++;
-			}
+			this.WriteVersionRecord();
 		}
 
 		/// <summary>

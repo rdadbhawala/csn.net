@@ -12,10 +12,11 @@ namespace Abstraction.Csn.Test
 		{
 			// externals
 			MemoryStream mstream = new MemoryStream();
+			StreamWriter sWriter = new StreamWriter(mstream);
 
 			// setup the CSN Parser
 			Config cfg = Config.CreateDefaultConfig();
-			Writer csnw = new Writer(mstream, cfg);
+			Writer csnw = new Writer(sWriter, cfg);
 
 			// 
 		}

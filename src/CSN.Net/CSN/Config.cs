@@ -20,11 +20,6 @@ namespace Abstraction.Csn
 		public char RecordSeparator { get; set; }
 
 		/// <summary>
-		/// Gets or sets a value indicating whether the ICsnWriter should write a Version Record upon initialization.
-		/// </summary>
-		public bool WriteVersionRecord { get; set; }
-
-		/// <summary>
 		/// Create a new instance of a default CSN Configuration.
 		/// </summary>
 		/// <returns>An instance of CsnConfig</returns>
@@ -34,7 +29,6 @@ namespace Abstraction.Csn
 			{
 				FieldSeparator = Constants.DefaultFieldSeparator,
 				RecordSeparator = Constants.DefaultRecordSeparator,
-				WriteVersionRecord = true
 			};
 		}
 	}
