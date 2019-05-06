@@ -31,33 +31,49 @@ namespace Abstraction.Csn
 		}
 
 		/// <summary>
-		/// Write the Version Record to the Stream.
+		/// Write a TypeDef Record
 		/// </summary>
-		public void WriteVersionRecord()
+		/// <param name="typeName">Type name</param>
+		/// <param name="typeMembers">Type Members</param>
+		/// <returns>Record Sequence Number</returns>
+		public int WriteTypeDefRecord(string typeName, params string[] typeMembers)
 		{
-			this.WriteRecord(Constants.RecordTypeChar.Version, Constants.CsnVersion);
+			int currentRecordIndex = this.WriteRecordCode(Constants.RecordTypeChar.TypeDef);
+			this.WriteValue(typeName);
+			this.WriteValues(typeMembers);
+			return currentRecordIndex;
 		}
 
-		private void WriteRecord(char rType, params FieldConversion[] values)
+		private int WriteVersionRecord()
 		{
-			this.WriteRecordCode(rType);
-			if (values != null && values.Length > 0)
-			{
-				this.WriteField(values[0]);
-			}
+			int currentRecordIndex = this.WriteRecordCode(Constants.RecordTypeChar.Version);
+			this.WriteValue(Constants.CsnVersion);
+			return currentRecordIndex;
+		}
+
+		private int WriteRecordCode(char rType)
+		{
+			int currentRecordIndex = this.recordCounter;
+			this.writer.Write(rType);
+			this.writer.Write(currentRecordIndex);
+			this.recordCounter++;
+			return currentRecordIndex;
+		}
+
+		private void WriteValue(string str)
+		{
+			FieldString.W.WriteField(this.writer, str);
+		}
+
+		private void WriteValues(string[] arr)
+		{
+			FieldString.W.WriteFields(this.writer, arr);
 		}
 
 		private void WriteField(IField v)
 		{
 			this.writer.Write(this.config.FieldSeparator);
 			v.WriteField(this.writer);
-		}
-
-		private void WriteRecordCode(char rType)
-		{
-			this.writer.Write(rType);
-			this.writer.Write(this.recordCounter);
-			this.recordCounter++;
 		}
 	}
 }

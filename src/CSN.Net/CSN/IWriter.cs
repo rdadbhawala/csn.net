@@ -11,12 +11,12 @@ using System;
 	/// </summary>
 	public interface IWriter
     {
+		/*
 		/// <summary>
 		/// Write the Version Record to the Stream.
 		/// </summary>
 		void WriteVersionRecord();
 
-		/*
 		///// <summary>
 		///// WriteFieldString writes a field with string value.
 		///// </summary>
@@ -52,5 +52,5 @@ using System;
 		///// </summary>
 		//void WriteFieldNull();
 		*/
-    }
+	}
 }

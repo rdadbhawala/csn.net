@@ -18,7 +18,13 @@ namespace Abstraction.Csn.Test
 			Config cfg = Config.CreateDefaultConfig();
 			Writer csnw = new Writer(sWriter, cfg);
 
-			// 
+			// read the contents
+			sWriter.Flush();
+			StreamReader sReader = new StreamReader(mstream);
+			mstream.Position = 0;
+			String str = sReader.ReadToEnd();
+
+			Assert.AreEqual("what?", str);
 		}
 	}
 }
