@@ -17,6 +17,8 @@ namespace Abstraction.Csn.Test
 			// setup the CSN Parser
 			Config cfg = Config.CreateDefaultConfig();
 			Writer csnw = new Writer(sWriter, cfg);
+			int tRef = csnw.WriteTypeDefRecord("AllPrimitives", "BooleanTrue", "BooleanFalse", "DateTime", "String", "Real", "Integer");
+			Assert.AreEqual(1, tRef, "Ref Type - All Primitives");
 
 			// read the contents
 			sWriter.Flush();
@@ -24,7 +26,7 @@ namespace Abstraction.Csn.Test
 			mstream.Position = 0;
 			String str = sReader.ReadToEnd();
 
-			Assert.AreEqual("what?", str);
+			Assert.AreEqual(TestResources.Basic, str);
 		}
 	}
 }

@@ -38,6 +38,7 @@ namespace Abstraction.Csn
 		/// <returns>Record Sequence Number</returns>
 		public int WriteTypeDefRecord(string typeName, params string[] typeMembers)
 		{
+			this.writer.Write(Constants.DefaultRecordSeparator);
 			int currentRecordIndex = this.WriteRecordCode(Constants.RecordTypeChar.TypeDef);
 			this.WriteValue(typeName);
 			this.WriteValues(typeMembers);
