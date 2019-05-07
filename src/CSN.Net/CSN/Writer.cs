@@ -13,7 +13,7 @@ namespace Abstraction.Csn
 	public class Writer : IWriter
 	{
 		// private readonly Stream stream = null;
-		private readonly StreamWriter writer = null;
+		private readonly StreamWriter sw = null;
 		private readonly Config config = null;
 		private int recordCounter = 0;
 
@@ -24,7 +24,7 @@ namespace Abstraction.Csn
 		/// <param name="pConfig">Configuration parameters for CSN.</param>
 		public Writer(StreamWriter pStream, Config pConfig)
 		{
-			this.writer = pStream;
+			this.sw = pStream;
 			this.config = pConfig;
 
 			this.WriteVersionRecord();
@@ -38,10 +38,29 @@ namespace Abstraction.Csn
 		/// <returns>Record Sequence Number</returns>
 		public int WriteTypeDefRecord(string typeName, params string[] typeMembers)
 		{
-			this.writer.Write(Constants.DefaultRecordSeparator);
+			this.sw.Write(Constants.DefaultRecordSeparator);
 			int currentRecordIndex = this.WriteRecordCode(Constants.RecordTypeChar.TypeDef);
 			this.WriteValue(typeName);
 			this.WriteValues(typeMembers);
+			return currentRecordIndex;
+		}
+
+		/// <summary>
+		/// Write an Instance Record
+		/// </summary>
+		/// <param name="typeSeqNo">Type Reference of Instance</param>
+		/// <param name="values">Values of Instance</param>
+		/// <returns>Record Sequence Number of Instance</returns>
+		public int WriteInstanceRecord(int typeSeqNo, params PrimitiveCast[] values)
+		{
+			this.sw.Write(Constants.DefaultRecordSeparator);
+			int currentRecordIndex = this.WriteRecordCode(Constants.RecordTypeChar.Instance);
+			FieldReference.R.WriteField(this.sw, typeSeqNo);
+			for (int pCtr = 0; pCtr < values.Length; pCtr++)
+			{
+				values[pCtr].WritePrimitive(this.sw);
+			}
+
 			return currentRecordIndex;
 		}
 
@@ -55,26 +74,20 @@ namespace Abstraction.Csn
 		private int WriteRecordCode(char rType)
 		{
 			int currentRecordIndex = this.recordCounter;
-			this.writer.Write(rType);
-			this.writer.Write(currentRecordIndex);
+			this.sw.Write(rType);
+			this.sw.Write(currentRecordIndex);
 			this.recordCounter++;
 			return currentRecordIndex;
 		}
 
 		private void WriteValue(string str)
 		{
-			FieldString.W.WriteField(this.writer, str);
+			FieldString.W.WriteField(this.sw, str);
 		}
 
 		private void WriteValues(string[] arr)
 		{
-			FieldString.W.WriteFields(this.writer, arr);
-		}
-
-		private void WriteField(IField v)
-		{
-			this.writer.Write(this.config.FieldSeparator);
-			v.WriteField(this.writer);
+			FieldString.W.WriteFields(this.sw, arr);
 		}
 	}
 }

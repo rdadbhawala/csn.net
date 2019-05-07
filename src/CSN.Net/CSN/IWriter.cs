@@ -11,6 +11,22 @@ using System;
 	/// </summary>
 	public interface IWriter
     {
+		/// <summary>
+		/// Write a TypeDef Record
+		/// </summary>
+		/// <param name="typeName">Type name</param>
+		/// <param name="typeMembers">Type Members</param>
+		/// <returns>Record Sequence Number</returns>
+		int WriteTypeDefRecord(string typeName, params string[] typeMembers);
+
+		/// <summary>
+		/// Write an Instance Record
+		/// </summary>
+		/// <param name="typeSeqNo">Type Reference of Instance</param>
+		/// <param name="values">Values of Instance</param>
+		/// <returns>Record Sequence Number of Instance</returns>
+		int WriteInstanceRecord(int typeSeqNo, params PrimitiveCast[] values);
+
 		/*
 		/// <summary>
 		/// Write the Version Record to the Stream.

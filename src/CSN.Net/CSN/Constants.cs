@@ -35,6 +35,21 @@ namespace Abstraction.Csn
 		public const char StringEscapeChar = '\\';
 
 		/// <summary>
+		/// Reference Character Prefix
+		/// </summary>
+		public const char ReferencePrefix = '#';
+
+		/// <summary>
+		/// True value
+		/// </summary>
+		public const char BoolTrue = 'T';
+
+		/// <summary>
+		/// False value
+		/// </summary>
+		public const char BoolFalse = 'F';
+
+		/// <summary>
 		/// Record Type Characters
 		/// </summary>
 		public static class RecordTypeChar
