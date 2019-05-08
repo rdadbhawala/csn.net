@@ -9,7 +9,7 @@ namespace Abstraction.Csn
 	/// <summary>
 	/// String value Primitive wrapper class
 	/// </summary>
-	public class PrimitiveString
+	internal class PrimitiveString
 		: PrimitiveCast, IPrimitive
 	{
 		private readonly string value = null;

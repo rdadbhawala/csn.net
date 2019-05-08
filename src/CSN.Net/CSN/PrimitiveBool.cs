@@ -9,7 +9,7 @@ namespace Abstraction.Csn
 	/// <summary>
 	/// Primitive Bool Wrapper
 	/// </summary>
-	public class PrimitiveBool
+	internal class PrimitiveBool
 		: PrimitiveCast, IPrimitive
 	{
 		private readonly bool value;

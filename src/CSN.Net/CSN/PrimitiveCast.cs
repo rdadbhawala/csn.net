@@ -4,6 +4,7 @@
 
 namespace Abstraction.Csn
 {
+	using System;
 	using System.IO;
 
 	/// <summary>
@@ -27,6 +28,15 @@ namespace Abstraction.Csn
 		public static implicit operator PrimitiveCast(bool b)
 		{
 			return new PrimitiveBool(b);
+		}
+
+		/// <summary>
+		/// PrimitiveCast for DateTime values
+		/// </summary>
+		/// <param name="dt">DateTime value to convert</param>
+		public static implicit operator PrimitiveCast(DateTime dt)
+		{
+			return new PrimitiveDateTime(dt);
 		}
 
 		/// <summary>

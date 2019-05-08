@@ -50,6 +50,11 @@ namespace Abstraction.Csn
 		public const char BoolFalse = 'F';
 
 		/// <summary>
+		/// DateTime field prefix
+		/// </summary>
+		public const char DateTimePrefix = 'D';
+
+		/// <summary>
 		/// Record Type Characters
 		/// </summary>
 		public static class RecordTypeChar
