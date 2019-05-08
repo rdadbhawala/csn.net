@@ -40,6 +40,24 @@ namespace Abstraction.Csn
 		}
 
 		/// <summary>
+		/// PrimitiveCast for Long values
+		/// </summary>
+		/// <param name="l">long value</param>
+		public static implicit operator PrimitiveCast(long l)
+		{
+			return new PrimitiveLong(l);
+		}
+
+		/// <summary>
+		/// PrimitiveCast for double values
+		/// </summary>
+		/// <param name="d">double value</param>
+		public static implicit operator PrimitiveCast(double d)
+		{
+			return new PrimitiveDouble(d);
+		}
+
+		/// <summary>
 		/// Write Primitive.
 		/// </summary>
 		/// <param name="sw">Stream to write unto</param>
