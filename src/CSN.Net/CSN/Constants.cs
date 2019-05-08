@@ -17,7 +17,7 @@ namespace Abstraction.Csn
 		/// <summary>
 		/// Default Record Separator
 		/// </summary>
-		public const char DefaultRecordSeparator = '\r';
+		public const char DefaultRecordSeparator = '\n';
 
 		/// <summary>
 		/// CSN Version String. This must align with the CSN Specification Version.

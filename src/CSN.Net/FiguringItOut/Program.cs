@@ -6,7 +6,7 @@ namespace FiguringItOut
     {
         static void Main(string[] args)
         {
-			DateTimeFormat.FormatO();
+			Sample.PrintCsn();
 			Console.ReadLine();
         }
     }

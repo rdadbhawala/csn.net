@@ -1,3 +1,3 @@
 V0,"0.1.0"
 T1,"AllPrimitives","BooleanTrue","BooleanFalse","DateTime","String","Real","Integer"
-I2,#1,T,F,D20190312T192433.567Z,"Label",-123.45,345
+I2,#1,T,F,D20190312T192433.5670000Z,"Label",-123.45,345
