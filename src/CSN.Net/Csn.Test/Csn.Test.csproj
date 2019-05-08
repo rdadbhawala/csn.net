@@ -74,6 +74,15 @@
   <ItemGroup>
     <None Include="Resources\Basic.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\VersionRecOnly.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AllPrimitiveTypes.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AllPrimitives.txt" />
+  </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

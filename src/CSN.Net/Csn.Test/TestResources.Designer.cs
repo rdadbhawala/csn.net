@@ -63,11 +63,40 @@ namespace Abstraction.Csn.Test {
         /// <summary>
         ///   Looks up a localized string similar to V0,&quot;0.1.0&quot;
         ///T1,&quot;AllPrimitives&quot;,&quot;BooleanTrue&quot;,&quot;BooleanFalse&quot;,&quot;DateTime&quot;,&quot;String&quot;,&quot;Real&quot;,&quot;Integer&quot;
-        ///I2,#1,T,F,D20190312T192433.567Z,&quot;Label&quot;,-123.45,345.
+        ///I2,#1,T,F,D20190312T1924335670000Z,&quot;Label&quot;,-123.45,345.
+        /// </summary>
+        internal static string AllPrimitives {
+            get {
+                return ResourceManager.GetString("AllPrimitives", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to V0,&quot;0.1.0&quot;
+        ///T1,&quot;AllPrimitives&quot;,&quot;BooleanTrue&quot;,&quot;BooleanFalse&quot;,&quot;DateTime&quot;,&quot;String&quot;,&quot;Real&quot;,&quot;Integer&quot;.
+        /// </summary>
+        internal static string AllPrimitiveTypes {
+            get {
+                return ResourceManager.GetString("AllPrimitiveTypes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to V0,&quot;0.1.0&quot;
+        ///T1,&quot;AllPrimitives&quot;,&quot;BooleanTrue&quot;,&quot;BooleanFalse&quot;,&quot;DateTime&quot;,&quot;String&quot;,&quot;Real&quot;,&quot;Integer&quot;.
         /// </summary>
         internal static string Basic {
             get {
                 return ResourceManager.GetString("Basic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to V0,&quot;0.1.0&quot;.
+        /// </summary>
+        internal static string VersionRecOnly {
+            get {
+                return ResourceManager.GetString("VersionRecOnly", resourceCulture);
             }
         }
     }

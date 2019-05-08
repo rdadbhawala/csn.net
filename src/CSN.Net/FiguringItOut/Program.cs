@@ -7,7 +7,6 @@ namespace FiguringItOut
         static void Main(string[] args)
         {
 			Sample.PrintCsn();
-			Console.ReadLine();
         }
     }
 }
