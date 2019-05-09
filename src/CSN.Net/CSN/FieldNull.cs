@@ -11,6 +11,9 @@ namespace Abstraction.Csn
 	/// </summary>
     internal class FieldNull
     {
+		/// <summary>
+		/// Singleton
+		/// </summary>
 		public static readonly FieldNull F = new FieldNull();
 
 		private FieldNull()

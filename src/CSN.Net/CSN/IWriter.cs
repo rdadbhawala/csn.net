@@ -16,16 +16,16 @@ using System;
 		/// </summary>
 		/// <param name="typeName">Type name</param>
 		/// <param name="typeMembers">Type Members</param>
-		/// <returns>Record Sequence Number</returns>
-		int WriteTypeDefRecord(string typeName, params string[] typeMembers);
+		/// <returns>Record Code</returns>
+		RecordCode WriteTypeDefRecord(string typeName, params string[] typeMembers);
 
 		/// <summary>
 		/// Write an Instance Record
 		/// </summary>
-		/// <param name="typeSeqNo">Type Reference of Instance</param>
+		/// <param name="typeRecCode">RecordCode of Instance Type</param>
 		/// <param name="values">Values of Instance</param>
 		/// <returns>Record Sequence Number of Instance</returns>
-		int WriteInstanceRecord(int typeSeqNo, params PrimitiveCast[] values);
+		RecordCode WriteInstanceRecord(RecordCode typeRecCode, params PrimitiveCast[] values);
 
 		/*
 		/// <summary>

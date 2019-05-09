@@ -35,11 +35,11 @@ namespace Abstraction.Csn
 		/// </summary>
 		/// <param name="typeName">Type name</param>
 		/// <param name="typeMembers">Type Members</param>
-		/// <returns>Record Sequence Number</returns>
-		public int WriteTypeDefRecord(string typeName, params string[] typeMembers)
+		/// <returns>Record Code</returns>
+		public RecordCode WriteTypeDefRecord(string typeName, params string[] typeMembers)
 		{
 			this.sw.Write(Constants.DefaultRecordSeparator);
-			int currentRecordIndex = this.WriteRecordCode(Constants.RecordTypeChar.TypeDef);
+			RecordCode currentRecordIndex = this.WriteRecordCode(RecordType.TypeDef, Constants.RecordTypeChar.TypeDef);
 			this.WriteValue(typeName);
 			this.WriteValues(typeMembers);
 			return currentRecordIndex;
@@ -48,14 +48,14 @@ namespace Abstraction.Csn
 		/// <summary>
 		/// Write an Instance Record
 		/// </summary>
-		/// <param name="typeSeqNo">Type Reference of Instance</param>
+		/// <param name="typeRecCode">Record Code of Instance Type</param>
 		/// <param name="values">Values of Instance</param>
-		/// <returns>Record Sequence Number of Instance</returns>
-		public int WriteInstanceRecord(int typeSeqNo, params PrimitiveCast[] values)
+		/// <returns>Record Code</returns>
+		public RecordCode WriteInstanceRecord(RecordCode typeRecCode, params PrimitiveCast[] values)
 		{
 			this.sw.Write(Constants.DefaultRecordSeparator);
-			int currentRecordIndex = this.WriteRecordCode(Constants.RecordTypeChar.Instance);
-			FieldReference.R.WriteField(this.sw, typeSeqNo);
+			RecordCode currentRecordIndex = this.WriteRecordCode(RecordType.Instance, Constants.RecordTypeChar.Instance);
+			FieldReference.R.WriteField(this.sw, typeRecCode.SequenceNo);
 			for (int pCtr = 0; pCtr < values.Length; pCtr++)
 			{
 				values[pCtr].WritePrimitive(this.sw);
@@ -64,20 +64,19 @@ namespace Abstraction.Csn
 			return currentRecordIndex;
 		}
 
-		private int WriteVersionRecord()
+		private RecordCode WriteVersionRecord()
 		{
-			int currentRecordIndex = this.WriteRecordCode(Constants.RecordTypeChar.Version);
+			RecordCode currentRecordIndex = this.WriteRecordCode(RecordType.Version, Constants.RecordTypeChar.Version);
 			this.WriteValue(Constants.CsnVersion);
 			return currentRecordIndex;
 		}
 
-		private int WriteRecordCode(char rType)
+		private RecordCode WriteRecordCode(RecordType recType, char rType)
 		{
-			int currentRecordIndex = this.recordCounter;
+			RecordCode rCode = new RecordCode(recType, this.recordCounter++);
 			this.sw.Write(rType);
-			this.sw.Write(currentRecordIndex);
-			this.recordCounter++;
-			return currentRecordIndex;
+			this.sw.Write(rCode.SequenceNo);
+			return rCode;
 		}
 
 		private void WriteValue(string str)
