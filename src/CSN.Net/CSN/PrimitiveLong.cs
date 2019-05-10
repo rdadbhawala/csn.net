@@ -10,7 +10,7 @@ namespace Abstraction.Csn
 	/// Primitive Long Wrapper
 	/// </summary>
 	internal class PrimitiveLong
-		: PrimitiveCast, IPrimitive
+		: CastPrimitive, IValue
 	{
 		private readonly long value;
 
@@ -28,7 +28,7 @@ namespace Abstraction.Csn
 		/// Writes a long value to a CSN Field
 		/// </summary>
 		/// <param name="sw">Stream to write unto</param>
-		public override void WritePrimitive(StreamWriter sw)
+		public override void WriteValue(StreamWriter sw)
 		{
 			FieldLong.F.WriteField(sw, this.value);
 		}

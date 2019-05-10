@@ -10,7 +10,7 @@ namespace Abstraction.Csn
 	/// Primitive type for Null values
 	/// </summary>
 	public class PrimitiveNull
-		: PrimitiveCast, IPrimitive
+		: CastPrimitive, IValue
     {
 		/// <summary>
 		/// Singleton
@@ -26,7 +26,7 @@ namespace Abstraction.Csn
 		/// Write a null field.
 		/// </summary>
 		/// <param name="sw">Stream to write unto</param>
-		public override void WritePrimitive(StreamWriter sw)
+		public override void WriteValue(StreamWriter sw)
 		{
 			FieldNull.F.WriteField(sw);
 		}

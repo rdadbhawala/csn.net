@@ -11,7 +11,7 @@ namespace Abstraction.Csn
 	/// Primitive type for DateTime values
 	/// </summary>
 	internal class PrimitiveDateTime
-		: PrimitiveCast, IPrimitive
+		: CastPrimitive, IValue
 	{
 		private readonly DateTime value;
 
@@ -29,7 +29,7 @@ namespace Abstraction.Csn
 		/// Write primitive to Stream
 		/// </summary>
 		/// <param name="sw">Stream to write unto</param>
-		public override void WritePrimitive(StreamWriter sw)
+		public override void WriteValue(StreamWriter sw)
 		{
 			FieldDateTime.F.WriteField(sw, this.value);
 		}

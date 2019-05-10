@@ -10,7 +10,7 @@ namespace Abstraction.Csn
 	/// String value Primitive wrapper class
 	/// </summary>
 	internal class PrimitiveString
-		: PrimitiveCast, IPrimitive
+		: CastPrimitive, IValue
 	{
 		private readonly string value = null;
 
@@ -28,7 +28,7 @@ namespace Abstraction.Csn
 		/// Write the Primitive to a Field.
 		/// </summary>
 		/// <param name="sw">Value to write.</param>
-		public override void WritePrimitive(StreamWriter sw)
+		public override void WriteValue(StreamWriter sw)
 		{
 			FieldString.W.WriteField(sw, this.value);
 		}

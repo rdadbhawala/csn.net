@@ -10,7 +10,7 @@ namespace Abstraction.Csn
 	/// Primitive Bool Wrapper
 	/// </summary>
 	internal class PrimitiveBool
-		: PrimitiveCast, IPrimitive
+		: CastPrimitive, IValue
 	{
 		private readonly bool value;
 
@@ -28,7 +28,7 @@ namespace Abstraction.Csn
 		/// Writes a bool value to a CSN Field
 		/// </summary>
 		/// <param name="sw">Stream to write unto</param>
-		public override void WritePrimitive(StreamWriter sw)
+		public override void WriteValue(StreamWriter sw)
 		{
 			FieldBool.F.WriteField(sw, this.value);
 		}

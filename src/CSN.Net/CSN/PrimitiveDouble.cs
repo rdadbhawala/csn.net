@@ -10,7 +10,7 @@ namespace Abstraction.Csn
 	/// Primitive Double Wrapper
 	/// </summary>
 	internal class PrimitiveDouble
-		: PrimitiveCast, IPrimitive
+		: CastPrimitive, IValue
 	{
 		private readonly double value;
 
@@ -28,7 +28,7 @@ namespace Abstraction.Csn
 		/// Writes a double value to a CSN Field
 		/// </summary>
 		/// <param name="sw">Stream to write unto</param>
-		public override void WritePrimitive(StreamWriter sw)
+		public override void WriteValue(StreamWriter sw)
 		{
 			FieldDouble.F.WriteField(sw, this.value);
 		}

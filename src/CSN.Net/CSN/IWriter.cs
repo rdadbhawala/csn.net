@@ -24,8 +24,15 @@ using System;
 		/// </summary>
 		/// <param name="typeRecCode">RecordCode of Instance Type</param>
 		/// <param name="values">Values of Instance</param>
-		/// <returns>Record Sequence Number of Instance</returns>
-		RecordCode WriteInstanceRecord(RecordCode typeRecCode, params PrimitiveCast[] values);
+		/// <returns>Record Code</returns>
+		RecordCode WriteInstanceRecord(RecordCode typeRecCode, params CastPrimitive[] values);
+
+		/// <summary>
+		/// Write an Array Record
+		/// </summary>
+		/// <param name="values">Array values</param>
+		/// <returns>Record Code</returns>
+		RecordCode WriteArrayRecord(CastArray values);
 
 		/*
 		/// <summary>

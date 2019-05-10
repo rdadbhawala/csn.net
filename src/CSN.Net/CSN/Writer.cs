@@ -39,10 +39,10 @@ namespace Abstraction.Csn
 		public RecordCode WriteTypeDefRecord(string typeName, params string[] typeMembers)
 		{
 			this.sw.Write(Constants.DefaultRecordSeparator);
-			RecordCode currentRecordIndex = this.WriteRecordCode(RecordType.TypeDef, Constants.RecordTypeChar.TypeDef);
+			RecordCode rCode = this.WriteRecordCode(RecordType.TypeDef, Constants.RecordTypeChar.TypeDef);
 			this.WriteValue(typeName);
 			this.WriteValues(typeMembers);
-			return currentRecordIndex;
+			return rCode;
 		}
 
 		/// <summary>
@@ -51,17 +51,30 @@ namespace Abstraction.Csn
 		/// <param name="typeRecCode">Record Code of Instance Type</param>
 		/// <param name="values">Values of Instance</param>
 		/// <returns>Record Code</returns>
-		public RecordCode WriteInstanceRecord(RecordCode typeRecCode, params PrimitiveCast[] values)
+		public RecordCode WriteInstanceRecord(RecordCode typeRecCode, params CastPrimitive[] values)
 		{
 			this.sw.Write(Constants.DefaultRecordSeparator);
-			RecordCode currentRecordIndex = this.WriteRecordCode(RecordType.Instance, Constants.RecordTypeChar.Instance);
+			RecordCode rCode = this.WriteRecordCode(RecordType.Instance, Constants.RecordTypeChar.Instance);
 			FieldReference.R.WriteField(this.sw, typeRecCode.SequenceNo);
 			for (int pCtr = 0; pCtr < values.Length; pCtr++)
 			{
-				values[pCtr].WritePrimitive(this.sw);
+				values[pCtr].WriteValue(this.sw);
 			}
 
-			return currentRecordIndex;
+			return rCode;
+		}
+
+		/// <summary>
+		/// Write an Array Record
+		/// </summary>
+		/// <param name="values">Array values</param>
+		/// <returns>Record Code</returns>
+		public RecordCode WriteArrayRecord(CastArray values)
+		{
+			this.sw.Write(Constants.DefaultRecordSeparator);
+			RecordCode rCode = this.WriteRecordCode(RecordType.Array, Constants.RecordTypeChar.Array);
+
+			return rCode;
 		}
 
 		private RecordCode WriteVersionRecord()

@@ -1,4 +1,4 @@
-﻿// <copyright file="PrimitiveCast.cs" company="Abstraction">
+﻿// <copyright file="CastPrimitive.cs" company="Abstraction">
 // Copyright (c) Abstraction. All rights reserved.
 // </copyright>
 
@@ -10,13 +10,13 @@ namespace Abstraction.Csn
 	/// <summary>
 	/// Abstract implementation of Interface IPrimitive for casting convenience
 	/// </summary>
-	public abstract class PrimitiveCast : IPrimitive
+	public abstract class CastPrimitive : IValue
 	{
 		/// <summary>
 		/// Convert String to A Primitive
 		/// </summary>
 		/// <param name="s">String to convert</param>
-		public static implicit operator PrimitiveCast(string s)
+		public static implicit operator CastPrimitive(string s)
 		{
 			return new PrimitiveString(s);
 		}
@@ -25,7 +25,7 @@ namespace Abstraction.Csn
 		/// Convert a boolean to a Primitive
 		/// </summary>
 		/// <param name="b">boolean to convert</param>
-		public static implicit operator PrimitiveCast(bool b)
+		public static implicit operator CastPrimitive(bool b)
 		{
 			return new PrimitiveBool(b);
 		}
@@ -34,7 +34,7 @@ namespace Abstraction.Csn
 		/// PrimitiveCast for DateTime values
 		/// </summary>
 		/// <param name="dt">DateTime value to convert</param>
-		public static implicit operator PrimitiveCast(DateTime dt)
+		public static implicit operator CastPrimitive(DateTime dt)
 		{
 			return new PrimitiveDateTime(dt);
 		}
@@ -43,7 +43,7 @@ namespace Abstraction.Csn
 		/// PrimitiveCast for Long values
 		/// </summary>
 		/// <param name="l">long value</param>
-		public static implicit operator PrimitiveCast(long l)
+		public static implicit operator CastPrimitive(long l)
 		{
 			return new PrimitiveLong(l);
 		}
@@ -52,7 +52,7 @@ namespace Abstraction.Csn
 		/// PrimitiveCast for double values
 		/// </summary>
 		/// <param name="d">double value</param>
-		public static implicit operator PrimitiveCast(double d)
+		public static implicit operator CastPrimitive(double d)
 		{
 			return new PrimitiveDouble(d);
 		}
@@ -61,6 +61,6 @@ namespace Abstraction.Csn
 		/// Write Primitive.
 		/// </summary>
 		/// <param name="sw">Stream to write unto</param>
-		public abstract void WritePrimitive(StreamWriter sw);
+		public abstract void WriteValue(StreamWriter sw);
 	}
 }
