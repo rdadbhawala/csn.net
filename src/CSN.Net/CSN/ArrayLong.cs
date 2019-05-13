@@ -12,7 +12,7 @@ namespace Abstraction.Csn
 	/// Array of Primitive Long
 	/// </summary>
 	internal class ArrayLong
-		: CastArray, IValue
+		: CastArray, IValues
 	{
 		private readonly IEnumerable<long> values;
 
@@ -25,11 +25,16 @@ namespace Abstraction.Csn
 			this.values = arr;
 		}
 
+		public override void WriteType(StreamWriter sw)
+		{
+			FieldLong.F.WriteType(sw);
+		}
+
 		/// <summary>
 		/// Write Array
 		/// </summary>
 		/// <param name="sw">Stream to write unto</param>
-		public override void WriteValue(StreamWriter sw)
+		public override void WriteValues(StreamWriter sw)
 		{
 			FieldLong.F.WriteFields(sw, this.values);
 		}

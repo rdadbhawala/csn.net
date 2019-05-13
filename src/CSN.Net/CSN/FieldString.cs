@@ -18,6 +18,7 @@ namespace Abstraction.Csn
 		public static readonly FieldString W = new FieldString();
 
 		private FieldString()
+			: base(Constants.ArrayCode.String)
 		{
 		}
 

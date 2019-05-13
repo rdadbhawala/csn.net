@@ -18,6 +18,7 @@ namespace Abstraction.Csn
 		public static readonly FieldDouble F = new FieldDouble();
 
 		private FieldDouble()
+			: base(Constants.ArrayCode.Real)
 		{
 			// nothing
 		}

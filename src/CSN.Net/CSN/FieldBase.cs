@@ -14,6 +14,13 @@ namespace Abstraction.Csn
 	internal abstract class FieldBase<P>
 		: IField<P>
 	{
+		public readonly char ArrType;
+
+		protected FieldBase(char pArrType)
+		{
+			this.ArrType = pArrType;
+		}
+
 		/// <summary>
 		/// Write an individual value to a CSN Field.
 		/// </summary>
@@ -26,12 +33,19 @@ namespace Abstraction.Csn
 		/// </summary>
 		/// <param name="sw">Stream to write unto</param>
 		/// <param name="values">Values to write</param>
-		public void WriteFields(StreamWriter sw, IEnumerable<P> values)
+		public virtual void WriteFields(StreamWriter sw, IEnumerable<P> values)
 		{
 			foreach (P oneValue in values)
 			{
 				this.WriteField(sw, oneValue);
 			}
+		}
+
+		public virtual void WriteType(StreamWriter sw)
+		{
+			sw.Write(Constants.DefaultFieldSeparator);
+			sw.Write(Constants.ArrayCode.Prefix);
+			sw.Write(this.ArrType);
 		}
 	}
 }

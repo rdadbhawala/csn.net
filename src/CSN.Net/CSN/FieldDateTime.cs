@@ -22,6 +22,7 @@ namespace Abstraction.Csn
 		private readonly string formatString = "yyyyMMddTHHmmssfffffffK";
 
 		private FieldDateTime()
+			: base(Constants.ArrayCode.DateTime)
 		{
 			// nothing
 		}

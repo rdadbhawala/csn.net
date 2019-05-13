@@ -26,5 +26,8 @@ namespace Abstraction.Csn
 		/// <param name="sw">Stream to write unto</param>
 		/// <param name="values">Values to write</param>
 		void WriteFields(StreamWriter sw, IEnumerable<P> values);
-    }
+
+		void WriteType(StreamWriter sw);
+
+	}
 }

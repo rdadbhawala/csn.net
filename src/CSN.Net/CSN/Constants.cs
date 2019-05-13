@@ -79,5 +79,41 @@ namespace Abstraction.Csn
 			/// </summary>
 			public const char Instance = 'I';
 		}
+
+		/// <summary>
+		/// Array Primitive Char Codes
+		/// </summary>
+		public static class ArrayCode
+		{
+			/// <summary>
+			/// Prefix Character
+			/// </summary>
+			public const char Prefix = 'P';
+
+			/// <summary>
+			/// Integer type
+			/// </summary>
+			public const char Integer = 'I';
+
+			/// <summary>
+			/// Bool type
+			/// </summary>
+			public const char Bool = 'B';
+
+			/// <summary>
+			/// String type
+			/// </summary>
+			public const char String = 'S';
+
+			/// <summary>
+			/// Real number type
+			/// </summary>
+			public const char Real = 'R';
+
+			/// <summary>
+			/// DateTime type
+			/// </summary>
+			public const char DateTime = 'D';
+		}
 	}
 }

@@ -73,7 +73,7 @@ namespace Abstraction.Csn
 		{
 			this.sw.Write(Constants.DefaultRecordSeparator);
 			RecordCode rCode = this.WriteRecordCode(RecordType.Array, Constants.RecordTypeChar.Array);
-
+			values.WriteType(this.sw);
 			return rCode;
 		}
 

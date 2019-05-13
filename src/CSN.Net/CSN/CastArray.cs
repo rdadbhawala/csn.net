@@ -10,7 +10,7 @@ namespace Abstraction.Csn
 	/// <summary>
 	/// Handle casting of Arrays of Primitives
 	/// </summary>
-	public abstract class CastArray : IValue
+	public abstract class CastArray : IValues
 	{
 		/// <summary>
 		/// Cast array of Integers
@@ -25,6 +25,8 @@ namespace Abstraction.Csn
 		/// Write the Array
 		/// </summary>
 		/// <param name="sw">Stream to write unto</param>
-		public abstract void WriteValue(StreamWriter sw);
+		public abstract void WriteValues(StreamWriter sw);
+
+		public abstract void WriteType(StreamWriter sw);
 	}
 }

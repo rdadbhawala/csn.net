@@ -18,6 +18,7 @@ namespace Abstraction.Csn
 		public static readonly FieldReference R = new FieldReference();
 
 		private FieldReference()
+			: base(Constants.ArrayCode.DateTime)
 		{
 			// nothing
 		}

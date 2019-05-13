@@ -18,6 +18,7 @@ namespace Abstraction.Csn
 		public static readonly FieldLong F = new FieldLong();
 
 		private FieldLong()
+			: base(Constants.ArrayCode.Integer)
 		{
 			// nothing
 		}

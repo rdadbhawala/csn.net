@@ -18,6 +18,7 @@ namespace Abstraction.Csn
 		public static readonly FieldBool F = new FieldBool();
 
 		private FieldBool()
+			: base(Constants.ArrayCode.Bool)
 		{
 			// nothing
 		}
