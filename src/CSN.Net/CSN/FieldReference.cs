@@ -15,7 +15,7 @@ namespace Abstraction.Csn
 		/// <summary>
 		/// Single FieldReference Instance.
 		/// </summary>
-		public static readonly FieldReference R = new FieldReference();
+		public static readonly FieldReference F = new FieldReference();
 
 		private FieldReference()
 			: base(Constants.ArrayCode.DateTime)

@@ -4,6 +4,8 @@
 
 namespace Abstraction.Csn
 {
+	using System;
+	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
 
@@ -16,9 +18,54 @@ namespace Abstraction.Csn
 		/// Cast array of Integers.
 		/// </summary>
 		/// <param name="array">array.</param>
-		public static implicit operator CastArray(int[] array)
+		public static implicit operator CastArray(long[] array)
 		{
-			return new Array<long>(FieldLong.F, array.Select(x => (long)x));
+			return new Array<long>(FieldLong.F, array);
+		}
+
+		/// <summary>
+		/// Cast array of Strings.
+		/// </summary>
+		/// <param name="array">Strings.</param>
+		public static implicit operator CastArray(string[] array)
+		{
+			return new Array<string>(FieldString.F, array);
+		}
+
+		/// <summary>
+		/// Cast array of Bools.
+		/// </summary>
+		/// <param name="array">Bools.</param>
+		public static implicit operator CastArray(bool[] array)
+		{
+			return new Array<bool>(FieldBool.F, array);
+		}
+
+		/// <summary>
+		/// Cast array of DateTimes.
+		/// </summary>
+		/// <param name="array">DateTimes.</param>
+		public static implicit operator CastArray(DateTime[] array)
+		{
+			return new Array<DateTime>(FieldDateTime.F, array);
+		}
+
+		/// <summary>
+		/// Cast array of doubles.
+		/// </summary>
+		/// <param name="array">doubles.</param>
+		public static implicit operator CastArray(double[] array)
+		{
+			return new Array<double>(FieldDouble.F, array);
+		}
+
+		/// <summary>
+		/// Cast array of References.
+		/// </summary>
+		/// <param name="array">References.</param>
+		public static implicit operator CastArray(RecordCode[] array)
+		{
+			return new Array<int>(FieldReference.F, array.Select(x => x.SequenceNo));
 		}
 
 		/// <summary>

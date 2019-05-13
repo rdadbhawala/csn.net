@@ -55,7 +55,7 @@ namespace Abstraction.Csn
 		{
 			this.sw.Write(Constants.DefaultRecordSeparator);
 			RecordCode rCode = this.WriteRecordCode(RecordType.Instance, Constants.RecordTypeChar.Instance);
-			FieldReference.R.WriteField(this.sw, typeRecCode.SequenceNo);
+			FieldReference.F.WriteField(this.sw, typeRecCode.SequenceNo);
 			for (int pCtr = 0; pCtr < values.Length; pCtr++)
 			{
 				values[pCtr].WriteValue(this.sw);

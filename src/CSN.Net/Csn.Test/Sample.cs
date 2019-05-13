@@ -25,7 +25,7 @@ namespace Abstraction.Csn.Test
 			RecordCode iRef = csnw.WriteInstanceRecord(tRef, true, false, new DateTime(2019, 03, 12, 19, 24, 33, 567, DateTimeKind.Utc), "Label", -123.45, 345);
 			Assert.AreEqual(2, iRef.SequenceNo);
 
-			RecordCode paRef = csnw.WriteArrayRecord(new int[]{10, 20, 30, 40, 50});
+			RecordCode paRef = csnw.WriteArrayRecord(new long[]{10, 20, 30, 40, 50});
 
 			// read the contents
 			sWriter.Flush();
