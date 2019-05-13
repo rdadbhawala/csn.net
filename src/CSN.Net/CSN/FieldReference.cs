@@ -10,6 +10,7 @@ namespace Abstraction.Csn
 	/// Field Reference
 	/// </summary>
 	internal class FieldReference
+		: FieldBase<int>
     {
 		/// <summary>
 		/// Single FieldReference Instance
@@ -22,24 +23,11 @@ namespace Abstraction.Csn
 		}
 
 		/// <summary>
-		/// Write many References.
-		/// </summary>
-		/// <param name="sw">Writer to write unto</param>
-		/// <param name="fieldValues">Values to write</param>
-		public void WriteFields(StreamWriter sw, int[] fieldValues)
-		{
-			for (int ctr = 0; ctr < fieldValues.Length; ctr++)
-			{
-				this.WriteField(sw, fieldValues[ctr]);
-			}
-		}
-
-		/// <summary>
 		/// Write a Reference Field.
 		/// </summary>
 		/// <param name="sw">Stream to write unto</param>
 		/// <param name="fieldValue">Value to write.</param>
-		public void WriteField(StreamWriter sw, int fieldValue)
+		public override void WriteField(StreamWriter sw, int fieldValue)
 		{
 			sw.Write(Constants.DefaultFieldSeparator);
 			sw.Write(Constants.ReferencePrefix);

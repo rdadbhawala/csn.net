@@ -10,6 +10,7 @@ namespace Abstraction.Csn
 	/// Boolean Field Writer
 	/// </summary>
 	internal class FieldBool
+		: FieldBase<bool>
     {
 		/// <summary>
 		/// Singleton FieldBool instance
@@ -26,7 +27,7 @@ namespace Abstraction.Csn
 		/// </summary>
 		/// <param name="sw">Stream to write unto</param>
 		/// <param name="value">Value to write</param>
-		public void WriteField(StreamWriter sw, bool value)
+		public override void WriteField(StreamWriter sw, bool value)
 		{
 			sw.Write(Constants.DefaultFieldSeparator);
 			sw.Write(value ? Constants.BoolTrue : Constants.BoolFalse);

@@ -10,6 +10,7 @@ namespace Abstraction.Csn
 	/// Double Field Writer
 	/// </summary>
 	internal class FieldDouble
+		: FieldBase<double>
     {
 		/// <summary>
 		/// Singleton FieldDouble instance
@@ -26,7 +27,7 @@ namespace Abstraction.Csn
 		/// </summary>
 		/// <param name="sw">Stream to write unto</param>
 		/// <param name="value">Value to write</param>
-		public void WriteField(StreamWriter sw, double value)
+		public override void WriteField(StreamWriter sw, double value)
 		{
 			sw.Write(Constants.DefaultFieldSeparator);
 			sw.Write(value);

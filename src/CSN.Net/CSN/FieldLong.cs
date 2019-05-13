@@ -10,6 +10,7 @@ namespace Abstraction.Csn
 	/// Long Field Writer
 	/// </summary>
 	internal class FieldLong
+		: FieldBase<long>
     {
 		/// <summary>
 		/// Singleton FieldLong instance
@@ -26,7 +27,7 @@ namespace Abstraction.Csn
 		/// </summary>
 		/// <param name="sw">Stream to write unto</param>
 		/// <param name="value">Value to write</param>
-		public void WriteField(StreamWriter sw, long value)
+		public override void WriteField(StreamWriter sw, long value)
 		{
 			sw.Write(Constants.DefaultFieldSeparator);
 			sw.Write(value);

@@ -31,10 +31,7 @@ namespace Abstraction.Csn
 		/// <param name="sw">Stream to write unto</param>
 		public override void WriteValue(StreamWriter sw)
 		{
-			foreach (long oneValue in this.values)
-			{
-				FieldLong.F.WriteField(sw, oneValue);
-			}
+			FieldLong.F.WriteFields(sw, this.values);
 		}
 	}
 }
