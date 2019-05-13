@@ -10,15 +10,19 @@ namespace Abstraction.Csn
 	/// <summary>
 	/// Base class for Fields, abstracting the Array implementation.
 	/// </summary>
-	/// <typeparam name="P">Primitive Type</typeparam>
-	internal abstract class FieldBase<P>
-		: IField<P>
+	/// <typeparam name="T">Primitive Type.</typeparam>
+	internal abstract class FieldBase<T>
+		: IField<T>, IFields<T>
 	{
-		public readonly char ArrType;
+		private readonly char arrType;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="FieldBase{P}"/> class.
+		/// </summary>
+		/// <param name="pArrType">Array Type Character.</param>
 		protected FieldBase(char pArrType)
 		{
-			this.ArrType = pArrType;
+			this.arrType = pArrType;
 		}
 
 		/// <summary>
@@ -26,26 +30,30 @@ namespace Abstraction.Csn
 		/// </summary>
 		/// <param name="sw">Stream to write unto.</param>
 		/// <param name="value">Value to write.</param>
-		public abstract void WriteField(StreamWriter sw, P value);
+		public abstract void WriteField(StreamWriter sw, T value);
 
 		/// <summary>
 		/// Write a set of values to CSN Fields.
 		/// </summary>
-		/// <param name="sw">Stream to write unto</param>
-		/// <param name="values">Values to write</param>
-		public virtual void WriteFields(StreamWriter sw, IEnumerable<P> values)
+		/// <param name="sw">Stream to write unto.</param>
+		/// <param name="values">Values to write.</param>
+		public virtual void WriteFields(StreamWriter sw, IEnumerable<T> values)
 		{
-			foreach (P oneValue in values)
+			foreach (T oneValue in values)
 			{
 				this.WriteField(sw, oneValue);
 			}
 		}
 
+		/// <summary>
+		/// Write the Array Type Code.
+		/// </summary>
+		/// <param name="sw">Stream to write unto.</param>
 		public virtual void WriteType(StreamWriter sw)
 		{
 			sw.Write(Constants.DefaultFieldSeparator);
 			sw.Write(Constants.ArrayCode.Prefix);
-			sw.Write(this.ArrType);
+			sw.Write(this.arrType);
 		}
 	}
 }

@@ -22,7 +22,7 @@ namespace Abstraction.Csn
 		/// <summary>
 		/// Create a new instance of a default CSN Configuration.
 		/// </summary>
-		/// <returns>An instance of CsnConfig</returns>
+		/// <returns>An instance of CsnConfig.</returns>
 		public static Config CreateDefaultConfig()
 		{
 			return new Config

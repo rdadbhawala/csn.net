@@ -5,28 +5,28 @@
 namespace Abstraction.Csn
 {
 	/// <summary>
-	/// Record Type enumerates the type of CSN Records
+	/// Record Type enumerates the type of CSN Records.
 	/// </summary>
     public enum RecordType
     {
 		/// <summary>
-		/// Version
+		/// Version.
 		/// </summary>
 		Version = 10,
 
 		/// <summary>
-		/// TypeDef
+		/// TypeDef.
 		/// </summary>
 		TypeDef = 20,
 
 		/// <summary>
-		/// Array
+		/// Array.
 		/// </summary>
 		Array = 30,
 
 		/// <summary>
-		/// Instance
+		/// Instance.
 		/// </summary>
-		Instance = 40
+		Instance = 40,
     }
 }

@@ -7,13 +7,13 @@ namespace Abstraction.Csn
 	using System.IO;
 
 	/// <summary>
-	/// Field Reference
+	/// Field Reference.
 	/// </summary>
 	internal class FieldReference
 		: FieldBase<int>
     {
 		/// <summary>
-		/// Single FieldReference Instance
+		/// Single FieldReference Instance.
 		/// </summary>
 		public static readonly FieldReference R = new FieldReference();
 
@@ -26,7 +26,7 @@ namespace Abstraction.Csn
 		/// <summary>
 		/// Write a Reference Field.
 		/// </summary>
-		/// <param name="sw">Stream to write unto</param>
+		/// <param name="sw">Stream to write unto.</param>
 		/// <param name="fieldValue">Value to write.</param>
 		public override void WriteField(StreamWriter sw, int fieldValue)
 		{

@@ -7,13 +7,13 @@ namespace Abstraction.Csn
 	using System.IO;
 
 	/// <summary>
-	/// Boolean Field Writer
+	/// Boolean Field Writer.
 	/// </summary>
 	internal class FieldBool
 		: FieldBase<bool>
     {
 		/// <summary>
-		/// Singleton FieldBool instance
+		/// Singleton FieldBool instance.
 		/// </summary>
 		public static readonly FieldBool F = new FieldBool();
 
@@ -24,10 +24,10 @@ namespace Abstraction.Csn
 		}
 
 		/// <summary>
-		/// Write a boolean value to a CSN Field
+		/// Write a boolean value to a CSN Field.
 		/// </summary>
-		/// <param name="sw">Stream to write unto</param>
-		/// <param name="value">Value to write</param>
+		/// <param name="sw">Stream to write unto.</param>
+		/// <param name="value">Value to write.</param>
 		public override void WriteField(StreamWriter sw, bool value)
 		{
 			sw.Write(Constants.DefaultFieldSeparator);

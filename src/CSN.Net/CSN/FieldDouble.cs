@@ -7,13 +7,13 @@ namespace Abstraction.Csn
 	using System.IO;
 
 	/// <summary>
-	/// Double Field Writer
+	/// Double Field Writer.
 	/// </summary>
 	internal class FieldDouble
 		: FieldBase<double>
     {
 		/// <summary>
-		/// Singleton FieldDouble instance
+		/// Singleton FieldDouble instance.
 		/// </summary>
 		public static readonly FieldDouble F = new FieldDouble();
 
@@ -24,10 +24,10 @@ namespace Abstraction.Csn
 		}
 
 		/// <summary>
-		/// Write a Double value to a CSN Field
+		/// Write a Double value to a CSN Field.
 		/// </summary>
-		/// <param name="sw">Stream to write unto</param>
-		/// <param name="value">Value to write</param>
+		/// <param name="sw">Stream to write unto.</param>
+		/// <param name="value">Value to write.</param>
 		public override void WriteField(StreamWriter sw, double value)
 		{
 			sw.Write(Constants.DefaultFieldSeparator);

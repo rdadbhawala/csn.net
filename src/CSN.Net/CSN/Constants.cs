@@ -5,17 +5,17 @@
 namespace Abstraction.Csn
 {
 	/// <summary>
-	/// CSN Constants
+	/// CSN Constants.
 	/// </summary>
     public static class Constants
     {
 		/// <summary>
-		/// Default Field Separator
+		/// Default Field Separator.
 		/// </summary>
 		public const char DefaultFieldSeparator = ',';
 
 		/// <summary>
-		/// Default Record Separator
+		/// Default Record Separator.
 		/// </summary>
 		public const char DefaultRecordSeparator = '\n';
 
@@ -25,93 +25,93 @@ namespace Abstraction.Csn
 		public const string CsnVersion = "0.1.0";
 
 		/// <summary>
-		/// String Field Encloser (Double Quote) Character
+		/// String Field Encloser (Double Quote) Character.
 		/// </summary>
 		public const char StringFieldEncloser = '\"';
 
 		/// <summary>
-		/// Escape character for String values
+		/// Escape character for String values.
 		/// </summary>
 		public const char StringEscapeChar = '\\';
 
 		/// <summary>
-		/// Reference Character Prefix
+		/// Reference Character Prefix.
 		/// </summary>
 		public const char ReferencePrefix = '#';
 
 		/// <summary>
-		/// True value
+		/// True value.
 		/// </summary>
 		public const char BoolTrue = 'T';
 
 		/// <summary>
-		/// False value
+		/// False value.
 		/// </summary>
 		public const char BoolFalse = 'F';
 
 		/// <summary>
-		/// DateTime field prefix
+		/// DateTime field prefix.
 		/// </summary>
 		public const char DateTimePrefix = 'D';
 
 		/// <summary>
-		/// Record Type Characters
+		/// Record Type Characters.
 		/// </summary>
 		public static class RecordTypeChar
 		{
 			/// <summary>
-			/// Version
+			/// Version.
 			/// </summary>
 			public const char Version = 'V';
 
 			/// <summary>
-			/// TypeDef
+			/// TypeDef.
 			/// </summary>
 			public const char TypeDef = 'T';
 
 			/// <summary>
-			/// Array
+			/// Array.
 			/// </summary>
 			public const char Array = 'A';
 
 			/// <summary>
-			/// Instance
+			/// Instance.
 			/// </summary>
 			public const char Instance = 'I';
 		}
 
 		/// <summary>
-		/// Array Primitive Char Codes
+		/// Array Primitive Char Codes.
 		/// </summary>
 		public static class ArrayCode
 		{
 			/// <summary>
-			/// Prefix Character
+			/// Prefix Character.
 			/// </summary>
 			public const char Prefix = 'P';
 
 			/// <summary>
-			/// Integer type
+			/// Integer type.
 			/// </summary>
 			public const char Integer = 'I';
 
 			/// <summary>
-			/// Bool type
+			/// Bool type.
 			/// </summary>
 			public const char Bool = 'B';
 
 			/// <summary>
-			/// String type
+			/// String type.
 			/// </summary>
 			public const char String = 'S';
 
 			/// <summary>
-			/// Real number type
+			/// Real number type.
 			/// </summary>
 			public const char Real = 'R';
 
 			/// <summary>
-			/// DateTime type
+			/// DateTime type.
 			/// </summary>
 			public const char DateTime = 'D';
 		}

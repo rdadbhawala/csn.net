@@ -8,7 +8,7 @@ namespace Abstraction.Csn
 	using System.IO;
 
 	/// <summary>
-	/// CsnWriter is an implementation of ICsnWriter
+	/// CsnWriter is an implementation of ICsnWriter.
 	/// </summary>
 	public class Writer : IWriter
 	{
@@ -31,11 +31,11 @@ namespace Abstraction.Csn
 		}
 
 		/// <summary>
-		/// Write a TypeDef Record
+		/// Write a TypeDef Record.
 		/// </summary>
-		/// <param name="typeName">Type name</param>
-		/// <param name="typeMembers">Type Members</param>
-		/// <returns>Record Code</returns>
+		/// <param name="typeName">Type name.</param>
+		/// <param name="typeMembers">Type Members.</param>
+		/// <returns>Record Code.</returns>
 		public RecordCode WriteTypeDefRecord(string typeName, params string[] typeMembers)
 		{
 			this.sw.Write(Constants.DefaultRecordSeparator);
@@ -46,11 +46,11 @@ namespace Abstraction.Csn
 		}
 
 		/// <summary>
-		/// Write an Instance Record
+		/// Write an Instance Record.
 		/// </summary>
-		/// <param name="typeRecCode">Record Code of Instance Type</param>
-		/// <param name="values">Values of Instance</param>
-		/// <returns>Record Code</returns>
+		/// <param name="typeRecCode">Record Code of Instance Type.</param>
+		/// <param name="values">Values of Instance.</param>
+		/// <returns>Record Code.</returns>
 		public RecordCode WriteInstanceRecord(RecordCode typeRecCode, params CastPrimitive[] values)
 		{
 			this.sw.Write(Constants.DefaultRecordSeparator);
@@ -65,15 +65,16 @@ namespace Abstraction.Csn
 		}
 
 		/// <summary>
-		/// Write an Array Record
+		/// Write an Array Record.
 		/// </summary>
-		/// <param name="values">Array values</param>
-		/// <returns>Record Code</returns>
+		/// <param name="values">Array values.</param>
+		/// <returns>Record Code.</returns>
 		public RecordCode WriteArrayRecord(CastArray values)
 		{
 			this.sw.Write(Constants.DefaultRecordSeparator);
 			RecordCode rCode = this.WriteRecordCode(RecordType.Array, Constants.RecordTypeChar.Array);
 			values.WriteType(this.sw);
+			values.WriteValues(this.sw);
 			return rCode;
 		}
 
@@ -94,12 +95,12 @@ namespace Abstraction.Csn
 
 		private void WriteValue(string str)
 		{
-			FieldString.W.WriteField(this.sw, str);
+			FieldString.F.WriteField(this.sw, str);
 		}
 
 		private void WriteValues(string[] arr)
 		{
-			FieldString.W.WriteFields(this.sw, arr);
+			FieldString.F.WriteFields(this.sw, arr);
 		}
 	}
 }

@@ -7,15 +7,15 @@ namespace Abstraction.Csn
 	using System.IO;
 
 	/// <summary>
-	/// FieldWriter for String Types
+	/// FieldWriter for String Types.
 	/// </summary>
 	internal class FieldString
 		: FieldBase<string>
 	{
 		/// <summary>
-		/// Singleton instance of FieldString
+		/// Singleton instance of FieldString.
 		/// </summary>
-		public static readonly FieldString W = new FieldString();
+		public static readonly FieldString F = new FieldString();
 
 		private FieldString()
 			: base(Constants.ArrayCode.String)
@@ -23,10 +23,10 @@ namespace Abstraction.Csn
 		}
 
 		/// <summary>
-		/// Write a value
+		/// Write a value.
 		/// </summary>
-		/// <param name="sw">Stream to write unto</param>
-		/// <param name="fieldValue">Value to write</param>
+		/// <param name="sw">Stream to write unto.</param>
+		/// <param name="fieldValue">Value to write.</param>
 		public override void WriteField(StreamWriter sw, string fieldValue)
 		{
 			sw.Write(Constants.DefaultFieldSeparator);

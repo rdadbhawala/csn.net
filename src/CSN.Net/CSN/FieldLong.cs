@@ -7,13 +7,13 @@ namespace Abstraction.Csn
 	using System.IO;
 
 	/// <summary>
-	/// Long Field Writer
+	/// Long Field Writer.
 	/// </summary>
 	internal class FieldLong
 		: FieldBase<long>
     {
 		/// <summary>
-		/// Singleton FieldLong instance
+		/// Singleton FieldLong instance.
 		/// </summary>
 		public static readonly FieldLong F = new FieldLong();
 
@@ -24,10 +24,10 @@ namespace Abstraction.Csn
 		}
 
 		/// <summary>
-		/// Write a Long value to a CSN Field
+		/// Write a Long value to a CSN Field.
 		/// </summary>
-		/// <param name="sw">Stream to write unto</param>
-		/// <param name="value">Value to write</param>
+		/// <param name="sw">Stream to write unto.</param>
+		/// <param name="value">Value to write.</param>
 		public override void WriteField(StreamWriter sw, long value)
 		{
 			sw.Write(Constants.DefaultFieldSeparator);

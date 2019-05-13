@@ -9,13 +9,13 @@ namespace Abstraction.Csn
 	using System.IO;
 
 	/// <summary>
-	/// DateTime field handling
+	/// DateTime field handling.
 	/// </summary>
-    internal class FieldDateTime
+	internal class FieldDateTime
 		: FieldBase<DateTime>
     {
 		/// <summary>
-		/// Singleton instance
+		/// Singleton instance.
 		/// </summary>
 		public static readonly FieldDateTime F = new FieldDateTime();
 
@@ -28,10 +28,10 @@ namespace Abstraction.Csn
 		}
 
 		/// <summary>
-		/// Write a DateTime field
+		/// Write a DateTime field.
 		/// </summary>
-		/// <param name="sw">Stream to write unto</param>
-		/// <param name="field">value to write</param>
+		/// <param name="sw">Stream to write unto.</param>
+		/// <param name="field">value to write.</param>
 		public override void WriteField(StreamWriter sw, DateTime field)
 		{
 			sw.Write(Constants.DefaultFieldSeparator);

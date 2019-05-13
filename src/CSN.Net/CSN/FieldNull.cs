@@ -7,12 +7,12 @@ namespace Abstraction.Csn
 	using System.IO;
 
 	/// <summary>
-	/// Null field
+	/// Null field.
 	/// </summary>
-    internal class FieldNull
+	internal class FieldNull
     {
 		/// <summary>
-		/// Singleton
+		/// Singleton.
 		/// </summary>
 		public static readonly FieldNull F = new FieldNull();
 
@@ -22,9 +22,9 @@ namespace Abstraction.Csn
 		}
 
 		/// <summary>
-		/// Write a null field
+		/// Write a null field.
 		/// </summary>
-		/// <param name="sw">Stream to write unto</param>
+		/// <param name="sw">Stream to write unto.</param>
 		public void WriteField(StreamWriter sw)
 		{
 			sw.Write(Constants.DefaultFieldSeparator);
