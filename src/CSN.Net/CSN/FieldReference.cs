@@ -4,13 +4,14 @@
 
 namespace Abstraction.Csn
 {
+	using System.Collections.Generic;
 	using System.IO;
 
 	/// <summary>
 	/// Field Reference.
 	/// </summary>
 	internal class FieldReference
-		: FieldBase<int>
+		: IField<RecordCode>, IFields<RecordCode>
     {
 		/// <summary>
 		/// Single FieldReference Instance.
@@ -18,7 +19,6 @@ namespace Abstraction.Csn
 		public static readonly FieldReference F = new FieldReference();
 
 		private FieldReference()
-			: base(Constants.ArrayCode.DateTime)
 		{
 			// nothing
 		}
@@ -28,11 +28,34 @@ namespace Abstraction.Csn
 		/// </summary>
 		/// <param name="sw">Stream to write unto.</param>
 		/// <param name="fieldValue">Value to write.</param>
-		public override void WriteField(StreamWriter sw, int fieldValue)
+		public void WriteField(StreamWriter sw, RecordCode fieldValue)
 		{
 			sw.Write(Constants.DefaultFieldSeparator);
 			sw.Write(Constants.ReferencePrefix);
-			sw.Write(fieldValue);
+			sw.Write(fieldValue.SequenceNo);
+		}
+
+		/// <summary>
+		/// Write an array of References.
+		/// </summary>
+		/// <param name="sw">Stream to write unto.</param>
+		/// <param name="values">Values to write.</param>
+		public void WriteFields(StreamWriter sw, IEnumerable<RecordCode> values)
+		{
+			foreach (RecordCode oneValue in values)
+			{
+				this.WriteField(sw, oneValue);
+			}
+		}
+
+		/// <summary>
+		/// Array Code for References. This method should not be invoked.
+		/// </summary>
+		/// <param name="sw">Stream to write unto.</param>
+		public void WriteType(StreamWriter sw)
+		{
+			// this method should not be invoked
+			throw new System.NotImplementedException();
 		}
 	}
 }

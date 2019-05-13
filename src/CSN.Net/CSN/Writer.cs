@@ -55,7 +55,7 @@ namespace Abstraction.Csn
 		{
 			this.sw.Write(Constants.DefaultRecordSeparator);
 			RecordCode rCode = this.WriteRecordCode(RecordType.Instance, Constants.RecordTypeChar.Instance);
-			FieldReference.F.WriteField(this.sw, typeRecCode.SequenceNo);
+			FieldReference.F.WriteField(this.sw, typeRecCode);
 			for (int pCtr = 0; pCtr < values.Length; pCtr++)
 			{
 				values[pCtr].WriteValue(this.sw);
@@ -75,6 +75,21 @@ namespace Abstraction.Csn
 			RecordCode rCode = this.WriteRecordCode(RecordType.Array, Constants.RecordTypeChar.Array);
 			values.WriteType(this.sw);
 			values.WriteValues(this.sw);
+			return rCode;
+		}
+
+		/// <summary>
+		/// Write an Array of Referneces.
+		/// </summary>
+		/// <param name="refType">Type of References.</param>
+		/// <param name="arrayElements">Elements of Array; Instances of Type.</param>
+		/// <returns>Record Code.</returns>
+		public RecordCode WriteArrayRecord(RecordCode refType, RecordCode[] arrayElements)
+		{
+			this.sw.Write(Constants.DefaultRecordSeparator);
+			RecordCode rCode = this.WriteRecordCode(RecordType.Array, Constants.RecordTypeChar.Array);
+			FieldReference.F.WriteField(this.sw, refType);
+			FieldReference.F.WriteFields(this.sw, arrayElements);
 			return rCode;
 		}
 
