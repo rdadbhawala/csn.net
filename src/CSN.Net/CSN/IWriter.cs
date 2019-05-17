@@ -4,8 +4,6 @@
 
 namespace Abstraction.Csn
 {
-using System;
-
 	/// <summary>
 	/// ICsnWriter is the raw CSN Writer.
 	/// </summary>
@@ -33,5 +31,13 @@ using System;
 		/// <param name="values">Array values.</param>
 		/// <returns>Record Code.</returns>
 		RecordCode WriteArrayRecord(CastArray values);
+
+		/// <summary>
+		/// Write an Array of Referneces.
+		/// </summary>
+		/// <param name="refType">Type of References.</param>
+		/// <param name="arrayElements">Elements of Array; Instances of Type.</param>
+		/// <returns>Record Code.</returns>
+		RecordCode WriteArrayRecord(RecordCode refType, RecordCode[] arrayElements);
 	}
 }

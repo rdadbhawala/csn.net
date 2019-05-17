@@ -65,7 +65,7 @@ namespace Abstraction.Csn
 		/// <param name="array">References.</param>
 		public static implicit operator CastArray(RecordCode[] array)
 		{
-			return new Array<int>(FieldReference.F, array.Select(x => x.SequenceNo));
+			return new Array<RecordCode>(FieldReference.F, array);
 		}
 
 		/// <summary>

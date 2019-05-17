@@ -63,7 +63,7 @@ namespace Abstraction.Csn
 		/// <param name="r">RecordCode.</param>
 		public static implicit operator CastPrimitive(RecordCode r)
 		{
-			return new Primitive<int>(FieldReference.F, r.SequenceNo);
+			return new Primitive<RecordCode>(FieldReference.F, r);
 		}
 
 		/// <summary>
