@@ -30,9 +30,16 @@ namespace Abstraction.Csn
 		/// <param name="fieldValue">Value to write.</param>
 		public void WriteField(StreamWriter sw, RecordCode fieldValue)
 		{
-			sw.Write(Constants.DefaultFieldSeparator);
-			sw.Write(Constants.ReferencePrefix);
-			sw.Write(fieldValue.SequenceNo);
+			if (fieldValue == null)
+			{
+				FieldNull.F.WriteField(sw);
+			}
+			else
+			{
+				sw.Write(Constants.DefaultFieldSeparator);
+				sw.Write(Constants.ReferencePrefix);
+				sw.Write(fieldValue.SequenceNo);
+			}
 		}
 
 		/// <summary>

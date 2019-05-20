@@ -9,7 +9,11 @@ namespace Performance
             Console.WriteLine("Hello World!");
 			CsnTimeZones csnTzs = TimeZoneService.S.GetTimeZones();
 			Console.WriteLine(csnTzs.TimeZones.Length);
-			Console.ReadLine();
+
+			ISerializer ser = new CsnSer();
+			ser.Serialize(csnTzs, System.Console.OpenStandardOutput());
+
+			//Console.ReadLine();
         }
     }
 }
