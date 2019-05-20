@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 
 namespace Performance
 {
@@ -10,10 +12,20 @@ namespace Performance
 			CsnTimeZones csnTzs = TimeZoneService.S.GetTimeZones();
 			Console.WriteLine(csnTzs.TimeZones.Length);
 
-			ISerializer ser = new CsnSer();
-			ser.Serialize(csnTzs, System.Console.OpenStandardOutput());
+			CsnSer csn = new CsnSer();
+			JsonSer json = new JsonSer();
 
-			//Console.ReadLine();
+			WriteSer(csn, "d:\\Temp\\tz-csn.txt", csnTzs);
+			WriteSer(json, "d:\\Temp\\tz-json.txt", csnTzs);
         }
+
+		static void WriteSer(ISerializer ser, String path, CsnTimeZones ctzs)
+		{
+			FileStream fs = new FileStream(path, FileMode.Create);
+			StreamWriter sw = new StreamWriter(fs, Encoding.UTF8);
+			ser.Serialize(ctzs, sw);
+			sw.Flush();
+			sw.Close();
+		}
     }
 }

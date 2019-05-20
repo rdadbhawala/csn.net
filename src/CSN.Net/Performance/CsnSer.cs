@@ -11,9 +11,8 @@ namespace Performance
 	class CsnSer
 		: ISerializer
 	{
-		public void Serialize(CsnTimeZones ctzs, Stream stream)
+		public void Serialize(CsnTimeZones ctzs, StreamWriter sw)
 		{
-			StreamWriter sw = new StreamWriter(stream);
 			Writer w = new Writer(sw, Config.CreateDefaultConfig());
 			// typedefs
 			RecordCode ttType = w.WriteTypeDefRecord("TransitionTime", "IsFixedDateRule", "Day", "Month", "TimeOfDay", "Week", "DayOfWeek");

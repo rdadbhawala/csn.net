@@ -7,6 +7,6 @@ namespace Performance
 {
     interface ISerializer
     {
-		void Serialize(CsnTimeZones ctzs, Stream stream);
+		void Serialize(CsnTimeZones ctzs, StreamWriter sw);
     }
 }
