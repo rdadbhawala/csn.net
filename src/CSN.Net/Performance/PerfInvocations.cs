@@ -12,7 +12,7 @@ namespace Performance
 		private readonly string[] names = { "ABCDE", "FGHIJ", "LKMNO", "PQRST", "UVWXY", "Z" };
 		private StreamWriter sw = null;
 		private Writer w = null;
-		private readonly int limit = 10000;
+		private readonly int limit = 100000;
 
 		[IterationSetup]
 		public void IterationSetup()
@@ -38,6 +38,17 @@ namespace Performance
 			for (int ctr = 0; ctr < this.limit; ctr++)
 			{
 				w.WriteInstanceRecord(rc, names[0], names[1], names[2], names[3], names[4], names[5]);
+			}
+		}
+
+		[Benchmark]
+		public void Fields()
+		{
+			RecordCode rc = w.WriteTypeDefRecord("TY", names[0], names[1], names[2], names[3], names[4], names[5]);
+			RecordCode outRc = null;
+			for (int ctr = 0; ctr < this.limit; ctr++)
+			{
+				w.WriteInstanceFields(rc, out outRc).W(names[0]).W(names[1]).W(names[2]).W(names[3]).W(names[4]).W(names[5]);
 			}
 		}
 

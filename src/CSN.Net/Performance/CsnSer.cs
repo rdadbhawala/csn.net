@@ -32,6 +32,7 @@ namespace Performance
 					if (adjLen > 0)
 					{
 						RecordCode[] arrAdjs = new RecordCode[adjLen];
+						RecordCode outRcAdj = null;
 						for (int adjCtr = 0; adjCtr < adjLen; adjCtr++)
 						{
 							CsnAdjustment adj = ctz.Adjustments[adjCtr];
@@ -49,9 +50,16 @@ namespace Performance
 
 		private CastPrimitive WriteTrTime(CsnTransition tt, Writer w, RecordCode ttType)
 		{
-			return (tt == null) ?
-				null :
-				w.WriteInstanceRecord(ttType, tt.IsFixedDateRule, tt.Day, tt.Month, tt.TimeOfDay, tt.Week, tt.DayOfWeek);
+			RecordCode outrc = null;
+			if (tt != null)
+			{
+				w.WriteInstanceFields(ttType, out outrc).W(tt.IsFixedDateRule).W(tt.Day).W(tt.Month).W(tt.TimeOfDay).W(tt.Week).W(tt.DayOfWeek);
+			}
+			return outrc;
+
+			//return (tt == null) ?
+			//	null :
+			//	w.WriteInstanceRecord(ttType, tt.IsFixedDateRule, tt.Day, tt.Month, tt.TimeOfDay, tt.Week, tt.DayOfWeek);
 		}
 	}
 }

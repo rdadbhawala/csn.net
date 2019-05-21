@@ -10,7 +10,7 @@ namespace Abstraction.Csn
 	/// <summary>
 	/// CsnWriter is an implementation of ICsnWriter.
 	/// </summary>
-	public class Writer : IWriter
+	public class Writer : IWriter, IFieldWriter
 	{
 		// private readonly Stream stream = null;
 		private readonly StreamWriter sw = null;
@@ -40,8 +40,8 @@ namespace Abstraction.Csn
 		{
 			this.sw.Write(Constants.DefaultRecordSeparator);
 			RecordCode rCode = this.WriteRecordCode(RecordType.TypeDef, Constants.RecordTypeChar.TypeDef);
-			this.WriteValue(typeName);
-			this.WriteValues(typeMembers);
+			FieldString.F.WriteField(this.sw, typeName);
+			FieldString.F.WriteFields(this.sw, typeMembers);
 			return rCode;
 		}
 
@@ -62,6 +62,14 @@ namespace Abstraction.Csn
 			}
 
 			return rCode;
+		}
+
+		public IFieldWriter WriteInstanceFields(RecordCode typeRecCode, out RecordCode instance)
+		{
+			this.sw.Write(Constants.DefaultRecordSeparator);
+			instance = this.WriteRecordCode(RecordType.Instance, Constants.RecordTypeChar.Instance);
+			FieldReference.F.WriteField(this.sw, typeRecCode);
+			return this;
 		}
 
 		/// <summary>
@@ -96,7 +104,7 @@ namespace Abstraction.Csn
 		private RecordCode WriteVersionRecord()
 		{
 			RecordCode currentRecordIndex = this.WriteRecordCode(RecordType.Version, Constants.RecordTypeChar.Version);
-			this.WriteValue(Constants.CsnVersion);
+			FieldString.F.WriteField(this.sw, Constants.CsnVersion);
 			return currentRecordIndex;
 		}
 
@@ -108,14 +116,40 @@ namespace Abstraction.Csn
 			return rCode;
 		}
 
-		private void WriteValue(string str)
+		public IFieldWriter W(string value)
 		{
-			FieldString.F.WriteField(this.sw, str);
+			FieldString.F.WriteField(this.sw, value);
+			return this;
 		}
 
-		private void WriteValues(string[] arr)
+		public IFieldWriter W(bool value)
 		{
-			FieldString.F.WriteFields(this.sw, arr);
+			FieldBool.F.WriteField(this.sw, value);
+			return this;
+		}
+
+		public IFieldWriter W(DateTime value)
+		{
+			FieldDateTime.F.WriteField(this.sw, value);
+			return this;
+		}
+
+		public IFieldWriter W(long value)
+		{
+			FieldLong.F.WriteField(this.sw, value);
+			return this;
+		}
+
+		public IFieldWriter W(double value)
+		{
+			FieldDouble.F.WriteField(this.sw, value);
+			return this;
+		}
+
+		public IFieldWriter W(RecordCode value)
+		{
+			FieldReference.F.WriteField(this.sw, value);
+			return this;
 		}
 	}
 }

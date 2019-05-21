@@ -2,6 +2,8 @@
 // Copyright (c) Abstraction. All rights reserved.
 // </copyright>
 
+using System;
+
 namespace Abstraction.Csn
 {
 	/// <summary>
@@ -24,6 +26,8 @@ namespace Abstraction.Csn
 		/// <param name="values">Values of Instance.</param>
 		/// <returns>Record Code.</returns>
 		RecordCode WriteInstanceRecord(RecordCode typeRecCode, params CastPrimitive[] values);
+
+		IFieldWriter WriteInstanceFields(RecordCode typeRecCode, out RecordCode instance);
 
 		/// <summary>
 		/// Write an Array Record.
