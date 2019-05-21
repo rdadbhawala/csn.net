@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BenchmarkDotNet.Running;
+using System;
 using System.IO;
 using System.Text;
 
@@ -15,6 +16,8 @@ namespace Performance
 			WriteSer(json, "d:\\Temp\\tz-json-long.txt", csnTzs);
 			JsonSer json2 = new JsonSer(JsonSer.shortNames);
 			WriteSer(json2, "d:\\Temp\\tz-json-short.txt", csnTzs);
+
+			BenchmarkRunner.Run<PerfSer>();
 		}
 
 		static void WriteSer(ISerializer ser, String path, CsnTimeZones ctzs)

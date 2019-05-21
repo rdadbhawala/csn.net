@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Csn.Test", "Csn.Test\Csn.Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FiguringItOut", "FiguringItOut\FiguringItOut.csproj", "{24038ECA-03FF-49B5-9B56-5662B53FABE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Performance", "Performance\Performance.csproj", "{8BAC918B-5625-4D34-9AAE-63957E3373ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Performance", "Performance\Performance.csproj", "{8BAC918B-5625-4D34-9AAE-63957E3373ED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,8 +17,8 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{FA2B559F-F476-46CF-8644-36D64B4695D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FA2B559F-F476-46CF-8644-36D64B4695D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA2B559F-F476-46CF-8644-36D64B4695D7}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{FA2B559F-F476-46CF-8644-36D64B4695D7}.Debug|Any CPU.Build.0 = Release|Any CPU
 		{FA2B559F-F476-46CF-8644-36D64B4695D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA2B559F-F476-46CF-8644-36D64B4695D7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F367AC70-CCBA-4283-8206-442CD25055D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -29,8 +29,8 @@ Global
 		{24038ECA-03FF-49B5-9B56-5662B53FABE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24038ECA-03FF-49B5-9B56-5662B53FABE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24038ECA-03FF-49B5-9B56-5662B53FABE7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8BAC918B-5625-4D34-9AAE-63957E3373ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8BAC918B-5625-4D34-9AAE-63957E3373ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BAC918B-5625-4D34-9AAE-63957E3373ED}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{8BAC918B-5625-4D34-9AAE-63957E3373ED}.Debug|Any CPU.Build.0 = Release|Any CPU
 		{8BAC918B-5625-4D34-9AAE-63957E3373ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BAC918B-5625-4D34-9AAE-63957E3373ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
