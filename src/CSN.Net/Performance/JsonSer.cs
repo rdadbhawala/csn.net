@@ -37,6 +37,7 @@ namespace Performance
 
 			JsonTextWriter json = new JsonTextWriter(sw);
 			Serialize(ctzs, json);
+			json.Flush();
 		}
 
 		private void Serialize(CsnTimeZones ctzs, JsonTextWriter json)

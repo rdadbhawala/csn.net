@@ -32,23 +32,25 @@ namespace Performance
 					if (adjLen > 0)
 					{
 						RecordCode[] arrAdjs = new RecordCode[adjLen];
-						RecordCode outRcAdj = null;
 						for (int adjCtr = 0; adjCtr < adjLen; adjCtr++)
 						{
 							CsnAdjustment adj = ctz.Adjustments[adjCtr];
-							arrAdjs[adjCtr] = w.WriteInstanceRecord(adjType, adj.StartDate, adj.EndDate, adj.DaylightDeltaHours,
-								WriteTrTime(adj.TransitionStart, w, ttType), WriteTrTime(adj.TransitionEnd, w, ttType));
+							RecordCode rcTtStart = this.WriteTrTime(adj.TransitionStart, w, ttType);
+							RecordCode rcTtEnd = this.WriteTrTime(adj.TransitionEnd, w, ttType);
+							arrAdjs[adjCtr] = w.WriteInstanceFields(adjType).W(adj.StartDate).W(adj.EndDate).W(adj.DaylightDeltaHours).W(rcTtStart).W(rcTtEnd).Current;
 						}
+
 						rcAdjArr = w.WriteArrayRecord(adjType, arrAdjs);
 					}
-					rcTzsArr[tzCtr] = w.WriteInstanceRecord(tzType, ctz.Id, ctz.DisplayName, ctz.DaylightName, ctz.StandardName, ctz.HasDst, ctz.UtcOffsetHours, rcAdjArr);
+					rcTzsArr[tzCtr] = w.WriteInstanceFields(tzType).W(ctz.Id).W(ctz.DisplayName).W(ctz.DaylightName).W(ctz.StandardName).W(ctz.HasDst).W(ctz.UtcOffsetHours).W(rcAdjArr).Current;
 				}
 			}
-			w.WriteInstanceRecord(tzsType, w.WriteArrayRecord(tzType, rcTzsArr));
+			RecordCode rc = w.WriteArrayRecord(tzType, rcTzsArr);
+			w.WriteInstanceFields(tzsType).W(rc);
 			sw.Flush();
 		}
 
-		private CastPrimitive WriteTrTime(CsnTransition tt, Writer w, RecordCode ttType)
+		private RecordCode WriteTrTime(CsnTransition tt, Writer w, RecordCode ttType)
 		{
 			return (tt == null) ?
 				null :
