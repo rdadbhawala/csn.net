@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace Performance
 {
@@ -10,7 +11,7 @@ namespace Performance
 		public CsnTimeZones()
 		{ }
 
-		public CsnTimeZone[] TimeZones { get; set; }
+		public CsnTimeZone[] AllTimeZones { get; set; }
     }
 
 	public class CsnTimeZone

@@ -20,11 +20,11 @@ namespace Performance
 			RecordCode tzType = w.WriteTypeDefRecord("TimeZone", "Id", "DisplayName", "DaylightName", "StandardName", "HasDst", "UtcOffsetHours", "Adjustments");
 			RecordCode tzsType = w.WriteTypeDefRecord("TimeZones", "AllTimeZones");
 
-			int tzLen = ctzs.TimeZones.Length;
+			int tzLen = ctzs.AllTimeZones.Length;
 			RecordCode[] rcTzsArr = new RecordCode[tzLen];
 			for (int tzCtr = 0; tzCtr < tzLen; tzCtr++)
 			{
-				CsnTimeZone ctz = ctzs.TimeZones[tzCtr];
+				CsnTimeZone ctz = ctzs.AllTimeZones[tzCtr];
 				if (ctz.Adjustments != null)
 				{
 					int adjLen = ctz.Adjustments.Length;

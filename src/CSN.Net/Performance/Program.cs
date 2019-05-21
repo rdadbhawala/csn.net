@@ -8,16 +8,14 @@ namespace Performance
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
 			CsnTimeZones csnTzs = TimeZoneService.S.GetTimeZones();
-			Console.WriteLine(csnTzs.TimeZones.Length);
-
 			CsnSer csn = new CsnSer();
-			JsonSer json = new JsonSer();
-
 			WriteSer(csn, "d:\\Temp\\tz-csn.txt", csnTzs);
-			WriteSer(json, "d:\\Temp\\tz-json.txt", csnTzs);
-        }
+			JsonSer json = new JsonSer(JsonSer.longNames);
+			WriteSer(json, "d:\\Temp\\tz-json-long.txt", csnTzs);
+			JsonSer json2 = new JsonSer(JsonSer.shortNames);
+			WriteSer(json2, "d:\\Temp\\tz-json-short.txt", csnTzs);
+		}
 
 		static void WriteSer(ISerializer ser, String path, CsnTimeZones ctzs)
 		{

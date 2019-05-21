@@ -15,7 +15,7 @@ namespace Performance
 		public CsnTimeZones GetTimeZones()
 		{
 			CsnTimeZones tzs = new CsnTimeZones();
-			tzs.TimeZones = TimeZoneInfo.GetSystemTimeZones().Select(x => new CsnTimeZone(x)).ToArray();
+			tzs.AllTimeZones = TimeZoneInfo.GetSystemTimeZones().Select(x => new CsnTimeZone(x)).ToArray();
 			return tzs;
 		}
     }
