@@ -14,7 +14,7 @@ namespace Abstraction.Csn
 		/// </summary>
 		/// <param name="rType">Record Type.</param>
 		/// <param name="seqNo">Sequence Number.</param>
-		internal RecordCode(RecordType rType, int seqNo)
+		internal RecordCode(RecordType rType, long seqNo)
 		{
 			this.RecType = rType;
 			this.SequenceNo = seqNo;
@@ -28,6 +28,6 @@ namespace Abstraction.Csn
 		/// <summary>
 		/// Gets the Sequence Number of the record.
 		/// </summary>
-		public int SequenceNo { get; private set; }
+		public long SequenceNo { get; private set; }
 	}
 }

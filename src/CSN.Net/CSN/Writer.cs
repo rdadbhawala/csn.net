@@ -10,12 +10,12 @@ namespace Abstraction.Csn
 	/// <summary>
 	/// CsnWriter is an implementation of ICsnWriter.
 	/// </summary>
-	public class Writer : IWriter, IFieldWriter
+	public class Writer : IWriter
 	{
 		// private readonly Stream stream = null;
 		private readonly StreamWriter sw = null;
 		private readonly Config config = null;
-		private int recordCounter = 0;
+		private long recordCounter = -1;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Writer"/> class.
@@ -30,6 +30,8 @@ namespace Abstraction.Csn
 			this.WriteVersionRecord();
 		}
 
+		public RecordCode Current { get; private set; }
+
 		/// <summary>
 		/// Write a TypeDef Record.
 		/// </summary>
@@ -39,10 +41,10 @@ namespace Abstraction.Csn
 		public RecordCode WriteTypeDefRecord(string typeName, params string[] typeMembers)
 		{
 			this.sw.Write(Constants.DefaultRecordSeparator);
-			RecordCode rCode = this.WriteRecordCode(RecordType.TypeDef, Constants.RecordTypeChar.TypeDef);
+			this.WriteRecordCode(RecordType.TypeDef, Constants.RecordTypeChar.TypeDef);
 			FieldString.F.WriteField(this.sw, typeName);
 			FieldString.F.WriteFields(this.sw, typeMembers);
-			return rCode;
+			return Current;
 		}
 
 		/// <summary>
@@ -54,20 +56,20 @@ namespace Abstraction.Csn
 		public RecordCode WriteInstanceRecord(RecordCode typeRecCode, params CastPrimitive[] values)
 		{
 			this.sw.Write(Constants.DefaultRecordSeparator);
-			RecordCode rCode = this.WriteRecordCode(RecordType.Instance, Constants.RecordTypeChar.Instance);
+			this.WriteRecordCode(RecordType.Instance, Constants.RecordTypeChar.Instance);
 			FieldReference.F.WriteField(this.sw, typeRecCode);
 			for (int pCtr = 0; pCtr < values.Length; pCtr++)
 			{
 				values[pCtr].WriteValue(this.sw);
 			}
 
-			return rCode;
+			return Current;
 		}
 
-		public IFieldWriter WriteInstanceFields(RecordCode typeRecCode, out RecordCode instance)
+		public IFieldWriter WriteInstanceFields(RecordCode typeRecCode)
 		{
 			this.sw.Write(Constants.DefaultRecordSeparator);
-			instance = this.WriteRecordCode(RecordType.Instance, Constants.RecordTypeChar.Instance);
+			this.WriteRecordCode(RecordType.Instance, Constants.RecordTypeChar.Instance);
 			FieldReference.F.WriteField(this.sw, typeRecCode);
 			return this;
 		}
@@ -80,10 +82,10 @@ namespace Abstraction.Csn
 		public RecordCode WriteArrayRecord(CastArray values)
 		{
 			this.sw.Write(Constants.DefaultRecordSeparator);
-			RecordCode rCode = this.WriteRecordCode(RecordType.Array, Constants.RecordTypeChar.Array);
+			this.WriteRecordCode(RecordType.Array, Constants.RecordTypeChar.Array);
 			values.WriteType(this.sw);
 			values.WriteValues(this.sw);
-			return rCode;
+			return this.Current;
 		}
 
 		/// <summary>
@@ -95,25 +97,25 @@ namespace Abstraction.Csn
 		public RecordCode WriteArrayRecord(RecordCode refType, RecordCode[] arrayElements)
 		{
 			this.sw.Write(Constants.DefaultRecordSeparator);
-			RecordCode rCode = this.WriteRecordCode(RecordType.Array, Constants.RecordTypeChar.Array);
+			this.WriteRecordCode(RecordType.Array, Constants.RecordTypeChar.Array);
 			FieldReference.F.WriteField(this.sw, refType);
 			FieldReference.F.WriteFields(this.sw, arrayElements);
-			return rCode;
+			return this.Current;
 		}
 
 		private RecordCode WriteVersionRecord()
 		{
-			RecordCode currentRecordIndex = this.WriteRecordCode(RecordType.Version, Constants.RecordTypeChar.Version);
+			this.WriteRecordCode(RecordType.Version, Constants.RecordTypeChar.Version);
 			FieldString.F.WriteField(this.sw, Constants.CsnVersion);
-			return currentRecordIndex;
+			return this.Current;
 		}
 
-		private RecordCode WriteRecordCode(RecordType recType, char rType)
+		private void WriteRecordCode(RecordType recType, char rType)
 		{
-			RecordCode rCode = new RecordCode(recType, this.recordCounter++);
+			this.recordCounter++;
 			this.sw.Write(rType);
-			this.sw.Write(rCode.SequenceNo);
-			return rCode;
+			this.sw.Write(this.recordCounter);
+			this.Current = new RecordCode(recType, this.recordCounter);
 		}
 
 		public IFieldWriter W(string value)

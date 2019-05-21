@@ -45,10 +45,9 @@ namespace Performance
 		public void Fields()
 		{
 			RecordCode rc = w.WriteTypeDefRecord("TY", names[0], names[1], names[2], names[3], names[4], names[5]);
-			RecordCode outRc = null;
 			for (int ctr = 0; ctr < this.limit; ctr++)
 			{
-				w.WriteInstanceFields(rc, out outRc).W(names[0]).W(names[1]).W(names[2]).W(names[3]).W(names[4]).W(names[5]);
+				w.WriteInstanceFields(rc).W(names[0]).W(names[1]).W(names[2]).W(names[3]).W(names[4]).W(names[5]);
 			}
 		}
 
