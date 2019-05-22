@@ -91,7 +91,7 @@ namespace Abstraction.Csn
 			WriteIntToCharArr(arrDt, 12, 2, field.Minute);
 			WriteIntToCharArr(arrDt, 14, 2, field.Second);
 			WriteIntToCharArr(arrDt, 16, 7, (int)(field.Ticks % tickFactor));
-			sw.Write(arrDt);
+			sw.Write(arrDt, 0, 23);
 
 			//if (field.Kind == DateTimeKind.Utc)
 			//{
@@ -112,11 +112,10 @@ namespace Abstraction.Csn
 				case DateTimeKind.Utc: sw.Write(isoZ); break;
 				case DateTimeKind.Local:
 					TimeSpan ts = TimeZoneInfo.Local.GetUtcOffset(field);
-					char[] arrTz = { '+', '0', '0', '0', '0' };
-					arrTz[0] = (ts.Ticks > 0 ? '+' : '-');
+					char[] arrTz = { (ts.Ticks > 0 ? '+' : '-'), '0', '0', '0', '0' };
 					WriteIntToCharArr(arrTz, 1, 2, ts.Hours);
 					WriteIntToCharArr(arrTz, 3, 2, ts.Minutes);
-					sw.Write(arrTz);
+					sw.Write(arrTz, 0, 5);
 					break;
 			}
 		}

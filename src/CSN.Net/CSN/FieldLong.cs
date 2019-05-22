@@ -32,6 +32,14 @@ namespace Abstraction.Csn
 		{
 			sw.Write(Constants.DefaultFieldSeparator);
 			sw.Write(value);
+			//if (value < 0)
+			//{
+			//	sw.Write('-');
+			//	sw.Write((ulong)(-value));
+			//} else
+			//{
+			//	sw.Write((ulong)value);
+			//}
 		}
     }
 }

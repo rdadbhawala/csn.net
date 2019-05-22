@@ -9,6 +9,7 @@ namespace Performance
 	public class PerfSer
 	{
 		private readonly CsnSer core = null;
+		private readonly CsnForSer forCore = null;
 		private readonly CsnTimeZones Ctzs = null;
 		private readonly JsonSer jcore = null;
 		private readonly JsonObjSer jobjcore = new JsonObjSer();
@@ -18,6 +19,7 @@ namespace Performance
 		{
 			this.Ctzs = TimeZoneService.S.GetTimeZones();
 			this.core = new CsnSer();
+			this.forCore = new CsnForSer();
 			this.jcore = new JsonSer(Performance.JsonSer.longNames);
 		}
 
@@ -33,16 +35,22 @@ namespace Performance
 			this.jcore.Serialize(this.Ctzs, this.sw);
 		}
 
-		[Benchmark]
-		public void JsonObjSer()
-		{
-			this.jobjcore.Serialize(this.Ctzs, this.sw);
-		}
+		//[Benchmark]
+		//public void JsonObjSer()
+		//{
+		//	this.jobjcore.Serialize(this.Ctzs, this.sw);
+		//}
 
 		[Benchmark]
 		public void CsnSer()
 		{
 			this.core.Serialize(this.Ctzs, this.sw);
 		}
+
+		//[Benchmark]
+		//public void CsnForSer()
+		//{
+		//	this.forCore.Serialize(this.Ctzs, this.sw);
+		//}
 	}
 }

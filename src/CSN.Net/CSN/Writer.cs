@@ -38,13 +38,13 @@ namespace Abstraction.Csn
 		/// <param name="typeName">Type name.</param>
 		/// <param name="typeMembers">Type Members.</param>
 		/// <returns>Record Code.</returns>
-		public RecordCode WriteTypeDefRecord(string typeName, params string[] typeMembers)
+		public IWriter WriteTypeDefRecord(string typeName, params string[] typeMembers)
 		{
 			this.sw.Write(Constants.DefaultRecordSeparator);
 			this.WriteRecordCode(RecordType.TypeDef, Constants.RecordTypeChar.TypeDef);
 			FieldString.F.WriteField(this.sw, typeName);
 			FieldString.F.WriteFields(this.sw, typeMembers);
-			return Current;
+			return this;
 		}
 
 		/// <summary>
@@ -53,7 +53,7 @@ namespace Abstraction.Csn
 		/// <param name="typeRecCode">Record Code of Instance Type.</param>
 		/// <param name="values">Values of Instance.</param>
 		/// <returns>Record Code.</returns>
-		public RecordCode WriteInstanceRecord(RecordCode typeRecCode, params CastPrimitive[] values)
+		public IWriter WriteInstanceRecord(RecordCode typeRecCode, params CastPrimitive[] values)
 		{
 			this.sw.Write(Constants.DefaultRecordSeparator);
 			this.WriteRecordCode(RecordType.Instance, Constants.RecordTypeChar.Instance);
@@ -63,7 +63,7 @@ namespace Abstraction.Csn
 				values[pCtr].WriteValue(this.sw);
 			}
 
-			return Current;
+			return this;
 		}
 
 		public IFieldWriter WriteInstanceFields(RecordCode typeRecCode)
@@ -79,13 +79,13 @@ namespace Abstraction.Csn
 		/// </summary>
 		/// <param name="values">Array values.</param>
 		/// <returns>Record Code.</returns>
-		public RecordCode WriteArrayRecord(CastArray values)
+		public IWriter WriteArrayRecord(CastArray values)
 		{
 			this.sw.Write(Constants.DefaultRecordSeparator);
 			this.WriteRecordCode(RecordType.Array, Constants.RecordTypeChar.Array);
 			values.WriteType(this.sw);
 			values.WriteValues(this.sw);
-			return this.Current;
+			return this;
 		}
 
 		/// <summary>
@@ -94,20 +94,19 @@ namespace Abstraction.Csn
 		/// <param name="refType">Type of References.</param>
 		/// <param name="arrayElements">Elements of Array; Instances of Type.</param>
 		/// <returns>Record Code.</returns>
-		public RecordCode WriteArrayRecord(RecordCode refType, RecordCode[] arrayElements)
+		public IWriter WriteArrayRecord(RecordCode refType, RecordCode[] arrayElements)
 		{
 			this.sw.Write(Constants.DefaultRecordSeparator);
 			this.WriteRecordCode(RecordType.Array, Constants.RecordTypeChar.Array);
 			FieldReference.F.WriteField(this.sw, refType);
 			FieldReference.F.WriteFields(this.sw, arrayElements);
-			return this.Current;
+			return this;
 		}
 
-		private RecordCode WriteVersionRecord()
+		private void WriteVersionRecord()
 		{
 			this.WriteRecordCode(RecordType.Version, Constants.RecordTypeChar.Version);
 			FieldString.F.WriteField(this.sw, Constants.CsnVersion);
-			return this.Current;
 		}
 
 		private void WriteRecordCode(RecordType recType, char rType)
