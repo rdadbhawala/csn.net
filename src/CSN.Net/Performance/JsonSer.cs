@@ -69,7 +69,8 @@ namespace Performance
 			json.WritePropertyName(this.names[6]);
 			json.WriteValue(ctz.UtcOffsetHours);
 
-			if (ctz.Adjustments != null) {
+			if (ctz.Adjustments != null)
+			{
 				json.WritePropertyName(this.names[7]);
 				json.WriteStartArray();
 				foreach (CsnAdjustment adj in ctz.Adjustments)

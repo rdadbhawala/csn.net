@@ -25,10 +25,10 @@ namespace Performance
 			for (int tzCtr = 0; tzCtr < tzLen; tzCtr++)
 			{
 				CsnTimeZone ctz = ctzs.AllTimeZones[tzCtr];
+				RecordCode rcAdjArr = null;
 				if (ctz.Adjustments != null)
 				{
 					int adjLen = ctz.Adjustments.Length;
-					RecordCode rcAdjArr = null;
 					if (adjLen > 0)
 					{
 						RecordCode[] arrAdjs = new RecordCode[adjLen];
@@ -42,8 +42,8 @@ namespace Performance
 
 						rcAdjArr = w.WriteArrayRecord(adjType, arrAdjs).Current;
 					}
-					rcTzsArr[tzCtr] = w.WriteInstanceFields(tzType).W(ctz.Id).W(ctz.DisplayName).W(ctz.DaylightName).W(ctz.StandardName).W(ctz.HasDst).W(ctz.UtcOffsetHours).W(rcAdjArr).Current;
 				}
+				rcTzsArr[tzCtr] = w.WriteInstanceFields(tzType).W(ctz.Id).W(ctz.DisplayName).W(ctz.DaylightName).W(ctz.StandardName).W(ctz.HasDst).W(ctz.UtcOffsetHours).W(rcAdjArr).Current;
 			}
 			RecordCode rc = w.WriteArrayRecord(tzType, rcTzsArr).Current;
 			w.WriteInstanceFields(tzsType).W(rc);
