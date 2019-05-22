@@ -24,7 +24,7 @@ namespace Performance
 		[IterationSetup]
 		public void IterationSetup()
 		{
-			this.sw = new StreamWriter(new MemoryStream(), Encoding.UTF8);
+			this.sw = new StreamWriter(Stream.Null, Encoding.UTF8);
 		}
 
 		[Benchmark]

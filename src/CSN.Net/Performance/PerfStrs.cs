@@ -12,9 +12,9 @@ namespace Performance
     {
 		private StreamWriter sw = null;
 		private Config cfg = null;
-		//private readonly long[] valueArr = new long[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+		private readonly long[] valueArr = new long[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 		//private readonly string[] valueArr = new string[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
-		private readonly DateTime[] valueArr = new DateTime[] { DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now };
+		//private readonly DateTime[] valueArr = new DateTime[] { DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now };
 
 		public PerfStrs()
 		{
@@ -24,7 +24,7 @@ namespace Performance
 		public void IterationSetup()
 		{
 			this.cfg = Config.CreateDefaultConfig();
-			this.sw = new StreamWriter(new MemoryStream(), Encoding.UTF8);
+			this.sw = new StreamWriter(Stream.Null, Encoding.UTF8);
 		}
 
 		[Benchmark]
