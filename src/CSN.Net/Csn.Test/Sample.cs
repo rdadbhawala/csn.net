@@ -16,16 +16,17 @@ namespace Abstraction.Csn.Test
 
 			// setup the CSN Parser
 
-			Config cfg = Config.CreateDefaultConfig();
-			Writer csnw = new Writer(sWriter, cfg);
+			IWriter csnw = new Writer(sWriter);
 
-			RecordCode tRef = csnw.WriteTypeDefRecord("AllPrimitives", "BooleanTrue", "BooleanFalse", "DateTime", "String", "Real", "Integer");
+			RecordCode tRef = csnw.WriteTypeDefRecord("AllPrimitives", "BooleanTrue", "BooleanFalse", "DateTime", "String", "Real", "Integer").Current;
 			Assert.AreEqual(1, tRef.SequenceNo, "Ref Type - All Primitives");
 
-			RecordCode iRef = csnw.WriteInstanceRecord(tRef, true, false, new DateTime(2019, 03, 12, 19, 24, 33, 567, DateTimeKind.Utc), "Label", -123.45, 345);
+			RecordCode iRef = csnw.WriteInstanceRecord(tRef, true, false, new DateTime(2019, 03, 12, 19, 24, 33, 567, DateTimeKind.Utc), "Label", -123.45, 345).Current;
 			Assert.AreEqual(2, iRef.SequenceNo);
 
-			RecordCode paRef = csnw.WriteArrayRecord(new long[]{10, 20, 30, 40, 50});
+			RecordCode paRef = csnw.WriteArrayRecord(new long[]{10, 20, 30, 40, 50}).Current;
+
+			RecordCode objRef = csnw.WriteArrayRecord(new RecordCode[] { tRef, iRef, paRef }).Current;
 
 			// read the contents
 			sWriter.Flush();

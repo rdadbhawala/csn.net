@@ -35,10 +35,11 @@ namespace Abstraction.Csn
 				sw.Write(Constants.StringFieldEncloser);
 
 				char[] chars = fieldValue.ToCharArray();
-				if (chars.Length > 0)
+				int charsLen = chars.Length;
+				if (charsLen > 0)
 				{
 					this.WriteChar(chars[0], sw);
-					for (int charCtr = 1; charCtr < chars.Length; charCtr++)
+					for (int charCtr = 1; charCtr < charsLen; charCtr++)
 					{
 						this.WriteChar(chars[charCtr], sw);
 					}

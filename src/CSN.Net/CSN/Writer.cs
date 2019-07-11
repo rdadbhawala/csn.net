@@ -14,7 +14,7 @@ namespace Abstraction.Csn
 	{
 		// private readonly Stream stream = null;
 		private readonly StreamWriter sw = null;
-		private readonly Config config = null;
+		//private readonly Config config = null;
 		private long recordCounter = -1;
 
 		/// <summary>
@@ -22,10 +22,10 @@ namespace Abstraction.Csn
 		/// </summary>
 		/// <param name="pStream">The IO Stream on which to write the CSN Payload.</param>
 		/// <param name="pConfig">Configuration parameters for CSN.</param>
-		public Writer(StreamWriter pStream, Config pConfig)
+		public Writer(StreamWriter pStream)
 		{
 			this.sw = pStream;
-			this.config = pConfig;
+			//this.config = pConfig;
 
 			this.WriteVersionRecord();
 		}

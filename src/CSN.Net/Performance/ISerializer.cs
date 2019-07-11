@@ -8,5 +8,6 @@ namespace Performance
     interface ISerializer
     {
 		void Serialize(CsnTimeZones ctzs, StreamWriter sw);
+		CsnTimeZones Deserialize(StreamWriter sw);
     }
 }

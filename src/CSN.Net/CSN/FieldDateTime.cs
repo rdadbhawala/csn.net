@@ -19,7 +19,7 @@ namespace Abstraction.Csn
 		/// </summary>
 		public static readonly FieldDateTime F = new FieldDateTime();
 
-		private readonly string formatString = "yyyyMMddTHHmmssfffffffK";
+		//private readonly string formatString = "yyyyMMddTHHmmssfffffffK";
 
 		private readonly char[] sArrDt = { 'D', '0', '0', '0', '0', '0', '0', '0', '0', 'T', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0' };
 
@@ -31,7 +31,7 @@ namespace Abstraction.Csn
 		private const char timeSep = ':';
 		private const char secondSep = '.';
 
-		private char[] chDigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+		private readonly char[] chDigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
 		private FieldDateTime()
 			: base(Constants.ArrayCode.DateTime)

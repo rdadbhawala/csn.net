@@ -8,7 +8,7 @@ namespace Abstraction.Csn
 	/// Record Code class.
 	/// </summary>
     public class RecordCode
-    {
+	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RecordCode"/> class.
 		/// </summary>

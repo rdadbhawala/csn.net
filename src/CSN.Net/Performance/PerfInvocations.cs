@@ -18,7 +18,7 @@ namespace Performance
 		public void IterationSetup()
 		{
 			sw = new StreamWriter(new MemoryStream(), Encoding.UTF8);
-			w = new Writer(sw, Config.CreateDefaultConfig());
+			w = new Writer(sw);
 		}
 
 		[Benchmark]

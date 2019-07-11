@@ -11,32 +11,37 @@ namespace Performance
 	class CsnSer
 		: ISerializer
 	{
+		public CsnTimeZones Deserialize(StreamWriter sw)
+		{
+			throw new NotImplementedException();
+		}
+
 		public void Serialize(CsnTimeZones ctzs, StreamWriter sw)
 		{
-			Writer w = new Writer(sw, Config.CreateDefaultConfig());
+			Writer w = new Writer(sw);
 			// typedefs
-			RecordCode ttType = w.WriteTypeDefRecord("TransitionTime", "IsFixedDateRule", "Day", "Month", "TimeOfDay", "Week", "DayOfWeek").Current;
-			RecordCode adjType = w.WriteTypeDefRecord("Adjustment", "StartDate", "EndDate", "DaylightDeltaHours", "TransitionStart", "TransitionEnd").Current;
-			RecordCode tzType = w.WriteTypeDefRecord("TimeZone", "Id", "DisplayName", "DaylightName", "StandardName", "HasDst", "UtcOffsetHours", "Adjustments").Current;
-			RecordCode tzsType = w.WriteTypeDefRecord("TimeZones", "AllTimeZones").Current;
+			RecordCode  ttType = w.WriteTypeDefRecord("TransitionTime", "IsFixedDateRule", "Day", "Month", "TimeOfDay", "Week", "DayOfWeek").Current;
+			RecordCode  adjType = w.WriteTypeDefRecord("Adjustment", "StartDate", "EndDate", "DaylightDeltaHours", "TransitionStart", "TransitionEnd").Current;
+			RecordCode  tzType = w.WriteTypeDefRecord("TimeZone", "Id", "DisplayName", "DaylightName", "StandardName", "HasDst", "UtcOffsetHours", "Adjustments").Current;
+			RecordCode  tzsType = w.WriteTypeDefRecord("TimeZones", "AllTimeZones").Current;
 
 			int tzLen = ctzs.AllTimeZones.Length;
-			RecordCode[] rcTzsArr = new RecordCode[tzLen];
+			RecordCode [] rcTzsArr = new RecordCode [tzLen];
 			for (int tzCtr = 0; tzCtr < tzLen; tzCtr++)
 			{
 				CsnTimeZone ctz = ctzs.AllTimeZones[tzCtr];
-				RecordCode rcAdjArr = null;
+				RecordCode  rcAdjArr = null;
 				if (ctz.Adjustments != null)
 				{
 					int adjLen = ctz.Adjustments.Length;
 					if (adjLen > 0)
 					{
-						RecordCode[] arrAdjs = new RecordCode[adjLen];
+						RecordCode [] arrAdjs = new RecordCode [adjLen];
 						for (int adjCtr = 0; adjCtr < adjLen; adjCtr++)
 						{
 							CsnAdjustment adj = ctz.Adjustments[adjCtr];
-							RecordCode rcTtStart = this.WriteTrTime(adj.TransitionStart, w, ttType);
-							RecordCode rcTtEnd = this.WriteTrTime(adj.TransitionEnd, w, ttType);
+							RecordCode  rcTtStart = this.WriteTrTime(adj.TransitionStart, w, ttType);
+							RecordCode  rcTtEnd = this.WriteTrTime(adj.TransitionEnd, w, ttType);
 							arrAdjs[adjCtr] = w.WriteInstanceFields(adjType).W(adj.StartDate).W(adj.EndDate).W(adj.DaylightDeltaHours).W(rcTtStart).W(rcTtEnd).Current;
 						}
 
@@ -45,12 +50,12 @@ namespace Performance
 				}
 				rcTzsArr[tzCtr] = w.WriteInstanceFields(tzType).W(ctz.Id).W(ctz.DisplayName).W(ctz.DaylightName).W(ctz.StandardName).W(ctz.HasDst).W(ctz.UtcOffsetHours).W(rcAdjArr).Current;
 			}
-			RecordCode rc = w.WriteArrayRecord(tzType, rcTzsArr).Current;
+			RecordCode  rc = w.WriteArrayRecord(tzType, rcTzsArr).Current;
 			w.WriteInstanceFields(tzsType).W(rc);
 			sw.Flush();
 		}
 
-		private RecordCode WriteTrTime(CsnTransition tt, Writer w, RecordCode ttType)
+		private RecordCode  WriteTrTime(CsnTransition tt, Writer w, RecordCode  ttType)
 		{
 			return (tt == null) ?
 				null :

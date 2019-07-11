@@ -10,6 +10,11 @@ namespace Performance
 	class JsonObjSer
 		: ISerializer
 	{
+		public CsnTimeZones Deserialize(StreamWriter sw)
+		{
+			throw new NotImplementedException();
+		}
+
 		public void Serialize(CsnTimeZones ctzs, StreamWriter sw)
 		{
 			JsonSerializer json = new JsonSerializer();

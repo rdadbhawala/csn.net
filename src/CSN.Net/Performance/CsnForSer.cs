@@ -13,7 +13,7 @@ namespace Performance
 	{
 		public void Serialize(CsnTimeZones ctzs, StreamWriter sw)
 		{
-			Writer w = new Writer(sw, Config.CreateDefaultConfig());
+			Writer w = new Writer(sw);
 			// typedefs
 			RecordCode ttType = w.WriteTypeDefRecord("TransitionTime", "IsFixedDateRule", "Day", "Month", "TimeOfDay", "Week", "DayOfWeek").Current;
 			RecordCode adjType = w.WriteTypeDefRecord("Adjustment", "StartDate", "EndDate", "DaylightDeltaHours", "TransitionStart", "TransitionEnd").Current;
@@ -49,6 +49,11 @@ namespace Performance
 			return (tt == null) ?
 				null :
 				w.WriteInstanceFields(ttType).W(tt.IsFixedDateRule).W(tt.Day).W(tt.Month).W(tt.TimeOfDay).W(tt.Week).W(tt.DayOfWeek).Current;
+		}
+
+		public CsnTimeZones Deserialize(StreamWriter sw)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

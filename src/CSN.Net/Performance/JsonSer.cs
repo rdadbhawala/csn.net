@@ -29,7 +29,6 @@ namespace Performance
 			this.names = pNames;
 		}
 
-
 		public void Serialize(CsnTimeZones ctzs, StreamWriter sw)
 		{
 			//JsonSerializer json = new JsonSerializer();
@@ -118,5 +117,11 @@ namespace Performance
 				json.WriteEndObject();
 			}
 		}
+
+		public CsnTimeZones Deserialize(StreamWriter sw)
+		{
+			throw new NotImplementedException();
+		}
+
 	}
 }
