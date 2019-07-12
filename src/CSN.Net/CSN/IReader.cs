@@ -6,10 +6,12 @@ namespace Abstraction.Csn
 {
     public interface IReader
     {
+		void Read(IRead callback);
     }
 
-	public interface IReaderCallback
+	public interface IRead
 	{
-
+		void Read(VersionRecord vr);
+		void VersionRecord(RecordCode rc, string version);
 	}
 }

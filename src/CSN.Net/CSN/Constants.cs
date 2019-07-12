@@ -2,6 +2,8 @@
 // Copyright (c) Abstraction. All rights reserved.
 // </copyright>
 
+using System;
+
 namespace Abstraction.Csn
 {
 	/// <summary>
