@@ -10,6 +10,9 @@ namespace Abstraction.Csn
 		UnknownRecordType,
 		UnexpectedChars,
 		NothingToRead,
+		NotEscapeChar,
+		UnexpectedEOF,
+		UnexpectedRecordType,
 	}
 
 	public enum ErrorDataKeys
@@ -35,5 +38,11 @@ namespace Abstraction.Csn
 		}
 
 		public ErrorCode Code { get; private set; }
+
+		public Error AddData(ErrorDataKeys key, object value)
+		{
+			this.Data[key] = value;
+			return this;
+		}
     }
 }

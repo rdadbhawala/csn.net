@@ -9,6 +9,8 @@ namespace Abstraction.Csn
 	/// </summary>
     public enum RecordType
     {
+		Unknown = 0,
+
 		/// <summary>
 		/// Version.
 		/// </summary>
