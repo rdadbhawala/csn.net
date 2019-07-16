@@ -36,10 +36,18 @@ namespace Abstraction.Csn
 
 	public class InstanceRecord : Record
 	{
-		public InstanceRecord(RecordCode rc) : base(rc)
-		{ }
+		public InstanceRecord(RecordCode rc, TypeDefRecord refRec) : base(rc)
+		{
+			this.Ref = refRec;
+		}
 
-		public RecordCode TypeReference { get; internal set; }
-		public object[] Values { get; set; }
+		public TypeDefRecord Ref { get; internal set; }
+		public object Tag { get; set; }
+	}
+
+	public class ArrayRecord : Record
+	{
+		public ArrayRecord(RecordCode rc) : base(rc)
+		{ }
 	}
 }

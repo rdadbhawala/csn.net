@@ -11,7 +11,10 @@ namespace Abstraction.Csn
 
 	public interface IRead
 	{
-		void Read(VersionRecord vr);
-		void Read(TypeDefRecord rec);
+		void Read(VersionRecord verRec);
+		void Read(TypeDefRecord typeRec);
+		void Read(InstanceRecord instRec);
+		void Read(Record rec, int index, bool value);
+		void Read(Record rec, int index, long value);
 	}
 }

@@ -44,8 +44,9 @@ namespace Abstraction.Csn
 		public IRead Read = null;
 		public ReadStateBase State = ReadStateVersionRecord.Singleton;
 
-		// state vars
+		// data
 		public RecordCode CurrentRC = null;
+		public Dictionary<long, Record> dcRecords = new Dictionary<long, Record>();
 
 		public ReadArgs(StreamReader pStream, IRead pRead)
 		{
@@ -65,25 +66,25 @@ namespace Abstraction.Csn
 
 		abstract public void Read(ReadArgs args);
 
-		protected IEnumerable<int> ReadTill(ReadArgs args, int tillChar, bool includeTillChar = false)
-		{
-			LinkedList<int> charInts = new LinkedList<int>();
+		//protected IEnumerable<int> ReadTill(ReadArgs args, int tillChar, bool includeTillChar = false)
+		//{
+		//	LinkedList<int> charInts = new LinkedList<int>();
 
-			int readChar = -1;
-			while ((readChar = args.Stream.Read()) != -1)
-			{
-				if (readChar != tillChar || includeTillChar)
-				{
-					charInts.AddLast(readChar);
-				}
-				if (readChar == tillChar)
-				{
-					break;
-				}
-			}
+		//	int readChar = -1;
+		//	while ((readChar = args.Stream.Read()) != -1)
+		//	{
+		//		if (readChar != tillChar || includeTillChar)
+		//		{
+		//			charInts.AddLast(readChar);
+		//		}
+		//		if (readChar == tillChar)
+		//		{
+		//			break;
+		//		}
+		//	}
 
-			return charInts;
-		}
+		//	return charInts;
+		//}
 
 		protected string ReadStringField(ReadArgs args, bool expectOpenEncl = true)
 		{
@@ -164,26 +165,53 @@ namespace Abstraction.Csn
 				case RecordType.Array:
 				case RecordType.Instance:
 				case RecordType.TypeDef:
-
-					long seqNo = 0;
-					long mapValue = 0;
-					foreach (int digit in this.ReadTill(args, ReaderHelper.iFieldSep))
-					{
-						if (ReaderHelper.DigitMap.TryGetValue(digit, out mapValue))
-						{
-							seqNo = (seqNo * 10) + mapValue;
-						}
-						else
-						{
-							throw Error.UnexpectedChars('0', Convert.ToChar(mapValue));
-						}
-					}
-					args.CurrentRC = new RecordCode(ReaderHelper.ResolveRecordType(readChar), seqNo);
-
+					args.CurrentRC = new RecordCode(ReaderHelper.ResolveRecordType(readChar), ReadSeqNo(args));
 					break;
 				default:
 					throw new Error(ErrorCode.UnknownRecordType);
 			}
+		}
+
+		protected Record ReadRef(ReadArgs args, bool checkFirstChar = true)
+		{
+			int readChar = 0;
+			if (checkFirstChar)
+			{
+				if (readChar == -1)
+				{
+					throw new Error(ErrorCode.UnexpectedEOF);
+				}
+				if (readChar != ReaderHelper.iRefPrefix)
+				{
+					throw Error.UnexpectedChars(Constants.ReferencePrefix, Convert.ToChar(readChar));
+				}
+			}
+
+			return args.dcRecords[ReadSeqNo(args)];
+		}
+
+		protected long ReadSeqNo(ReadArgs args)
+		{
+			int readChar = 0;
+			long seqNo = 0;
+			long mapValue = 0;
+			while ((readChar = args.Stream.Read()) != -1)
+			{
+				if (ReaderHelper.DigitMap.TryGetValue(readChar, out mapValue))
+				{
+					seqNo = (seqNo * 10) + mapValue;
+				}
+				else if (readChar == ReaderHelper.iFieldSep || readChar == ReaderHelper.iRecordSep)
+				{
+					break;
+				}
+				else
+				{
+					throw Error.UnexpectedChars('0', Convert.ToChar(mapValue));
+				}
+			}
+
+			return seqNo;
 		}
 	}
 
@@ -201,12 +229,43 @@ namespace Abstraction.Csn
 			// set next state
 			switch (args.CurrentRC.RecType)
 			{
-				//case RecordType.Instance: args.State = new ReadStateInstanceRecord(); break;
-				case RecordType.Array: args.State = new ReadStateArrayRecord(); break;
-				case RecordType.TypeDef: args.State = ReadStateTypeDefRecord.Singleton; break;
+				case RecordType.Instance:
+					args.State = ReadStateInstanceRecord.Singleton;
+					break;
+
+				case RecordType.Array:
+					args.State = ReadStateArrayRecord.Singleton;
+					break;
+
+				case RecordType.TypeDef:
+					args.State = ReadStateTypeDefRecord.Singleton;
+					break;
+
 				default:
 					throw new Error(ErrorCode.UnexpectedRecordType);
 			}
+		}
+	}
+
+	class ReadStateInstanceRecord : ReadStateBase
+	{
+		public static readonly ReadStateInstanceRecord Singleton = new ReadStateInstanceRecord();
+
+		private ReadStateInstanceRecord() : base(ReadStateEnum.InstanceRecord)
+		{ }
+
+		public override void Read(ReadArgs args)
+		{
+			Record refRec = base.ReadRef(args);
+			if (refRec.Code.RecType != RecordType.Instance)
+			{
+				throw new Error(ErrorCode.UnexpectedRecordType);
+			}
+			InstanceRecord rec = new InstanceRecord(args.CurrentRC, (TypeDefRecord)refRec);
+			args.dcRecords[rec.Code.SequenceNo] = rec;
+			args.Read.Read(rec);
+
+			// announce the instance, and then callback for each value, then terminate call on instance
 
 		}
 	}
@@ -246,6 +305,7 @@ namespace Abstraction.Csn
 				else if (readChar == ReaderHelper.iRecordSep)
 				{
 					rec.Members = members.ToArray();
+					args.dcRecords[rec.Code.SequenceNo] = rec;
 					args.Read.Read(rec);
 					args.State = ReadStateNewRecord.Singleton;
 					break;
@@ -275,19 +335,10 @@ namespace Abstraction.Csn
 			{
 				throw new Error(ErrorCode.UnexpectedRecordType);
 			}
-			args.Read.Read(new VersionRecord(args.CurrentRC, base.ReadStringField(args)));
+			VersionRecord vr = new VersionRecord(args.CurrentRC, base.ReadStringField(args));
+			args.dcRecords[vr.Code.SequenceNo] = vr;
+			args.Read.Read(vr);
 
-			args.State = ReadStateWhatNext.Singleton;
-		}
-	}
-
-	class ReadStateWhatNext : ReadStateBase
-	{
-		public static readonly ReadStateWhatNext Singleton = new ReadStateWhatNext();
-		private ReadStateWhatNext() : base(ReadStateEnum.WhatNext) { }
-
-		public override void Read(ReadArgs args)
-		{
 			int readChar = args.Stream.Read();
 			if (readChar == -1)
 			{
@@ -318,6 +369,8 @@ namespace Abstraction.Csn
 
 	class ReaderHelper
 	{
+		public static readonly Dictionary<int, long> DigitMap = null;
+
 		public static readonly int iVersion = Convert.ToInt32(Constants.RecordTypeChar.Version);
 		public static readonly int iTypeDef = Convert.ToInt32(Constants.RecordTypeChar.TypeDef);
 		public static readonly int iArray = Convert.ToInt32(Constants.RecordTypeChar.Array);
@@ -326,8 +379,7 @@ namespace Abstraction.Csn
 		public static readonly int iRecordSep = Convert.ToInt32(Constants.DefaultRecordSeparator);
 		public static readonly int iStringEncl = Convert.ToInt32(Constants.StringFieldEncloser);
 		public static readonly int iStringEsc = Convert.ToInt32(Constants.StringEscapeChar);
-
-		public static readonly Dictionary<int, long> DigitMap = null;
+		public static readonly int iRefPrefix = Convert.ToInt32(Constants.ReferencePrefix);
 
 		static ReaderHelper()
 		{
