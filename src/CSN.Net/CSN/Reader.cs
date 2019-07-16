@@ -6,9 +6,9 @@ using System.Text;
 
 namespace Abstraction.Csn
 {
-    public class Reader
+	public class Reader
 		: IReader
-    {
+	{
 		readonly StreamReader sr = null;
 
 		public Reader(StreamReader reader)
@@ -56,7 +56,7 @@ namespace Abstraction.Csn
 
 	abstract class ReadStateBase
 	{
-		public ReadStateBase (ReadStateEnum pState)
+		public ReadStateBase(ReadStateEnum pState)
 		{
 			this.ReadState = pState;
 		}
@@ -70,7 +70,8 @@ namespace Abstraction.Csn
 			LinkedList<int> charInts = new LinkedList<int>();
 
 			int readChar = -1;
-			while ((readChar = args.Stream.Read()) != -1) {
+			while ((readChar = args.Stream.Read()) != -1)
+			{
 				if (readChar != tillChar || includeTillChar)
 				{
 					charInts.AddLast(readChar);
@@ -81,7 +82,7 @@ namespace Abstraction.Csn
 				}
 			}
 
-			return charInts; //.ToArray();
+			return charInts;
 		}
 
 		protected string ReadStringField(ReadArgs args, bool expectOpenEncl = true)
@@ -201,12 +202,24 @@ namespace Abstraction.Csn
 			switch (args.CurrentRC.RecType)
 			{
 				//case RecordType.Instance: args.State = new ReadStateInstanceRecord(); break;
-				//case RecordType.Array: args.State = new ReadStateArrayRecord(); break;
+				case RecordType.Array: args.State = new ReadStateArrayRecord(); break;
 				case RecordType.TypeDef: args.State = ReadStateTypeDefRecord.Singleton; break;
 				default:
 					throw new Error(ErrorCode.UnexpectedRecordType);
 			}
 
+		}
+	}
+
+	class ReadStateArrayRecord : ReadStateBase
+	{
+		public static readonly ReadStateArrayRecord Singleton = new ReadStateArrayRecord();
+
+		private ReadStateArrayRecord() : base(ReadStateEnum.ArrayRecord) { }
+
+		public override void Read(ReadArgs args)
+		{
+			throw new NotImplementedException();
 		}
 	}
 
@@ -219,13 +232,33 @@ namespace Abstraction.Csn
 		public override void Read(ReadArgs args)
 		{
 			// record code has been read,
-			TypeDefRecord rec = new TypeDefRecord(args.CurrentRC);
-
-			// type name
-			rec.Name = base.ReadStringField(args);
+			TypeDefRecord rec = new TypeDefRecord(args.CurrentRC, base.ReadStringField(args));
 
 			// members
-
+			int readChar = 0;
+			List<String> members = new List<string>();
+			while ((readChar = args.Stream.Read()) != -1)
+			{
+				if (readChar == ReaderHelper.iFieldSep)
+				{
+					members.Add(base.ReadStringField(args));
+				}
+				else if (readChar == ReaderHelper.iRecordSep)
+				{
+					rec.Members = members.ToArray();
+					args.Read.Read(rec);
+					args.State = ReadStateNewRecord.Singleton;
+					break;
+				}
+				else
+				{
+					throw Error.UnexpectedChars(Constants.DefaultFieldSeparator, Convert.ToChar(readChar));
+				}
+			}
+			if (readChar == -1)
+			{
+				args.State = ReadStateEnd.Singleton;
+			}
 		}
 	}
 
@@ -242,10 +275,7 @@ namespace Abstraction.Csn
 			{
 				throw new Error(ErrorCode.UnexpectedRecordType);
 			}
-
-			String version = base.ReadStringField(args);
-
-			args.Read.VersionRecord(args.CurrentRC, version);
+			args.Read.Read(new VersionRecord(args.CurrentRC, base.ReadStringField(args)));
 
 			args.State = ReadStateWhatNext.Singleton;
 		}

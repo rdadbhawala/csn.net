@@ -22,7 +22,7 @@ namespace Performance
 			"IsFixedDateRule", "Day", "Month", "TimeOfDay", "Week", "DayOfWeek",
 		};
 
-		private string[] names = null;
+		private readonly string[] names = null;
 
 		public JsonSer(string[] pNames)
 		{

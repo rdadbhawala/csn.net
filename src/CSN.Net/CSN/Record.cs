@@ -13,15 +13,22 @@ namespace Abstraction.Csn
 		public RecordCode Code { get; private set; }
     }
 
-	//public class VersionRecord : Record
-	//{
-	//	public String Version { get; }
-	//}
+	public class VersionRecord : Record
+	{
+		public VersionRecord(RecordCode rc, String ver) : base(rc)
+		{
+			this.Version = ver;
+		}
+
+		public String Version { get; internal set; }
+	}
 
 	public class TypeDefRecord : Record
 	{
-		public TypeDefRecord(RecordCode rc) : base(rc)
-		{ }
+		public TypeDefRecord(RecordCode rc, String pName) : base(rc)
+		{
+			this.Name = pName;
+		}
 
 		public string Name { get; internal set; }
 		public string[] Members { get; internal set; }

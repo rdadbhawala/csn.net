@@ -12,6 +12,6 @@ namespace Abstraction.Csn
 	public interface IRead
 	{
 		void Read(VersionRecord vr);
-		void VersionRecord(RecordCode rc, string version);
+		void Read(TypeDefRecord rec);
 	}
 }
