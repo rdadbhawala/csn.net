@@ -34,7 +34,17 @@ namespace Abstraction.Csn
 		public string[] Members { get; internal set; }
 	}
 
-	public class InstanceRecord : Record
+	public abstract class ValueRecord : Record
+	{
+		public ValueRecord(RecordCode rc) : base(rc)
+		{
+			this.Values = new List<object>();
+		}
+
+		public List<object> Values { get; private set; }
+	}
+
+	public class InstanceRecord : ValueRecord
 	{
 		public InstanceRecord(RecordCode rc, TypeDefRecord refRec) : base(rc)
 		{
@@ -45,7 +55,7 @@ namespace Abstraction.Csn
 		public object Tag { get; set; }
 	}
 
-	public class ArrayRecord : Record
+	public class ArrayRecord : ValueRecord
 	{
 		public ArrayRecord(RecordCode rc) : base(rc)
 		{ }

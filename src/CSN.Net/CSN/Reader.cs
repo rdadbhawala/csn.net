@@ -34,7 +34,8 @@ namespace Abstraction.Csn
 		InstanceRecord,
 		ArrayRecord,
 		End,
-		WhatNext
+		WhatNext,
+		Field
 	}
 
 	class ReadArgs
@@ -46,6 +47,7 @@ namespace Abstraction.Csn
 
 		// data
 		public RecordCode CurrentRC = null;
+		public ValueRecord ValueRec = null;
 		public Dictionary<long, Record> dcRecords = new Dictionary<long, Record>();
 
 		public ReadArgs(StreamReader pStream, IRead pRead)
@@ -201,14 +203,24 @@ namespace Abstraction.Csn
 				{
 					seqNo = (seqNo * 10) + mapValue;
 				}
-				else if (readChar == ReaderHelper.iFieldSep || readChar == ReaderHelper.iRecordSep)
+				else if (readChar == ReaderHelper.iFieldSep)
 				{
+					args.State = ReadStateField.Singleton;
+					break;
+				}
+				else if (readChar == ReaderHelper.iRecordSep)
+				{
+					args.State = ReadStateNewRecord.Singleton;
 					break;
 				}
 				else
 				{
 					throw Error.UnexpectedChars('0', Convert.ToChar(mapValue));
 				}
+			}
+			if (readChar == -1)
+			{
+				args.State = ReadStateEnd.Singleton;
 			}
 
 			return seqNo;
@@ -265,8 +277,94 @@ namespace Abstraction.Csn
 			args.dcRecords[rec.Code.SequenceNo] = rec;
 			args.Read.Read(rec);
 
-			// announce the instance, and then callback for each value, then terminate call on instance
+			// base.ReadRef must have already set the next state
+		}
+	}
 
+	class ReadStateField : ReadStateBase
+	{
+		public static readonly ReadStateField Singleton = new ReadStateField();
+		private ReadStateField() : base(ReadStateEnum.Field)
+		{ }
+
+		public override void Read(ReadArgs args)
+		{
+			IReadValue rv = args.Read.GetReadValue();
+			ValueRecord vr = args.ValueRec;
+
+			int readChar = args.Stream.Read();
+			// if the field is null
+			if (readChar == ReaderHelper.iFieldSep)
+			{
+				vr.Values.Add(PrimitiveNull.Instance);
+				rv.ReadValue(vr, vr.Values.Count, PrimitiveNull.Instance);
+				return;
+			}
+			else if (readChar == ReaderHelper.iRecordSep)
+			{
+				vr.Values.Add(PrimitiveNull.Instance);
+				rv.ReadValue(vr, vr.Values.Count, PrimitiveNull.Instance);
+				args.State = ReadStateNewRecord.Singleton;
+				return;
+			}
+			else if (readChar == -1)
+			{
+				vr.Values.Add(PrimitiveNull.Instance);
+				rv.ReadValue(vr, vr.Values.Count, PrimitiveNull.Instance);
+				args.State = ReadStateEnd.Singleton;
+				return;
+			}
+			else if (readChar == ReaderHelper.iRefPrefix)
+			{
+				Record rc = base.ReadRef(args, false);
+				vr.Values.Add(rc);
+				rv.ReadValue(vr, vr.Values.Count, rc);
+				return;
+			}
+			else if (readChar == ReaderHelper.iStringEncl)
+			{
+				String str = base.ReadStringField(args, false);
+				vr.Values.Add(str);
+				rv.ReadValue(vr, vr.Values.Count, str);
+			}
+			else if (readChar == ReaderHelper.iBoolTrue)
+			{
+				vr.Values.Add(true);
+				rv.ReadValue(vr, vr.Values.Count, true);
+			}
+			else if (readChar == ReaderHelper.iBoolFalse)
+			{
+				vr.Values.Add(true);
+				rv.ReadValue(vr, vr.Values.Count, true);
+			}
+			else if (readChar == ReaderHelper.iDateTimePrefix)
+			{
+				//TODO
+			}
+			else
+			{
+				//TODO read number
+			}
+
+			// fixed width values (bool, datetime) or values with delimiter (string)
+			// still have one extra character to read in order to determine next step
+			readChar = args.Stream.Read();
+			if (readChar == ReaderHelper.iFieldSep)
+			{
+				args.State = ReadStateField.Singleton;
+			}
+			else if (readChar == ReaderHelper.iRecordSep)
+			{
+				args.State = ReadStateNewRecord.Singleton;
+			}
+			else if (readChar == -1)
+			{
+				args.State = ReadStateEnd.Singleton;
+			}
+			else
+			{
+				throw Error.UnexpectedChars(Constants.DefaultFieldSeparator, Convert.ToChar(readChar));
+			}
 		}
 	}
 
@@ -380,6 +478,9 @@ namespace Abstraction.Csn
 		public static readonly int iStringEncl = Convert.ToInt32(Constants.StringFieldEncloser);
 		public static readonly int iStringEsc = Convert.ToInt32(Constants.StringEscapeChar);
 		public static readonly int iRefPrefix = Convert.ToInt32(Constants.ReferencePrefix);
+		public static readonly int iBoolTrue = Convert.ToInt32(Constants.BoolTrue);
+		public static readonly int iBoolFalse = Convert.ToInt32(Constants.BoolFalse);
+		public static readonly int iDateTimePrefix = Convert.ToInt32(Constants.DateTimePrefix);
 
 		static ReaderHelper()
 		{
