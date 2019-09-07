@@ -26,10 +26,10 @@ namespace Abstraction.Csn
 		private const char cZero = '0';
 		private const char isoT = 'T';
 		private const char isoZ = 'Z';
-		private const long tickFactor = 10000000L;
-		private const char dateSep = '-';
-		private const char timeSep = ':';
-		private const char secondSep = '.';
+		//private const long tickFactor = 10000000L;
+		//private const char dateSep = '-';
+		//private const char timeSep = ':';
+		//private const char secondSep = '.';
 
 		private readonly char[] chDigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
@@ -48,27 +48,27 @@ namespace Abstraction.Csn
 		{
 			sw.Write(Constants.DefaultFieldSeparator);
 
-			char[] arrDt = { 'D', '0', '0', '0', '0', '0', '0', '0', '0', 'T', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0' };
+			char[] arrDt = { 'D', '0', '0', '0', '0', '0', '0', '0', '0', 'T', '0', '0', '0', '0', '0', '0', '0', '0', '0'};
 			WriteIntToCharArr(arrDt, 1, 4, field.Year);
 			WriteIntToCharArr(arrDt, 5, 2, field.Month);
 			WriteIntToCharArr(arrDt, 7, 2, field.Day);
 			WriteIntToCharArr(arrDt, 10, 2, field.Hour);
 			WriteIntToCharArr(arrDt, 12, 2, field.Minute);
 			WriteIntToCharArr(arrDt, 14, 2, field.Second);
-			WriteIntToCharArr(arrDt, 16, 7, (int)(field.Ticks % tickFactor));
-			sw.Write(arrDt, 0, 23);
+			WriteIntToCharArr(arrDt, 16, 3, field.Millisecond);
+			sw.Write(arrDt, 0, 19);
 
-			switch (field.Kind)
-			{
-				case DateTimeKind.Utc: sw.Write(isoZ); break;
-				case DateTimeKind.Local:
-					TimeSpan ts = TimeZoneInfo.Local.GetUtcOffset(field);
-					char[] arrTz = { (ts.Ticks > 0 ? '+' : '-'), '0', '0', '0', '0' };
-					WriteIntToCharArr(arrTz, 1, 2, ts.Hours);
-					WriteIntToCharArr(arrTz, 3, 2, ts.Minutes);
-					sw.Write(arrTz, 0, 5);
-					break;
-			}
+			//switch (field.Kind)
+			//{
+			//	case DateTimeKind.Utc: sw.Write(isoZ); break;
+			//	case DateTimeKind.Local:
+			//		TimeSpan ts = TimeZoneInfo.Local.GetUtcOffset(field);
+			//		char[] arrTz = { (ts.Ticks > 0 ? '+' : '-'), '0', '0', '0', '0' };
+			//		WriteIntToCharArr(arrTz, 1, 2, ts.Hours);
+			//		WriteIntToCharArr(arrTz, 3, 2, ts.Minutes);
+			//		sw.Write(arrTz, 0, 5);
+			//		break;
+			//}
 		}
 
 		private void WriteIntToCharArr(char[] arrDt, int index, int len, int value)

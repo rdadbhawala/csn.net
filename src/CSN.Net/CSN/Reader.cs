@@ -9,16 +9,16 @@ namespace Abstraction.Csn
 	public class Reader
 		: IReader
 	{
-		readonly StreamReader sr = null;
+		public static readonly Reader Singleton = new Reader();
 
-		public Reader(StreamReader reader)
+		private Reader()
 		{
-			this.sr = reader;
+			// private constructor for singleton
 		}
 
-		public void Read(IRead callback)
+		public void Read(StreamReader sr, IRead callback)
 		{
-			ReadArgs args = new ReadArgs(this.sr, callback);
+			ReadArgs args = new ReadArgs(sr, callback);
 			while (args.State.ReadState != ReadStateEnum.End)
 			{
 				args.State.Read(args);
@@ -68,25 +68,40 @@ namespace Abstraction.Csn
 
 		abstract public void Read(ReadArgs args);
 
-		//protected IEnumerable<int> ReadTill(ReadArgs args, int tillChar, bool includeTillChar = false)
-		//{
-		//	LinkedList<int> charInts = new LinkedList<int>();
+		protected IEnumerable<int> ReadTill(ReadArgs args, int tillChar, bool includeTillChar = false)
+		{
+			LinkedList<int> charInts = new LinkedList<int>();
 
-		//	int readChar = -1;
-		//	while ((readChar = args.Stream.Read()) != -1)
-		//	{
-		//		if (readChar != tillChar || includeTillChar)
-		//		{
-		//			charInts.AddLast(readChar);
-		//		}
-		//		if (readChar == tillChar)
-		//		{
-		//			break;
-		//		}
-		//	}
+			int readChar = -1;
+			while ((readChar = args.Stream.Read()) != -1)
+			{
+				if (readChar != tillChar || includeTillChar)
+				{
+					charInts.AddLast(readChar);
+				}
+				if (readChar == tillChar)
+				{
+					break;
+				}
+			}
 
-		//	return charInts;
-		//}
+			return charInts;
+		}
+
+		protected void ReadTill(ReadArgs args, int[] tillChars)
+		{
+			LinkedList<int> charInts = new LinkedList<int>();
+
+			int readChar = -1;
+			while ((readChar = args.Stream.Read()) != -1)
+			{
+				if (tillChars.Contains(readChar))
+				{
+					break;
+				}
+			}
+		}
+
 
 		protected string ReadStringField(ReadArgs args, bool expectOpenEncl = true)
 		{
@@ -179,6 +194,7 @@ namespace Abstraction.Csn
 			int readChar = 0;
 			if (checkFirstChar)
 			{
+				readChar = args.Stream.Read();
 				if (readChar == -1)
 				{
 					throw new Error(ErrorCode.UnexpectedEOF);
@@ -225,6 +241,32 @@ namespace Abstraction.Csn
 
 			return seqNo;
 		}
+
+		protected ReadStateBase ReadSkip(StreamReader stream, int skipInitial)
+		{
+			stream.Read(new char[skipInitial], 0, skipInitial);
+			return this;
+		}
+
+		public int ReadDateTimeDigits(StreamReader stream, int len)
+		{
+			int value = 0;
+			int readChar = 0;
+			int mapValue = 0;
+			for (int ctr = 0; ctr < len; ctr++)
+			{
+				readChar = stream.Read();
+				if (ReaderHelper.DigitMapInt.TryGetValue(readChar, out mapValue))
+				{
+					value = (value * 10) + mapValue;
+				}
+				else
+				{
+					throw Error.UnexpectedChars('0', Convert.ToChar(readChar));
+				}
+			}
+			return value;
+		}
 	}
 
 	class ReadStateNewRecord : ReadStateBase
@@ -269,12 +311,13 @@ namespace Abstraction.Csn
 		public override void Read(ReadArgs args)
 		{
 			Record refRec = base.ReadRef(args);
-			if (refRec.Code.RecType != RecordType.Instance)
+			if (refRec.Code.RecType != RecordType.TypeDef)
 			{
 				throw new Error(ErrorCode.UnexpectedRecordType);
 			}
 			InstanceRecord rec = new InstanceRecord(args.CurrentRC, (TypeDefRecord)refRec);
 			args.dcRecords[rec.Code.SequenceNo] = rec;
+			args.ValueRec = rec;
 			args.Read.Read(rec);
 
 			// base.ReadRef must have already set the next state
@@ -317,6 +360,10 @@ namespace Abstraction.Csn
 			else if (readChar == ReaderHelper.iRefPrefix)
 			{
 				Record rc = base.ReadRef(args, false);
+				if (rc.Code.RecType != RecordType.Instance)
+				{
+					throw new Error(ErrorCode.UnexpectedRecordType);
+				}
 				vr.Values.Add(rc);
 				rv.ReadValue(vr, vr.Values.Count, rc);
 				return;
@@ -334,16 +381,28 @@ namespace Abstraction.Csn
 			}
 			else if (readChar == ReaderHelper.iBoolFalse)
 			{
-				vr.Values.Add(true);
-				rv.ReadValue(vr, vr.Values.Count, true);
+				vr.Values.Add(false);
+				rv.ReadValue(vr, vr.Values.Count, false);
 			}
 			else if (readChar == ReaderHelper.iDateTimePrefix)
 			{
-				//TODO
+				//base.ReadTill(args, new int[] { ReaderHelper.iFieldSep, ReaderHelper.iRecordSep });
+				DateTime dt = new DateTime(
+					base.ReadDateTimeDigits(args.Stream, 4),
+					base.ReadDateTimeDigits(args.Stream, 2),
+					base.ReadDateTimeDigits(args.Stream, 2),
+					base.ReadSkip(args.Stream, 1).ReadDateTimeDigits(args.Stream, 2),
+					base.ReadDateTimeDigits(args.Stream, 2),
+					base.ReadDateTimeDigits(args.Stream, 2),
+					base.ReadDateTimeDigits(args.Stream, 3)
+				);
+				return;
 			}
 			else
 			{
 				//TODO read number
+				base.ReadTill(args, new int[] { ReaderHelper.iFieldSep, ReaderHelper.iRecordSep });
+				return;
 			}
 
 			// fixed width values (bool, datetime) or values with delimiter (string)
@@ -468,6 +527,7 @@ namespace Abstraction.Csn
 	class ReaderHelper
 	{
 		public static readonly Dictionary<int, long> DigitMap = null;
+		public static readonly Dictionary<int, int> DigitMapInt = null;
 
 		public static readonly int iVersion = Convert.ToInt32(Constants.RecordTypeChar.Version);
 		public static readonly int iTypeDef = Convert.ToInt32(Constants.RecordTypeChar.TypeDef);
@@ -496,6 +556,19 @@ namespace Abstraction.Csn
 				[Convert.ToInt32('7')] = 7L,
 				[Convert.ToInt32('8')] = 8L,
 				[Convert.ToInt32('9')] = 9L
+			};
+			DigitMapInt = new Dictionary<int, int>
+			{
+				[Convert.ToInt32('0')] = 0,
+				[Convert.ToInt32('1')] = 1,
+				[Convert.ToInt32('2')] = 2,
+				[Convert.ToInt32('3')] = 3,
+				[Convert.ToInt32('4')] = 4,
+				[Convert.ToInt32('5')] = 5,
+				[Convert.ToInt32('6')] = 6,
+				[Convert.ToInt32('7')] = 7,
+				[Convert.ToInt32('8')] = 8,
+				[Convert.ToInt32('9')] = 9
 			};
 		}
 

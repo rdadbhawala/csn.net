@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace Abstraction.Csn
 {
     public interface IReader
     {
-		void Read(IRead callback);
+		void Read(StreamReader sReader, IRead callback);
     }
 
 	public interface IRead
