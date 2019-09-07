@@ -59,14 +59,14 @@ namespace Abstraction.Csn
 			return new Array<double>(FieldDouble.F, array);
 		}
 
-		/// <summary>
-		/// Cast array of References.
-		/// </summary>
-		/// <param name="array">References.</param>
-		public static implicit operator CastArray(RecordCode[] array)
-		{
-			return new Array<RecordCode>(FieldReference.F, array);
-		}
+		///// <summary>
+		///// Cast array of References.
+		///// </summary>
+		///// <param name="array">References.</param>
+		//public static implicit operator CastArray(RecordCode[] array)
+		//{
+		//	return new Array<RecordCode>(FieldReference.F, array);
+		//}
 
 		/// <summary>
 		/// Write the Array.

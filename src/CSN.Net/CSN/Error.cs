@@ -33,6 +33,7 @@ namespace Abstraction.Csn
 		}
 
 		public Error(ErrorCode pCode)
+			: base(pCode.ToString())
 		{
 			this.Code = pCode;
 		}

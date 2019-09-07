@@ -39,6 +39,7 @@ namespace Abstraction.Csn.Test
 			{
 				rv.SetupVersionRecord();
 				rv.Setup(new RecordCode(RecordType.TypeDef, 1), "AllPrimitives", "BooleanTrue", "BooleanFalse", "DateTime", "String", "Real", "Integer");
+				rv.Setup(new RecordCode(RecordType.Instance, 2), 1).Setup(true).Setup(false);
 			}
 
 			public IReadValue GetReadValue()
@@ -58,7 +59,7 @@ namespace Abstraction.Csn.Test
 
 			public void Read(InstanceRecord instRec)
 			{
-				Console.WriteLine("Instance " + instRec.Code.SequenceNo + " of " + instRec.Ref.Name);
+				rv.Verify(instRec);
 			}
 
 			public void ReadValue(Record rec, int index, PrimitiveNull value)
@@ -68,7 +69,7 @@ namespace Abstraction.Csn.Test
 
 			public void ReadValue(Record rec, int index, bool value)
 			{
-				Console.WriteLine(index + ") Value " + value);
+				rv.Verify(value);
 			}
 
 			public void ReadValue(Record rec, int index, long value)

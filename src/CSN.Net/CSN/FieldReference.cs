@@ -62,7 +62,7 @@ namespace Abstraction.Csn
 		public void WriteType(StreamWriter sw)
 		{
 			// this method should not be invoked
-			throw new System.NotImplementedException();
+			throw new System.InvalidOperationException();
 		}
 	}
 }

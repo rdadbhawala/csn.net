@@ -12,6 +12,8 @@ namespace Abstraction.Csn.Test
 		Queue<RecordCode> sRecCodes = new Queue<RecordCode>();
 		Queue<string> sTypeName = new Queue<string>();
 		Queue<string[]> sTypeMembers = new Queue<string[]>();
+		Queue<int> sInstanceTypeRef = new Queue<int>();
+		Queue<bool> sValuesBool = new Queue<bool>();
 
 		public void SetupVersionRecord()
 		{
@@ -23,6 +25,19 @@ namespace Abstraction.Csn.Test
 			sRecCodes.Enqueue(rc);
 			sTypeName.Enqueue(name);
 			sTypeMembers.Enqueue(members);
+		}
+
+		public ReadVerify Setup(RecordCode recordCode, int refType)
+		{
+			sRecCodes.Enqueue(recordCode);
+			sInstanceTypeRef.Enqueue(refType);
+			return this;
+		}
+
+		public ReadVerify Setup(bool v)
+		{
+			sValuesBool.Enqueue(v);
+			return this;
 		}
 
 		private void Verify(RecordCode actual)
@@ -37,11 +52,22 @@ namespace Abstraction.Csn.Test
 			Verify(verRec.Code);
 		}
 
-		internal void Verify(TypeDefRecord typeRec)
+		public void Verify(TypeDefRecord typeRec)
 		{
 			Verify(typeRec.Code);
 			Assert.AreEqual(sTypeName.Dequeue(), typeRec.Name);
 			CollectionAssert.AreEqual(sTypeMembers.Dequeue(), typeRec.Members);
+		}
+
+		public void Verify(bool value)
+		{
+			Assert.AreEqual(sValuesBool.Dequeue(), value);
+		}
+
+		public void Verify(InstanceRecord instRec)
+		{
+			Verify(instRec.Code);
+			Assert.AreEqual(sInstanceTypeRef.Dequeue(), instRec.Ref.Code.SequenceNo);
 		}
 	}
 }

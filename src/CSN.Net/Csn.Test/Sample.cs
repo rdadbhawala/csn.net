@@ -26,7 +26,7 @@ namespace Abstraction.Csn.Test
 
 			RecordCode paRef = csnw.WriteArrayRecord(new long[]{10, 20, 30, 40, 50}).Current;
 
-			RecordCode objRef = csnw.WriteArrayRecord(new RecordCode[] { tRef, iRef, paRef }).Current;
+			RecordCode objRef = csnw.WriteArrayRecord(tRef, new RecordCode[] {iRef}).Current;
 
 			// read the contents
 			sWriter.Flush();
