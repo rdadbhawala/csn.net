@@ -18,8 +18,8 @@ namespace FiguringItOut
 			mstream.Position = 0;
 			StreamReader sr = new StreamReader(mstream);
 
-			IReader rdr = new Reader(sr);
-			rdr.Read(new ReadCallback());
+			IReader rdr = Reader.Singleton;
+			rdr.Read(sr, new ReadCallback());
 		}
 
 		class ReadCallback : IRead, IReadValue

@@ -18,8 +18,8 @@ namespace Abstraction.Csn.Test
 			mstream.Position = 0;
 			StreamReader sr = new StreamReader(mstream);
 
-			IReader rdr = new Reader(sr);
-			rdr.Read(new ReadCallback());
+			IReader rdr = Reader.Singleton;
+			rdr.Read(sr, new ReadCallback());
 
 
 			//RecordCode tRef = csnw.WriteTypeDefRecord("AllPrimitives", "BooleanTrue", "BooleanFalse", "DateTime", "String", "Real", "Integer").Current;
@@ -33,6 +33,14 @@ namespace Abstraction.Csn.Test
 
 		class ReadCallback : IRead, IReadValue
 		{
+			ReadVerify rv = new ReadVerify();
+
+			public ReadCallback()
+			{
+				rv.SetupVersionRecord();
+				rv.Setup(new RecordCode(RecordType.TypeDef, 1), "AllPrimitives", "BooleanTrue", "BooleanFalse", "DateTime", "String", "Real", "Integer");
+			}
+
 			public IReadValue GetReadValue()
 			{
 				return this;
@@ -40,12 +48,12 @@ namespace Abstraction.Csn.Test
 
 			public void Read(VersionRecord verRec)
 			{
-				Console.WriteLine("Version" + verRec.Version);
+				rv.Verify(verRec);
 			}
 
 			public void Read(TypeDefRecord typeRec)
 			{
-				Console.WriteLine("Type Name: " + typeRec.Name);
+				rv.Verify(typeRec);
 			}
 
 			public void Read(InstanceRecord instRec)

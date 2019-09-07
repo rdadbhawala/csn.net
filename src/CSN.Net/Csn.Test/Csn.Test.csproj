@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReadVerify.cs" />
     <Compile Include="SampleReader.cs" />
     <Compile Include="Sample.cs" />
     <Compile Include="TestResources.Designer.cs">
@@ -59,12 +60,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CSN\CSN.csproj">
-      <Project>{fa2b559f-f476-46cf-8644-36d64b4695d7}</Project>
-      <Name>CSN</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TestResources.resx">
@@ -83,6 +78,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AllPrimitives.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CSN\CSN.csproj">
+      <Project>{fa2b559f-f476-46cf-8644-36d64b4695d7}</Project>
+      <Name>CSN</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
