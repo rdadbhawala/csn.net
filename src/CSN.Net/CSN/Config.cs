@@ -27,8 +27,8 @@ namespace Abstraction.Csn
 		{
 			return new Config
 			{
-				FieldSeparator = Constants.DefaultFieldSeparator,
-				RecordSeparator = Constants.DefaultRecordSeparator,
+				FieldSeparator = Constants.FieldSeparator,
+				RecordSeparator = Constants.RecordSeparator,
 			};
 		}
 	}

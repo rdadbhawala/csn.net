@@ -40,7 +40,7 @@ namespace Abstraction.Csn
 		/// <returns>Record Code.</returns>
 		public IWriter WriteTypeDefRecord(string typeName, params string[] typeMembers)
 		{
-			this.sw.Write(Constants.DefaultRecordSeparator);
+			this.sw.Write(Constants.RecordSeparator);
 			this.WriteRecordCode(RecordType.TypeDef, Constants.RecordTypeChar.TypeDef);
 			FieldString.F.WriteField(this.sw, typeName);
 			FieldString.F.WriteFields(this.sw, typeMembers);
@@ -55,7 +55,7 @@ namespace Abstraction.Csn
 		/// <returns>Record Code.</returns>
 		public IWriter WriteInstanceRecord(RecordCode typeRecCode, params CastPrimitive[] values)
 		{
-			this.sw.Write(Constants.DefaultRecordSeparator);
+			this.sw.Write(Constants.RecordSeparator);
 			this.WriteRecordCode(RecordType.Instance, Constants.RecordTypeChar.Instance);
 			FieldReference.F.WriteField(this.sw, typeRecCode);
 			for (int pCtr = 0; pCtr < values.Length; pCtr++)
@@ -68,7 +68,7 @@ namespace Abstraction.Csn
 
 		public IFieldWriter WriteInstanceFields(RecordCode typeRecCode)
 		{
-			this.sw.Write(Constants.DefaultRecordSeparator);
+			this.sw.Write(Constants.RecordSeparator);
 			this.WriteRecordCode(RecordType.Instance, Constants.RecordTypeChar.Instance);
 			FieldReference.F.WriteField(this.sw, typeRecCode);
 			return this;
@@ -81,7 +81,7 @@ namespace Abstraction.Csn
 		/// <returns>Record Code.</returns>
 		public IWriter WriteArrayRecord(CastArray values)
 		{
-			this.sw.Write(Constants.DefaultRecordSeparator);
+			this.sw.Write(Constants.RecordSeparator);
 			this.WriteRecordCode(RecordType.Array, Constants.RecordTypeChar.Array);
 			values.WriteType(this.sw);
 			values.WriteValues(this.sw);
@@ -96,7 +96,7 @@ namespace Abstraction.Csn
 		/// <returns>Record Code.</returns>
 		public IWriter WriteArrayRecord(RecordCode refType, RecordCode[] arrayElements)
 		{
-			this.sw.Write(Constants.DefaultRecordSeparator);
+			this.sw.Write(Constants.RecordSeparator);
 			this.WriteRecordCode(RecordType.Array, Constants.RecordTypeChar.Array);
 			FieldReference.F.WriteField(this.sw, refType);
 			FieldReference.F.WriteFields(this.sw, arrayElements);

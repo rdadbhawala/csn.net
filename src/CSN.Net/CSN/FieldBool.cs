@@ -18,7 +18,7 @@ namespace Abstraction.Csn
 		public static readonly FieldBool F = new FieldBool();
 
 		private FieldBool()
-			: base(Constants.ArrayCode.Bool)
+			: base(Constants.Primitives.Bool)
 		{
 			// nothing
 		}
@@ -30,7 +30,7 @@ namespace Abstraction.Csn
 		/// <param name="value">Value to write.</param>
 		public override void WriteField(StreamWriter sw, bool value)
 		{
-			sw.Write(Constants.DefaultFieldSeparator);
+			sw.Write(Constants.FieldSeparator);
 			sw.Write(value ? Constants.BoolTrue : Constants.BoolFalse);
 		}
     }

@@ -44,34 +44,42 @@ namespace FiguringItOut
 				Console.WriteLine("Instance " + instRec.Code.SequenceNo + " of " + instRec.Ref.Name);
 			}
 
-			public void ReadValue(Record rec, int index, PrimitiveNull value)
+			public void Read(ArrayRecord arrRec)
+			{ }
+
+			public void ReadValue(ValueRecord rec, int index, PrimitiveNull value)
 			{
 				Console.WriteLine(index + ") Value null");
 			}
 
-			public void ReadValue(Record rec, int index, bool value)
+			public void ReadValue(ValueRecord rec, int index, bool value)
 			{
 				Console.WriteLine(index + ") Value " + value);
 			}
 
-			public void ReadValue(Record rec, int index, long value)
+			public void ReadValue(ValueRecord rec, int index, long value)
 			{
 				Console.WriteLine(index + ") Value " + value);
 			}
 
-			public void ReadValue(Record rec, int index, double value)
+			public void ReadValue(ValueRecord rec, int index, double value)
 			{
 				Console.WriteLine(index + ") Value " + value);
 			}
 
-			public void ReadValue(Record rec, int index, string value)
+			public void ReadValue(ValueRecord rec, int index, string value)
 			{
 				Console.WriteLine(index + ") Value " + value);
 			}
 
-			public void ReadValue(Record rec, int index, Record obj)
+			public void ReadValue(ValueRecord rec, int index, Record obj)
 			{
 				Console.WriteLine(index + ") Value " + obj.Code.SequenceNo);
+			}
+
+			public void ReadValue(ValueRecord rec, int index, DateTime value)
+			{
+				Console.WriteLine(index + ") Value " + value.ToString());
 			}
 		}
 

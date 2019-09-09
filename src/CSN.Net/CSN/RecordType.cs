@@ -31,4 +31,14 @@ namespace Abstraction.Csn
 		/// </summary>
 		Instance = 40,
     }
+
+	public enum PrimitiveType
+	{
+		Unknown = 0,
+		Bool = 10,
+		Int = 20,
+		Real = 30,
+		DateTime = 40,
+		String = 50
+	}
 }

@@ -18,7 +18,7 @@ namespace Abstraction.Csn
 		public static readonly FieldLong F = new FieldLong();
 
 		private FieldLong()
-			: base(Constants.ArrayCode.Integer)
+			: base(Constants.Primitives.Integer)
 		{
 			// nothing
 		}
@@ -30,7 +30,7 @@ namespace Abstraction.Csn
 		/// <param name="value">Value to write.</param>
 		public override void WriteField(StreamWriter sw, long value)
 		{
-			sw.Write(Constants.DefaultFieldSeparator);
+			sw.Write(Constants.FieldSeparator);
 			sw.Write(value);
 		}
     }

@@ -15,17 +15,19 @@ namespace Abstraction.Csn
 		void Read(VersionRecord verRec);
 		void Read(TypeDefRecord typeRec);
 		void Read(InstanceRecord instRec);
+		void Read(ArrayRecord arrayRec);
 
 		IReadValue GetReadValue();
 	}
 
 	public interface IReadValue
 	{
-		void ReadValue(Record rec, int index, PrimitiveNull value);
-		void ReadValue(Record rec, int index, bool value);
-		void ReadValue(Record rec, int index, long value);
-		void ReadValue(Record rec, int index, double value);
-		void ReadValue(Record rec, int index, string value);
-		void ReadValue(Record rec, int index, Record obj);
+		void ReadValue(ValueRecord rec, int index, PrimitiveNull value);
+		void ReadValue(ValueRecord rec, int index, bool value);
+		void ReadValue(ValueRecord rec, int index, long value);
+		void ReadValue(ValueRecord rec, int index, double value);
+		void ReadValue(ValueRecord rec, int index, string value);
+		void ReadValue(ValueRecord rec, int index, Record value);
+		void ReadValue(ValueRecord rec, int index, DateTime value);
 	}
 }

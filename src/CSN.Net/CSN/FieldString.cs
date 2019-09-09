@@ -18,7 +18,7 @@ namespace Abstraction.Csn
 		public static readonly FieldString F = new FieldString();
 
 		private FieldString()
-			: base(Constants.ArrayCode.String)
+			: base(Constants.Primitives.String)
 		{
 		}
 
@@ -29,7 +29,7 @@ namespace Abstraction.Csn
 		/// <param name="fieldValue">Value to write.</param>
 		public override void WriteField(StreamWriter sw, string fieldValue)
 		{
-			sw.Write(Constants.DefaultFieldSeparator);
+			sw.Write(Constants.FieldSeparator);
 			if (fieldValue != null)
 			{
 				sw.Write(Constants.StringFieldEncloser);

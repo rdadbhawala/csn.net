@@ -31,65 +31,14 @@ namespace Abstraction.Csn.Test
 			//RecordCode paRef = csnw.WriteArrayRecord(new long[]{10, 20, 30, 40, 50}).Current;
 		}
 
-		class ReadCallback : IRead, IReadValue
+		class ReadCallback : ReadTest
 		{
-			ReadVerify rv = new ReadVerify();
-
 			public ReadCallback()
 			{
-				rv.SetupVersionRecord();
-				rv.Setup(new RecordCode(RecordType.TypeDef, 1), "AllPrimitives", "BooleanTrue", "BooleanFalse", "DateTime", "String", "Real", "Integer");
-				rv.Setup(new RecordCode(RecordType.Instance, 2), 1).Setup(true).Setup(false);
-			}
-
-			public IReadValue GetReadValue()
-			{
-				return this;
-			}
-
-			public void Read(VersionRecord verRec)
-			{
-				rv.Verify(verRec);
-			}
-
-			public void Read(TypeDefRecord typeRec)
-			{
-				rv.Verify(typeRec);
-			}
-
-			public void Read(InstanceRecord instRec)
-			{
-				rv.Verify(instRec);
-			}
-
-			public void ReadValue(Record rec, int index, PrimitiveNull value)
-			{
-				Console.WriteLine(index + ") Value null");
-			}
-
-			public void ReadValue(Record rec, int index, bool value)
-			{
-				rv.Verify(value);
-			}
-
-			public void ReadValue(Record rec, int index, long value)
-			{
-				Console.WriteLine(index + ") Value " + value);
-			}
-
-			public void ReadValue(Record rec, int index, double value)
-			{
-				Console.WriteLine(index + ") Value " + value);
-			}
-
-			public void ReadValue(Record rec, int index, string value)
-			{
-				Console.WriteLine(index + ") Value " + value);
-			}
-
-			public void ReadValue(Record rec, int index, Record obj)
-			{
-				Console.WriteLine(index + ") Value " + obj.Code.SequenceNo);
+				this.SetupVersionRecord();
+				this.Setup(new RecordCode(RecordType.TypeDef, 1), "AllPrimitives", "BooleanTrue", "BooleanFalse", "DateTime", "String", "Real", "Integer");
+				this.Setup(new RecordCode(RecordType.Instance, 2), 1).Setup(true).Setup(false).Setup(new DateTime(2019, 03, 12, 19, 24, 33, 567)).Setup("Label").Setup(-123.45).Setup(345);
+				this.Setup(new RecordCode(RecordType.Array, 4), 1);
 			}
 		}
 	}

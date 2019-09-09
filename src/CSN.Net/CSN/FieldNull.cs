@@ -27,7 +27,7 @@ namespace Abstraction.Csn
 		/// <param name="sw">Stream to write unto.</param>
 		public void WriteField(StreamWriter sw)
 		{
-			sw.Write(Constants.DefaultFieldSeparator);
+			sw.Write(Constants.FieldSeparator);
 		}
     }
 }

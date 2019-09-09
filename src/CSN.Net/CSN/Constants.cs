@@ -14,12 +14,12 @@ namespace Abstraction.Csn
 		/// <summary>
 		/// Default Field Separator.
 		/// </summary>
-		public const char DefaultFieldSeparator = ',';
+		public const char FieldSeparator = ',';
 
 		/// <summary>
 		/// Default Record Separator.
 		/// </summary>
-		public const char DefaultRecordSeparator = '\n';
+		public const char RecordSeparator = '\n';
 
 		/// <summary>
 		/// CSN Version String. This must align with the CSN Specification Version.
@@ -85,7 +85,7 @@ namespace Abstraction.Csn
 		/// <summary>
 		/// Array Primitive Char Codes.
 		/// </summary>
-		public static class ArrayCode
+		public static class Primitives
 		{
 			/// <summary>
 			/// Prefix Character.

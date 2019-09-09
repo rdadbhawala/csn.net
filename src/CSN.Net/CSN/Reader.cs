@@ -100,6 +100,18 @@ namespace Abstraction.Csn
 					break;
 				}
 			}
+			if (readChar == ReaderHelper.iFieldSep)
+			{
+				args.State = ReadStateField.Singleton;
+			}
+			else if (readChar == ReaderHelper.iRecordSep)
+			{
+				args.State = ReadStateNewRecord.Singleton;
+			}
+			else if (readChar == -1)
+			{
+				args.State = ReadStateEnd.Singleton;
+			}
 		}
 
 
@@ -396,7 +408,8 @@ namespace Abstraction.Csn
 					base.ReadDateTimeDigits(args.Stream, 2),
 					base.ReadDateTimeDigits(args.Stream, 3)
 				);
-				return;
+				vr.Values.Add(dt);
+				rv.ReadValue(vr, vr.Values.Count, dt);
 			}
 			else
 			{
@@ -422,7 +435,7 @@ namespace Abstraction.Csn
 			}
 			else
 			{
-				throw Error.UnexpectedChars(Constants.DefaultFieldSeparator, Convert.ToChar(readChar));
+				throw Error.UnexpectedChars(Constants.FieldSeparator, Convert.ToChar(readChar));
 			}
 		}
 	}
@@ -435,7 +448,50 @@ namespace Abstraction.Csn
 
 		public override void Read(ReadArgs args)
 		{
-			throw new NotImplementedException();
+			// read array type: primitive or typeDef
+			int readChar = args.Stream.Read();
+			if (readChar == -1)
+			{
+				throw new Error(ErrorCode.UnexpectedEOF);
+			}
+			else if (readChar == ReaderHelper.iRefPrefix)
+			{
+				Record refRec = base.ReadRef(args, false);
+				args.Read.Read(new ArrayRecord(args.CurrentRC));
+			}
+			else if (readChar == ReaderHelper.iPrimitivePrefix)
+			{
+				// read one more char to get primitive type
+				readChar = args.Stream.Read();
+				args.Read.Read(new ArrayRecord(args.CurrentRC));
+				// read a field sep
+				readChar = args.Stream.Read();
+				if (readChar == -1)
+				{
+					args.State = ReadStateEnd.Singleton;
+				} else if (readChar != ReaderHelper.iFieldSep)
+				{
+					throw Error.UnexpectedChars(Constants.FieldSeparator, Convert.ToChar(readChar));
+				} else
+				{
+					args.State = ReadStateField.Singleton;
+				}
+			}
+			else if (readChar == ReaderHelper.iRefPrefix)
+			{
+				Record refRec = base.ReadRef(args, false);
+				if (refRec.Code.RecType != RecordType.TypeDef)
+				{
+					throw new Error(ErrorCode.UnexpectedRecordType);
+				}
+				ArrayRecord rec = new ArrayRecord(args.CurrentRC);
+				args.dcRecords[rec.Code.SequenceNo] = rec;
+				args.ValueRec = rec;
+				args.Read.Read(rec);
+			} else
+			{
+				throw Error.UnexpectedChars(Constants.RecordTypeChar.Array, Convert.ToChar(readChar));
+			}
 		}
 	}
 
@@ -469,7 +525,7 @@ namespace Abstraction.Csn
 				}
 				else
 				{
-					throw Error.UnexpectedChars(Constants.DefaultFieldSeparator, Convert.ToChar(readChar));
+					throw Error.UnexpectedChars(Constants.FieldSeparator, Convert.ToChar(readChar));
 				}
 			}
 			if (readChar == -1)
@@ -507,7 +563,7 @@ namespace Abstraction.Csn
 			}
 			else
 			{
-				throw Error.UnexpectedChars(Constants.DefaultRecordSeparator, Convert.ToChar(readChar));
+				throw Error.UnexpectedChars(Constants.RecordSeparator, Convert.ToChar(readChar));
 			}
 		}
 	}
@@ -533,14 +589,15 @@ namespace Abstraction.Csn
 		public static readonly int iTypeDef = Convert.ToInt32(Constants.RecordTypeChar.TypeDef);
 		public static readonly int iArray = Convert.ToInt32(Constants.RecordTypeChar.Array);
 		public static readonly int iInstance = Convert.ToInt32(Constants.RecordTypeChar.Instance);
-		public static readonly int iFieldSep = Convert.ToInt32(Constants.DefaultFieldSeparator);
-		public static readonly int iRecordSep = Convert.ToInt32(Constants.DefaultRecordSeparator);
+		public static readonly int iFieldSep = Convert.ToInt32(Constants.FieldSeparator);
+		public static readonly int iRecordSep = Convert.ToInt32(Constants.RecordSeparator);
 		public static readonly int iStringEncl = Convert.ToInt32(Constants.StringFieldEncloser);
 		public static readonly int iStringEsc = Convert.ToInt32(Constants.StringEscapeChar);
 		public static readonly int iRefPrefix = Convert.ToInt32(Constants.ReferencePrefix);
 		public static readonly int iBoolTrue = Convert.ToInt32(Constants.BoolTrue);
 		public static readonly int iBoolFalse = Convert.ToInt32(Constants.BoolFalse);
 		public static readonly int iDateTimePrefix = Convert.ToInt32(Constants.DateTimePrefix);
+		public static readonly int iPrimitivePrefix = Convert.ToInt32(Constants.Primitives.Prefix);
 
 		static ReaderHelper()
 		{

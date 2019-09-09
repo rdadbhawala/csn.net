@@ -34,7 +34,7 @@ namespace Abstraction.Csn
 		private readonly char[] chDigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
 		private FieldDateTime()
-			: base(Constants.ArrayCode.DateTime)
+			: base(Constants.Primitives.DateTime)
 		{
 			// nothing
 		}
@@ -46,7 +46,7 @@ namespace Abstraction.Csn
 		/// <param name="field">value to write.</param>
 		public override void WriteField(StreamWriter sw, DateTime field)
 		{
-			sw.Write(Constants.DefaultFieldSeparator);
+			sw.Write(Constants.FieldSeparator);
 
 			char[] arrDt = { 'D', '0', '0', '0', '0', '0', '0', '0', '0', 'T', '0', '0', '0', '0', '0', '0', '0', '0', '0'};
 			WriteIntToCharArr(arrDt, 1, 4, field.Year);

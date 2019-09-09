@@ -51,8 +51,8 @@ namespace Abstraction.Csn
 		/// <param name="sw">Stream to write unto.</param>
 		public virtual void WriteType(StreamWriter sw)
 		{
-			sw.Write(Constants.DefaultFieldSeparator);
-			sw.Write(Constants.ArrayCode.Prefix);
+			sw.Write(Constants.FieldSeparator);
+			sw.Write(Constants.Primitives.Prefix);
 			sw.Write(this.arrType);
 		}
 	}

@@ -18,7 +18,7 @@ namespace Abstraction.Csn
 		public static readonly FieldDouble F = new FieldDouble();
 
 		private FieldDouble()
-			: base(Constants.ArrayCode.Real)
+			: base(Constants.Primitives.Real)
 		{
 			// nothing
 		}
@@ -30,7 +30,7 @@ namespace Abstraction.Csn
 		/// <param name="value">Value to write.</param>
 		public override void WriteField(StreamWriter sw, double value)
 		{
-			sw.Write(Constants.DefaultFieldSeparator);
+			sw.Write(Constants.FieldSeparator);
 			sw.Write(value);
 		}
     }

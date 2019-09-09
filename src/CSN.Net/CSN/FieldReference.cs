@@ -36,7 +36,7 @@ namespace Abstraction.Csn
 			}
 			else
 			{
-				sw.Write(Constants.DefaultFieldSeparator);
+				sw.Write(Constants.FieldSeparator);
 				sw.Write(Constants.ReferencePrefix);
 				sw.Write(fieldValue.SequenceNo);
 			}
