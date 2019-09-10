@@ -118,10 +118,12 @@ namespace Performance
 			}
 		}
 
-		public CsnTimeZones Deserialize(StreamWriter sw)
+		public CsnTimeZones Deserialize(StreamReader sr)
 		{
-			throw new NotImplementedException();
+			JsonTextReader jReader = new JsonTextReader(sr);
+			while (jReader.Read())
+			{ }
+			return null;
 		}
-
 	}
 }

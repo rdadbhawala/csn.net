@@ -12,11 +12,11 @@ namespace FiguringItOut
 		{
 			// externals
 			MemoryStream mstream = new MemoryStream();
-			StreamWriter sw = new StreamWriter(mstream);
-			sw.Write(TestResources.AllPrimitives);
-			sw.Flush();
-			mstream.Position = 0;
-			StreamReader sr = new StreamReader(mstream);
+			//StreamWriter sw = new StreamWriter(mstream);
+			//sw.Write(TestResources.AllPrimitives);
+			//sw.Flush();
+			//mstream.Position = 0;
+			StreamReader sr = new StreamReader("d:\\Temp\\tz-csn.txt");
 
 			IReader rdr = Reader.Singleton;
 			rdr.Read(sr, new ReadCallback());

@@ -17,8 +17,8 @@ namespace Abstraction.Csn
 
 	public enum ErrorDataKeys
 	{
-		ExpectedChar,
-		ActualChar,
+		Expected,
+		Actual,
 	}
 
     public class Error
@@ -26,10 +26,25 @@ namespace Abstraction.Csn
     {
 		public static Error UnexpectedChars(char expected, char actual)
 		{
-			Error err = new Error(ErrorCode.UnexpectedChars);
-			err.Data[ErrorDataKeys.ExpectedChar] = expected;
-			err.Data[ErrorDataKeys.ActualChar] = actual;
-			return err;
+			return Unexpected(ErrorCode.UnexpectedChars, expected, actual);
+			//Error err = new Error(ErrorCode.UnexpectedChars);
+			//err.Data[ErrorDataKeys.Expected] = expected;
+			//err.Data[ErrorDataKeys.Actual] = actual;
+			//return err;
+		}
+
+		public static Error UnexpectedRecordType(RecordType expected, RecordType actual)
+		{
+			return Unexpected(ErrorCode.UnexpectedRecordType, expected, actual);
+			//Error err = new Error(ErrorCode.UnexpectedRecordType);
+			//err.Data[ErrorDataKeys.Expected] = expected;
+			//err.Data[ErrorDataKeys.Actual] = actual;
+			//return err;
+		}
+
+		public static Error Unexpected(ErrorCode pCode, object expected, object actual)
+		{
+			return new Error(pCode).AddData(ErrorDataKeys.Expected, expected).AddData(ErrorDataKeys.Actual, actual);
 		}
 
 		public Error(ErrorCode pCode)

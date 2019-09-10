@@ -11,7 +11,7 @@ namespace Performance
 	class CsnSer
 		: ISerializer
 	{
-		public CsnTimeZones Deserialize(StreamWriter sw)
+		public CsnTimeZones Deserialize(StreamReader sw)
 		{
 			throw new NotImplementedException();
 		}

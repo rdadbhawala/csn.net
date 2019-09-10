@@ -74,27 +74,27 @@ namespace Abstraction.Csn
 
 		abstract public void Read(ReadArgs args);
 
-		protected IEnumerable<int> ReadTill(ReadArgs args, int tillChar, bool includeTillChar = false)
-		{
-			LinkedList<int> charInts = new LinkedList<int>();
+		//protected IEnumerable<int> ReadTill(ReadArgs args, int tillChar, bool includeTillChar = false)
+		//{
+		//	LinkedList<int> charInts = new LinkedList<int>();
 
-			int readChar = -1;
-			while ((readChar = args.Stream.Read()) != -1)
-			{
-				if (readChar != tillChar || includeTillChar)
-				{
-					charInts.AddLast(readChar);
-				}
-				if (readChar == tillChar)
-				{
-					break;
-				}
-			}
+		//	int readChar = -1;
+		//	while ((readChar = args.Stream.Read()) != -1)
+		//	{
+		//		if (readChar != tillChar || includeTillChar)
+		//		{
+		//			charInts.AddLast(readChar);
+		//		}
+		//		if (readChar == tillChar)
+		//		{
+		//			break;
+		//		}
+		//	}
 
-			return charInts;
-		}
+		//	return charInts;
+		//}
 
-		protected void ReadTill(ReadArgs args, int[] tillChars)
+		protected IEnumerable<int> ReadTill(ReadArgs args, int[] tillChars)
 		{
 			LinkedList<int> charInts = new LinkedList<int>();
 
@@ -105,6 +105,7 @@ namespace Abstraction.Csn
 				{
 					break;
 				}
+				charInts.AddLast(readChar);
 			}
 			if (readChar == ReaderHelper.iFieldSep)
 			{
@@ -118,6 +119,8 @@ namespace Abstraction.Csn
 			{
 				args.State = ReadStateEnd.Singleton;
 			}
+
+			return charInts;
 		}
 
 
@@ -155,7 +158,7 @@ namespace Abstraction.Csn
 					}
 					else
 					{
-						throw new Error(ErrorCode.NotEscapeChar).AddData(ErrorDataKeys.ActualChar, Convert.ToChar(readChar));
+						throw new Error(ErrorCode.NotEscapeChar).AddData(ErrorDataKeys.Actual, Convert.ToChar(readChar));
 					}
 				}
 				else
@@ -377,9 +380,9 @@ namespace Abstraction.Csn
 			else if (readChar == ReaderHelper.iRefPrefix)
 			{
 				Record rc = base.ReadRef(args, false);
-				if (rc.Code.RecType != RecordType.Instance)
+				if (rc.Code.RecType != RecordType.Instance && rc.Code.RecType != RecordType.Array)
 				{
-					throw new Error(ErrorCode.UnexpectedRecordType);
+					throw Error.UnexpectedRecordType(RecordType.Instance, rc.Code.RecType);
 				}
 				vr.Values.Add(rc);
 				rv.ReadValue(vr, vr.Values.Count, rc);

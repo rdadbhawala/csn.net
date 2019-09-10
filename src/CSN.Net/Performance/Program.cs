@@ -17,7 +17,10 @@ namespace Performance
 			//JsonSer json2 = new JsonSer(JsonSer.shortNames);
 			//WriteSer(json2, "d:\\Temp\\tz-json-short.txt", csnTzs);
 
-			BenchmarkRunner.Run<PerfSer>();
+			//BenchmarkRunner.Run<PerfSer>();
+			BenchmarkRunner.Run<PerfDeser>();
+
+			Console.ReadLine();
 		}
 
 		static void WriteSer(ISerializer ser, String path, CsnTimeZones ctzs)

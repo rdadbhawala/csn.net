@@ -10,7 +10,7 @@ namespace Performance
 	class JsonObjSer
 		: ISerializer
 	{
-		public CsnTimeZones Deserialize(StreamWriter sw)
+		public CsnTimeZones Deserialize(StreamReader sw)
 		{
 			throw new NotImplementedException();
 		}

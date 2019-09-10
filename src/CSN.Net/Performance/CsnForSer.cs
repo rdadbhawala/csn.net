@@ -51,7 +51,7 @@ namespace Performance
 				w.WriteInstanceFields(ttType).W(tt.IsFixedDateRule).W(tt.Day).W(tt.Month).W(tt.TimeOfDay).W(tt.Week).W(tt.DayOfWeek).Current;
 		}
 
-		public CsnTimeZones Deserialize(StreamWriter sw)
+		public CsnTimeZones Deserialize(StreamReader sw)
 		{
 			throw new NotImplementedException();
 		}

@@ -48,6 +48,12 @@ namespace Performance
 		}
 
 		//[Benchmark]
+		//public void JsonDeser()
+		//{
+		//	this.jcore.Deserialize(new StreamReader(Resources.ResourceManager.GetStream("tz_json_long")));
+		//}
+
+		//[Benchmark]
 		//public void CsnForSer()
 		//{
 		//	this.forCore.Serialize(this.Ctzs, this.sw);
