@@ -15,7 +15,8 @@ namespace Abstraction.Csn
 		void Read(VersionRecord verRec);
 		void Read(TypeDefRecord typeRec);
 		void Read(InstanceRecord instRec);
-		void Read(ArrayRecord arrayRec);
+		void Read(ArrayRefsRecord arrayRec);
+		void Read(ArrayPrimitivesRecod arrRec);
 
 		IReadValue GetReadValue();
 	}

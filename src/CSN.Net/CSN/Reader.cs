@@ -55,6 +55,12 @@ namespace Abstraction.Csn
 			this.Stream = pStream;
 			this.Read = pRead;
 		}
+
+		public void SetupRecord(Record rec)
+		{
+			dcRecords[rec.Code.SequenceNo] = rec;
+			this.ValueRec = rec as ValueRecord;
+		}
 	}
 
 	abstract class ReadStateBase
@@ -328,8 +334,7 @@ namespace Abstraction.Csn
 				throw new Error(ErrorCode.UnexpectedRecordType);
 			}
 			InstanceRecord rec = new InstanceRecord(args.CurrentRC, (TypeDefRecord)refRec);
-			args.dcRecords[rec.Code.SequenceNo] = rec;
-			args.ValueRec = rec;
+			args.SetupRecord(rec);
 			args.Read.Read(rec);
 
 			// base.ReadRef must have already set the next state
@@ -457,38 +462,37 @@ namespace Abstraction.Csn
 			else if (readChar == ReaderHelper.iRefPrefix)
 			{
 				Record refRec = base.ReadRef(args, false);
-				args.Read.Read(new ArrayRecord(args.CurrentRC));
+				if (refRec.Code.RecType != RecordType.TypeDef)
+				{
+					throw new Error(ErrorCode.UnexpectedRecordType);
+				}
+				ArrayRefsRecord rec = new ArrayRefsRecord(args.CurrentRC, (TypeDefRecord)refRec);
+				args.SetupRecord(rec);
+				args.Read.Read(rec);
 			}
 			else if (readChar == ReaderHelper.iPrimitivePrefix)
 			{
 				// read one more char to get primitive type
 				readChar = args.Stream.Read();
-				args.Read.Read(new ArrayRecord(args.CurrentRC));
+				ArrayPrimitivesRecod arrRec = new ArrayPrimitivesRecod(args.CurrentRC, ReaderHelper.PrimitiveMap[readChar]);
+				args.SetupRecord(arrRec);
+				args.Read.Read(arrRec);
 				// read a field sep
 				readChar = args.Stream.Read();
 				if (readChar == -1)
 				{
 					args.State = ReadStateEnd.Singleton;
-				} else if (readChar != ReaderHelper.iFieldSep)
+				}
+				else if (readChar != ReaderHelper.iFieldSep)
 				{
 					throw Error.UnexpectedChars(Constants.FieldSeparator, Convert.ToChar(readChar));
-				} else
+				}
+				else
 				{
 					args.State = ReadStateField.Singleton;
 				}
 			}
-			else if (readChar == ReaderHelper.iRefPrefix)
-			{
-				Record refRec = base.ReadRef(args, false);
-				if (refRec.Code.RecType != RecordType.TypeDef)
-				{
-					throw new Error(ErrorCode.UnexpectedRecordType);
-				}
-				ArrayRecord rec = new ArrayRecord(args.CurrentRC);
-				args.dcRecords[rec.Code.SequenceNo] = rec;
-				args.ValueRec = rec;
-				args.Read.Read(rec);
-			} else
+			else
 			{
 				throw Error.UnexpectedChars(Constants.RecordTypeChar.Array, Convert.ToChar(readChar));
 			}
@@ -518,7 +522,7 @@ namespace Abstraction.Csn
 				else if (readChar == ReaderHelper.iRecordSep)
 				{
 					rec.Members = members.ToArray();
-					args.dcRecords[rec.Code.SequenceNo] = rec;
+					args.SetupRecord(rec);
 					args.Read.Read(rec);
 					args.State = ReadStateNewRecord.Singleton;
 					break;
@@ -584,6 +588,7 @@ namespace Abstraction.Csn
 	{
 		public static readonly Dictionary<int, long> DigitMap = null;
 		public static readonly Dictionary<int, int> DigitMapInt = null;
+		public static readonly Dictionary<int, PrimitiveType> PrimitiveMap = null;
 
 		public static readonly int iVersion = Convert.ToInt32(Constants.RecordTypeChar.Version);
 		public static readonly int iTypeDef = Convert.ToInt32(Constants.RecordTypeChar.TypeDef);
@@ -601,6 +606,14 @@ namespace Abstraction.Csn
 
 		static ReaderHelper()
 		{
+			PrimitiveMap = new Dictionary<int, PrimitiveType>
+			{
+				[Convert.ToInt32(Constants.Primitives.Bool)] = PrimitiveType.Bool,
+				[Convert.ToInt32(Constants.Primitives.DateTime)] = PrimitiveType.DateTime,
+				[Convert.ToInt32(Constants.Primitives.Integer)] = PrimitiveType.Int,
+				[Convert.ToInt32(Constants.Primitives.Real)] = PrimitiveType.Real,
+				[Convert.ToInt32(Constants.Primitives.String)] = PrimitiveType.String
+			};
 			DigitMap = new Dictionary<int, long>
 			{
 				[Convert.ToInt32('0')] = 0L,

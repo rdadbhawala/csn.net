@@ -12,29 +12,38 @@ namespace Abstraction.Csn.Test
 		protected Queue<RecordCode> sRecCodes = new Queue<RecordCode>();
 		protected Queue<string> sTypeName = new Queue<string>();
 		protected Queue<string[]> sTypeMembers = new Queue<string[]>();
-		protected Queue<int> sInstanceTypeRef = new Queue<int>();
+		protected Queue<long> sRefSeqNos = new Queue<long>();
 		protected Queue<bool> sValuesBool = new Queue<bool>();
 		protected Queue<DateTime> sValuesDt = new Queue<DateTime>();
 		protected Queue<double> sValuesDouble = new Queue<double>();
 		protected Queue<long> sValuesLong = new Queue<long>();
 		protected Queue<string> sValuesStr = new Queue<string>();
+		protected Queue<PrimitiveType> sPrimTypes = new Queue<PrimitiveType>();
 
-		public void SetupVersionRecord()
+		public void SetupVersionRecord(string version)
 		{
 			sRecCodes.Enqueue(new RecordCode(RecordType.Version, 0));
+			sValuesStr.Enqueue(version);
 		}
 
-		public void Setup(RecordCode rc, string name, params string[] members)
+		public void SetupTypeRecord(RecordCode rc, string name, params string[] members)
 		{
 			sRecCodes.Enqueue(rc);
 			sTypeName.Enqueue(name);
 			sTypeMembers.Enqueue(members);
 		}
 
-		public ReadSetup Setup(RecordCode recordCode, int refType)
+		public ReadSetup SetupArrayPrims(RecordCode rc, PrimitiveType p)
+		{
+			sRecCodes.Enqueue(rc);
+			sPrimTypes.Enqueue(p);
+			return this;
+		}
+
+		public ReadSetup SetupInstanceOrArrayRefs(RecordCode recordCode, long refType)
 		{
 			sRecCodes.Enqueue(recordCode);
-			sInstanceTypeRef.Enqueue(refType);
+			sRefSeqNos.Enqueue(refType);
 			return this;
 		}
 
@@ -67,32 +76,53 @@ namespace Abstraction.Csn.Test
 			sValuesLong.Enqueue(value);
 			return this;
 		}
+
+		public ReadSetup SetupRefs(long refSeq)
+		{
+			sRefSeqNos.Enqueue(refSeq);
+			return this;
+		}
 	}
 
 	class ReadVerify : ReadSetup
 	{
-		protected void Verify(RecordCode actual)
+		protected RecordCode Verify(RecordCode actual)
 		{
 			RecordCode expected = sRecCodes.Dequeue();
 			Assert.AreEqual(expected.RecType, actual.RecType);
 			Assert.AreEqual(expected.SequenceNo, actual.SequenceNo);
+			return expected;
 		}
 
-		public void Verify(VersionRecord verRec)
+		public void VerifyVersionRecord(VersionRecord verRec)
 		{
 			Verify(verRec.Code);
+			Assert.AreEqual(sValuesStr.Dequeue(), verRec.Version);
 		}
 
-		public void Verify(TypeDefRecord typeRec)
+		public void VerifyTypeDefWithMembers(TypeDefRecord typeRec)
 		{
 			Verify(typeRec.Code);
 			Assert.AreEqual(sTypeName.Dequeue(), typeRec.Name);
 			CollectionAssert.AreEqual(sTypeMembers.Dequeue(), typeRec.Members);
 		}
 
-		public void Verify(ArrayRecord arrRec)
+		public void Verify(InstanceRecord instRec)
+		{
+			Verify(instRec.Code);
+			Assert.AreEqual(sRefSeqNos.Dequeue(), instRec.Ref.Code.SequenceNo);
+		}
+
+		public void VerifyArrayRefs(ArrayRefsRecord arrRec)
 		{
 			Verify(arrRec.Code);
+			Assert.AreEqual(sRefSeqNos.Dequeue(), arrRec.TypeRef.Code.SequenceNo);
+		}
+
+		public void VerifyArrayPrims(ArrayPrimitivesRecod arrRec)
+		{
+			Verify(arrRec.Code);
+			Assert.AreEqual(sPrimTypes.Dequeue(), arrRec.Primitive);
 		}
 
 		public void Verify(long value)
@@ -115,15 +145,14 @@ namespace Abstraction.Csn.Test
 			Assert.AreEqual(sValuesStr.Dequeue(), value);
 		}
 
-		public void Verify(InstanceRecord instRec)
-		{
-			Verify(instRec.Code);
-			Assert.AreEqual(sInstanceTypeRef.Dequeue(), instRec.Ref.Code.SequenceNo);
-		}
-
 		internal void Verify(DateTime value)
 		{
 			Assert.AreEqual(sValuesDt.Dequeue(), value);
+		}
+
+		internal void VerifyRefs(long refSeqNo)
+		{
+			Assert.AreEqual(sRefSeqNos.Dequeue(), refSeqNo);
 		}
 	}
 
@@ -136,12 +165,12 @@ namespace Abstraction.Csn.Test
 
 		public void Read(VersionRecord verRec)
 		{
-			this.Verify(verRec);
+			this.VerifyVersionRecord(verRec);
 		}
 
 		public void Read(TypeDefRecord typeRec)
 		{
-			this.Verify(typeRec);
+			this.VerifyTypeDefWithMembers(typeRec);
 		}
 
 		public void Read(InstanceRecord instRec)
@@ -149,9 +178,14 @@ namespace Abstraction.Csn.Test
 			this.Verify(instRec);
 		}
 
-		public void Read(ArrayRecord arrRec)
+		public void Read(ArrayRefsRecord arrRec)
 		{
-			this.Verify(arrRec);
+			this.VerifyArrayRefs(arrRec);
+		}
+
+		public void Read(ArrayPrimitivesRecod arrRec)
+		{
+			this.VerifyArrayPrims(arrRec);
 		}
 
 		public void ReadValue(ValueRecord rec, int index, PrimitiveNull value)
@@ -182,6 +216,7 @@ namespace Abstraction.Csn.Test
 		public void ReadValue(ValueRecord rec, int index, Record obj)
 		{
 			//Console.WriteLine(index + ") Value " + obj.Code.SequenceNo);
+			this.VerifyRefs(obj.Code.SequenceNo);
 		}
 
 		public void ReadValue(ValueRecord rec, int index, DateTime value)

@@ -44,8 +44,15 @@ namespace FiguringItOut
 				Console.WriteLine("Instance " + instRec.Code.SequenceNo + " of " + instRec.Ref.Name);
 			}
 
-			public void Read(ArrayRecord arrRec)
-			{ }
+			public void Read(ArrayRefsRecord arrRec)
+			{
+				Console.WriteLine("Array " + arrRec.Code.SequenceNo + " of " + arrRec.TypeRef.Name);
+			}
+
+			public void Read(ArrayPrimitivesRecod arrRec)
+			{
+				Console.WriteLine("Array " + arrRec.Code.SequenceNo + " of " + arrRec.Primitive.ToString());
+			}
 
 			public void ReadValue(ValueRecord rec, int index, PrimitiveNull value)
 			{

@@ -35,10 +35,11 @@ namespace Abstraction.Csn.Test
 		{
 			public ReadCallback()
 			{
-				this.SetupVersionRecord();
-				this.Setup(new RecordCode(RecordType.TypeDef, 1), "AllPrimitives", "BooleanTrue", "BooleanFalse", "DateTime", "String", "Real", "Integer");
-				this.Setup(new RecordCode(RecordType.Instance, 2), 1).Setup(true).Setup(false).Setup(new DateTime(2019, 03, 12, 19, 24, 33, 567)).Setup("Label").Setup(-123.45).Setup(345);
-				this.Setup(new RecordCode(RecordType.Array, 4), 1);
+				this.SetupVersionRecord("0.1.0");
+				this.SetupTypeRecord(new RecordCode(RecordType.TypeDef, 1), "AllPrimitives", "BooleanTrue", "BooleanFalse", "DateTime", "String", "Real", "Integer");
+				this.SetupInstanceOrArrayRefs(new RecordCode(RecordType.Instance, 2), 1).Setup(true).Setup(false).Setup(new DateTime(2019, 03, 12, 19, 24, 33, 567)).Setup("Label").Setup(-123.45).Setup(345);
+				this.SetupArrayPrims(new RecordCode(RecordType.Array, 3), PrimitiveType.Int).Setup(10).Setup(20).Setup(30).Setup(40).Setup(50);
+				this.SetupInstanceOrArrayRefs(new RecordCode(RecordType.Array, 4), 1).SetupRefs(2);
 			}
 		}
 	}

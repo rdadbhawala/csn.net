@@ -60,4 +60,25 @@ namespace Abstraction.Csn
 		public ArrayRecord(RecordCode rc) : base(rc)
 		{ }
 	}
+
+	public class ArrayPrimitivesRecod : ArrayRecord
+	{
+		public ArrayPrimitivesRecod(RecordCode rc, PrimitiveType pType)
+			: base(rc)
+		{
+			this.Primitive = pType;
+		}
+
+		public PrimitiveType Primitive { get; private set; }
+	}
+
+	public class ArrayRefsRecord : ValueRecord
+	{
+		public ArrayRefsRecord(RecordCode rc, TypeDefRecord refRec) : base(rc)
+		{
+			this.TypeRef = refRec;
+		}
+
+		public TypeDefRecord TypeRef { get; private set; }
+	}
 }
