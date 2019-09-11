@@ -15,15 +15,6 @@ namespace Abstraction.Csn
 	public abstract class CastArray : IValues
 	{
 		/// <summary>
-		/// Cast array of DateTimes.
-		/// </summary>
-		/// <param name="array">DateTimes.</param>
-		public static implicit operator CastArray(DateTime[] array)
-		{
-			return new Array<DateTime>(FieldDateTime.F, array);
-		}
-
-		/// <summary>
 		/// Write the Array.
 		/// </summary>
 		/// <param name="sw">Stream to write unto.</param>

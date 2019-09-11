@@ -44,10 +44,10 @@ namespace Performance
 		public void Csn()
 		{
 			Writer w = new Writer(this.sw);
-			RecordCode rc = w.WriteTypeDefRecord("T", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9").Current;
+			RecordCode rc = w.WriteTypeDef("T", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9").Current;
 			for (long i = 0; i < 100000; i += 10)
 			{
-				IWriterField fw = w.WriteInstanceFields(rc);
+				IWriterField fw = w.WriteInstance(rc);
 				for (long j = 0; j < 10; j++)
 				{
 					fw.W(this.valueArr[j]);

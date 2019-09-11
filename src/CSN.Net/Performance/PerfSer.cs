@@ -30,6 +30,12 @@ namespace Performance
 		}
 
 		[Benchmark]
+		public void CsnSer()
+		{
+			this.core.Serialize(this.Ctzs, this.sw);
+		}
+
+		[Benchmark]
 		public void JsonSer()
 		{
 			this.jcore.Serialize(this.Ctzs, this.sw);
@@ -40,12 +46,6 @@ namespace Performance
 		//{
 		//	this.jobjcore.Serialize(this.Ctzs, this.sw);
 		//}
-
-		[Benchmark]
-		public void CsnSer()
-		{
-			this.core.Serialize(this.Ctzs, this.sw);
-		}
 
 		//[Benchmark]
 		//public void JsonDeser()

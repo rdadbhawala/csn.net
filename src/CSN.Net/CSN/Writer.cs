@@ -32,7 +32,7 @@ namespace Abstraction.Csn
 		/// <param name="typeName">Type name.</param>
 		/// <param name="typeMembers">Type Members.</param>
 		/// <returns>Record Code.</returns>
-		public IWriter WriteTypeDefRecord(string typeName, params string[] typeMembers)
+		public IWriter WriteTypeDef(string typeName, params string[] typeMembers)
 		{
 			this.sw.Write(Constants.RecordSeparator);
 			this.WriteNewRecord(RecordType.TypeDef, Constants.RecordTypeChar.TypeDef);
@@ -41,15 +41,7 @@ namespace Abstraction.Csn
 			return this;
 		}
 
-		public IWriterField WriteInstanceRecord(RecordCode typeRef)
-		{
-			this.sw.Write(Constants.RecordSeparator);
-			this.WriteNewRecord(RecordType.Instance, Constants.RecordTypeChar.Instance);
-			this.W(typeRef);
-			return this;
-		}
-
-		public IWriterField WriteInstanceFields(RecordCode typeRecCode)
+		public IWriterField WriteInstance(RecordCode typeRecCode)
 		{
 			this.sw.Write(Constants.RecordSeparator);
 			this.WriteNewRecord(RecordType.Instance, Constants.RecordTypeChar.Instance);
@@ -109,7 +101,7 @@ namespace Abstraction.Csn
 		/// <param name="refType">Type of References.</param>
 		/// <param name="arrayElements">Elements of Array; Instances of Type.</param>
 		/// <returns>Record Code.</returns>
-		public IWriter WriteArrayRecord(RecordCode refType, RecordCode[] arrayElements)
+		public IWriter WriteArrayRefs(RecordCode refType, params RecordCode[] arrayElements)
 		{
 			this.sw.Write(Constants.RecordSeparator);
 			this.WriteNewRecord(RecordType.Array, Constants.RecordTypeChar.Array);

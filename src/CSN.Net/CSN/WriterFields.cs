@@ -66,9 +66,31 @@ namespace Abstraction.Csn
 
 		public IWriterField W(DateTime value)
 		{
-			FieldDateTime.F.WriteField(this.sw, value);
+			sw.Write(Constants.FieldSeparator);
+
+			char[] arrDt = { 'D', '0', '0', '0', '0', '0', '0', '0', '0', 'T', '0', '0', '0', '0', '0', '0', '0', '0', '0' };
+			WriteIntToCharArr(arrDt, 1, 4, value.Year);
+			WriteIntToCharArr(arrDt, 5, 2, value.Month);
+			WriteIntToCharArr(arrDt, 7, 2, value.Day);
+			WriteIntToCharArr(arrDt, 10, 2, value.Hour);
+			WriteIntToCharArr(arrDt, 12, 2, value.Minute);
+			WriteIntToCharArr(arrDt, 14, 2, value.Second);
+			WriteIntToCharArr(arrDt, 16, 3, value.Millisecond);
+			sw.Write(arrDt, 0, 19);
+
 			return this;
 		}
+
+		private void WriteIntToCharArr(char[] arrDt, int index, int len, int value)
+		{
+			for (int i = index + len - 1; i >= index && value > 0; i--)
+			{
+				arrDt[i] = chDigits[value % 10];
+				value /= 10;
+			}
+		}
+		private readonly char[] chDigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+
 
 		public IWriterField W(long value)
 		{

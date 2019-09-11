@@ -20,10 +20,10 @@ namespace Performance
 		{
 			Writer w = new Writer(sw);
 			// typedefs
-			RecordCode  ttType = w.WriteTypeDefRecord("TransitionTime", "IsFixedDateRule", "Day", "Month", "TimeOfDay", "Week", "DayOfWeek").Current;
-			RecordCode  adjType = w.WriteTypeDefRecord("Adjustment", "StartDate", "EndDate", "DaylightDeltaHours", "TransitionStart", "TransitionEnd").Current;
-			RecordCode  tzType = w.WriteTypeDefRecord("TimeZone", "Id", "DisplayName", "DaylightName", "StandardName", "HasDst", "UtcOffsetHours", "Adjustments").Current;
-			RecordCode  tzsType = w.WriteTypeDefRecord("TimeZones", "AllTimeZones").Current;
+			RecordCode  ttType = w.WriteTypeDef("TransitionTime", "IsFixedDateRule", "Day", "Month", "TimeOfDay", "Week", "DayOfWeek").Current;
+			RecordCode  adjType = w.WriteTypeDef("Adjustment", "StartDate", "EndDate", "DaylightDeltaHours", "TransitionStart", "TransitionEnd").Current;
+			RecordCode  tzType = w.WriteTypeDef("TimeZone", "Id", "DisplayName", "DaylightName", "StandardName", "HasDst", "UtcOffsetHours", "Adjustments").Current;
+			RecordCode  tzsType = w.WriteTypeDef("TimeZones", "AllTimeZones").Current;
 
 			int tzLen = ctzs.AllTimeZones.Length;
 			RecordCode [] rcTzsArr = new RecordCode [tzLen];
@@ -42,16 +42,16 @@ namespace Performance
 							CsnAdjustment adj = ctz.Adjustments[adjCtr];
 							RecordCode  rcTtStart = this.WriteTrTime(adj.TransitionStart, w, ttType);
 							RecordCode  rcTtEnd = this.WriteTrTime(adj.TransitionEnd, w, ttType);
-							arrAdjs[adjCtr] = w.WriteInstanceFields(adjType).W(adj.StartDate).W(adj.EndDate).W(adj.DaylightDeltaHours).W(rcTtStart).W(rcTtEnd).Current;
+							arrAdjs[adjCtr] = w.WriteInstance(adjType).W(adj.StartDate).W(adj.EndDate).W(adj.DaylightDeltaHours).W(rcTtStart).W(rcTtEnd).Current;
 						}
 
-						rcAdjArr = w.WriteArrayRecord(adjType, arrAdjs).Current;
+						rcAdjArr = w.WriteArrayRefs(adjType, arrAdjs).Current;
 					}
 				}
-				rcTzsArr[tzCtr] = w.WriteInstanceFields(tzType).W(ctz.Id).W(ctz.DisplayName).W(ctz.DaylightName).W(ctz.StandardName).W(ctz.HasDst).W(ctz.UtcOffsetHours).W(rcAdjArr).Current;
+				rcTzsArr[tzCtr] = w.WriteInstance(tzType).W(ctz.Id).W(ctz.DisplayName).W(ctz.DaylightName).W(ctz.StandardName).W(ctz.HasDst).W(ctz.UtcOffsetHours).W(rcAdjArr).Current;
 			}
-			RecordCode  rc = w.WriteArrayRecord(tzType, rcTzsArr).Current;
-			w.WriteInstanceFields(tzsType).W(rc);
+			RecordCode  rc = w.WriteArrayRefs(tzType, rcTzsArr).Current;
+			w.WriteInstance(tzsType).W(rc);
 			sw.Flush();
 		}
 
@@ -59,7 +59,7 @@ namespace Performance
 		{
 			return (tt == null) ?
 				null :
-				w.WriteInstanceFields(ttType).W(tt.IsFixedDateRule).W(tt.Day).W(tt.Month).W(tt.TimeOfDay).W(tt.Week).W(tt.DayOfWeek).Current;
+				w.WriteInstance(ttType).W(tt.IsFixedDateRule).W(tt.Day).W(tt.Month).W(tt.TimeOfDay).W(tt.Week).W(tt.DayOfWeek).Current;
 		}
 	}
 }

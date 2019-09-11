@@ -11,31 +11,12 @@ namespace Abstraction.Csn
 	/// </summary>
 	public interface IWriter : IWriterField
 	{
-		/// <summary>
-		/// Write a TypeDef Record.
-		/// </summary>
-		/// <param name="typeName">Type name.</param>
-		/// <param name="typeMembers">Type Members.</param>
-		/// <returns>Record Code.</returns>
-		IWriter WriteTypeDefRecord(string typeName, params string[] typeMembers);
+		IWriter WriteTypeDef(string typeName, params string[] typeMembers);
 
-		IWriterField WriteInstanceRecord(RecordCode typeRef);
+		IWriterField WriteInstance(RecordCode typeRecCode);
 
-		IWriterField WriteInstanceFields(RecordCode typeRecCode);
+		IWriterField WriteArrayPrimitives(PrimitiveType p);
 
-		/// <summary>
-		/// Write an Array Record.
-		/// </summary>
-		/// <param name="values">Array values.</param>
-		/// <returns>Record Code.</returns>
-		IWriter WriteArrayRecord(CastArray values);
-
-		/// <summary>
-		/// Write an Array of Referneces.
-		/// </summary>
-		/// <param name="refType">Type of References.</param>
-		/// <param name="arrayElements">Elements of Array; Instances of Type.</param>
-		/// <returns>Record Code.</returns>
-		IWriter WriteArrayRecord(RecordCode refType, RecordCode[] arrayElements);
+		IWriter WriteArrayRefs(RecordCode refType, params RecordCode[] arrayElements);
 	}
 }
