@@ -24,7 +24,6 @@ namespace Abstraction.Csn
 	public interface IReadValue
 	{
 		void ReadValueNull(ValueRecord rec, int index);
-		//void ReadValue(ValueRecord rec, int index, PrimitiveNull value);
 		void ReadValue(ValueRecord rec, int index, bool value);
 		void ReadValue(ValueRecord rec, int index, long value);
 		void ReadValue(ValueRecord rec, int index, double value);

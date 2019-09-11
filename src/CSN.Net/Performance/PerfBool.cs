@@ -14,14 +14,18 @@ namespace Performance
 	{
 		public static int ctr = 100000;
 		public static bool value = true;
-		public static Stream stream = Stream.Null;
 
 		public static void Program()
 		{
 			BenchmarkRunner.Run<PerfBoolCsnSer>();
 			BenchmarkRunner.Run<PerfBoolJsonSer>();
-			//BenchmarkRunner.Run<PerfBoolCsnDeser>();
-			//BenchmarkRunner.Run<PerfBoolJsonDeser>();
+			BenchmarkRunner.Run<PerfBoolCsnDeser>();
+			BenchmarkRunner.Run<PerfBoolJsonDeser>();
+		}
+
+		private static Stream GetStream()
+		{
+			return new MemoryStream();
 		}
 
 		public class PerfBoolJsonSer
@@ -29,7 +33,7 @@ namespace Performance
 
 			StreamWriter sw = null;
 			JsonTextWriter jw = null;
-			internal Stream tgt = PerfBool.stream;
+			internal Stream tgt = PerfBool.GetStream();
 
 			[IterationSetup]
 			public void Setup()
@@ -86,7 +90,7 @@ namespace Performance
 		{
 			StreamWriter sw = null;
 			Writer w = null;
-			internal Stream tgt = PerfBool.stream;
+			internal Stream tgt = PerfBool.GetStream();
 
 			[IterationSetup]
 			public void Setup()
