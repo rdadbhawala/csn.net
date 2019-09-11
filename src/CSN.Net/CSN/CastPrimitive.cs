@@ -31,15 +31,6 @@ namespace Abstraction.Csn
 		}
 
 		/// <summary>
-		/// Cast References to Primitives.
-		/// </summary>
-		/// <param name="r">RecordCode.</param>
-		public static implicit operator CastPrimitive(RecordCode r)
-		{
-			return new Primitive<RecordCode>(FieldReference.F, r);
-		}
-
-		/// <summary>
 		/// Write Primitive.
 		/// </summary>
 		/// <param name="sw">Stream to write unto.</param>

@@ -44,7 +44,7 @@ namespace Abstraction.Csn
 		{
 			this.sw.Write(Constants.RecordSeparator);
 			this.WriteNewRecord(RecordType.Instance, Constants.RecordTypeChar.Instance);
-			this.WriteRecordCode(typeRef);
+			this.W(typeRef);
 			return this;
 		}
 
@@ -52,7 +52,7 @@ namespace Abstraction.Csn
 		{
 			this.sw.Write(Constants.RecordSeparator);
 			this.WriteNewRecord(RecordType.Instance, Constants.RecordTypeChar.Instance);
-			FieldReference.F.WriteField(this.sw, typeRecCode);
+			W(typeRecCode);
 			return this;
 		}
 
@@ -112,8 +112,8 @@ namespace Abstraction.Csn
 		{
 			this.sw.Write(Constants.RecordSeparator);
 			this.WriteNewRecord(RecordType.Array, Constants.RecordTypeChar.Array);
-			FieldReference.F.WriteField(this.sw, refType);
-			FieldReference.F.WriteFields(this.sw, arrayElements);
+			W(refType);
+			W(arrayElements);
 			return this;
 		}
 

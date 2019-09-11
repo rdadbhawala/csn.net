@@ -99,12 +99,6 @@ namespace Abstraction.Csn
 
 		public IWriterField W(RecordCode value)
 		{
-			WriteRecordCode(value);
-			return this;
-		}
-
-		protected void WriteRecordCode(RecordCode value)
-		{
 			if (value == null)
 			{
 				sw.Write(Constants.FieldSeparator);
@@ -115,7 +109,16 @@ namespace Abstraction.Csn
 				sw.Write(Constants.ReferencePrefix);
 				sw.Write(value.SequenceNo);
 			}
+			return this;
 		}
 
+		public IWriterField W(RecordCode[] values)
+		{
+			for (int i = 0, j = values.Length; i < j; i++)
+			{
+				W(values[i]);
+			}
+			return this;
+		}
 	}
 }
