@@ -49,20 +49,6 @@ namespace Abstraction.Csn
 			return this;
 		}
 
-		/// <summary>
-		/// Write an Array Record.
-		/// </summary>
-		/// <param name="values">Array values.</param>
-		/// <returns>Record Code.</returns>
-		public IWriter WriteArrayRecord(CastArray values)
-		{
-			this.sw.Write(Constants.RecordSeparator);
-			this.WriteNewRecord(RecordType.Array, Constants.RecordTypeChar.Array);
-			values.WriteType(this.sw);
-			values.WriteValues(this.sw);
-			return this;
-		}
-
 		public IWriterField WriteArrayPrimitives(PrimitiveType p)
 		{
 			this.sw.Write(Constants.RecordSeparator);
