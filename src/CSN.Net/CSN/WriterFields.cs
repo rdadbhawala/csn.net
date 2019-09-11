@@ -108,6 +108,7 @@ namespace Abstraction.Csn
 				sw.Write(chMinus);
 				value = -value;
 			}
+			// no need to initialize the chValue array as only updated array items are printed
 			char[] chValue = new char[longArrLen];
 			int pos = chValue.Length - 1;
 			do

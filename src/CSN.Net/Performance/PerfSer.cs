@@ -14,7 +14,7 @@ namespace Performance
 		private readonly JsonSer jcore = null;
 		private readonly JsonObjSer jobjcore = new JsonObjSer();
 		private StreamWriter sw = null;
-		private Stream tgt = Stream.Null;
+		private Stream tgt = new MemoryStream();
 
 		public PerfSer()
 		{
