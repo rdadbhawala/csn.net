@@ -88,7 +88,17 @@ namespace Abstraction.Csn
 
 		public IWriterField W(double value)
 		{
-			FieldDouble.F.WriteField(this.sw, value);
+			sw.Write(Constants.FieldSeparator);
+			sw.Write(value);
+			return this;
+		}
+
+		public IWriterField W(double[] values)
+		{
+			for (int i = 0, j = values.Length; i < j; i++)
+			{
+				W(values[i]);
+			}
 			return this;
 		}
 
@@ -96,7 +106,7 @@ namespace Abstraction.Csn
 		{
 			if (value == null)
 			{
-				sw.Write(Constants.FieldSeparator);
+				WNull();
 			}
 			else
 			{

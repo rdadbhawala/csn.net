@@ -24,24 +24,6 @@ namespace Abstraction.Csn
 		}
 
 		/// <summary>
-		/// Cast array of doubles.
-		/// </summary>
-		/// <param name="array">doubles.</param>
-		public static implicit operator CastArray(double[] array)
-		{
-			return new Array<double>(FieldDouble.F, array);
-		}
-
-		///// <summary>
-		///// Cast array of References.
-		///// </summary>
-		///// <param name="array">References.</param>
-		//public static implicit operator CastArray(RecordCode[] array)
-		//{
-		//	return new Array<RecordCode>(FieldReference.F, array);
-		//}
-
-		/// <summary>
 		/// Write the Array.
 		/// </summary>
 		/// <param name="sw">Stream to write unto.</param>

@@ -22,15 +22,6 @@ namespace Abstraction.Csn
 		}
 
 		/// <summary>
-		/// PrimitiveCast for double values.
-		/// </summary>
-		/// <param name="d">double value.</param>
-		public static implicit operator CastPrimitive(double d)
-		{
-			return new Primitive<double>(FieldDouble.F, d);
-		}
-
-		/// <summary>
 		/// Write Primitive.
 		/// </summary>
 		/// <param name="sw">Stream to write unto.</param>

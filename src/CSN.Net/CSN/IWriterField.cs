@@ -18,6 +18,7 @@ namespace Abstraction.Csn
 		IWriterField W(long[] values);
 
 		IWriterField W(double value);
+		IWriterField W(double[] values);
 
 		IWriterField W(RecordCode value);
 		IWriterField W(RecordCode[] values);
