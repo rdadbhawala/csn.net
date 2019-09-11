@@ -359,21 +359,21 @@ namespace Abstraction.Csn
 			// if the field is null
 			if (readChar == ReaderHelper.iFieldSep)
 			{
-				vr.Values.Add(PrimitiveNull.Instance);
-				rv.ReadValue(vr, vr.Values.Count, PrimitiveNull.Instance);
+				vr.Values.Add(null);
+				rv.ReadValueNull(vr, vr.Values.Count);
 				return;
 			}
 			else if (readChar == ReaderHelper.iRecordSep)
 			{
-				vr.Values.Add(PrimitiveNull.Instance);
-				rv.ReadValue(vr, vr.Values.Count, PrimitiveNull.Instance);
+				vr.Values.Add(null);
+				rv.ReadValueNull(vr, vr.Values.Count);
 				args.State = ReadStateNewRecord.Singleton;
 				return;
 			}
 			else if (readChar == -1)
 			{
-				vr.Values.Add(PrimitiveNull.Instance);
-				rv.ReadValue(vr, vr.Values.Count, PrimitiveNull.Instance);
+				vr.Values.Add(null);
+				rv.ReadValueNull(vr, vr.Values.Count);
 				args.State = ReadStateEnd.Singleton;
 				return;
 			}

@@ -164,7 +164,7 @@ namespace Performance
 				{
 				}
 
-				public void ReadValue(ValueRecord rec, int index, PrimitiveNull value)
+				public void ReadValueNull(ValueRecord rec, int index)
 				{
 					throw new InvalidOperationException();
 				}
