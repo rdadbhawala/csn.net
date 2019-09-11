@@ -10,11 +10,8 @@ namespace Abstraction.Csn
 	/// <summary>
 	/// CsnWriter is an implementation of ICsnWriter.
 	/// </summary>
-	public class Writer : IWriter
+	public class Writer : WriterField, IWriter
 	{
-		// private readonly Stream stream = null;
-		private readonly StreamWriter sw = null;
-		//private readonly Config config = null;
 		private long recordCounter = -1;
 
 		/// <summary>
@@ -23,14 +20,10 @@ namespace Abstraction.Csn
 		/// <param name="pStream">The IO Stream on which to write the CSN Payload.</param>
 		/// <param name="pConfig">Configuration parameters for CSN.</param>
 		public Writer(StreamWriter pStream)
+			: base (pStream)
 		{
-			this.sw = pStream;
-			//this.config = pConfig;
-
 			this.WriteVersionRecord();
 		}
-
-		public RecordCode Current { get; private set; }
 
 		/// <summary>
 		/// Write a TypeDef Record.
@@ -42,12 +35,12 @@ namespace Abstraction.Csn
 		{
 			this.sw.Write(Constants.RecordSeparator);
 			this.WriteNewRecord(RecordType.TypeDef, Constants.RecordTypeChar.TypeDef);
-			FieldString.F.WriteField(this.sw, typeName);
-			FieldString.F.WriteFields(this.sw, typeMembers);
+			this.W(typeName);
+			W(typeMembers);
 			return this;
 		}
 
-		public IFieldWriter WriteInstanceRecord(RecordCode typeRef)
+		public IWriterField WriteInstanceRecord(RecordCode typeRef)
 		{
 			this.sw.Write(Constants.RecordSeparator);
 			this.WriteNewRecord(RecordType.Instance, Constants.RecordTypeChar.Instance);
@@ -55,7 +48,7 @@ namespace Abstraction.Csn
 			return this;
 		}
 
-		public IFieldWriter WriteInstanceFields(RecordCode typeRecCode)
+		public IWriterField WriteInstanceFields(RecordCode typeRecCode)
 		{
 			this.sw.Write(Constants.RecordSeparator);
 			this.WriteNewRecord(RecordType.Instance, Constants.RecordTypeChar.Instance);
@@ -77,7 +70,7 @@ namespace Abstraction.Csn
 			return this;
 		}
 
-		public IFieldWriter WriteArrayPrimitives(PrimitiveType p)
+		public IWriterField WriteArrayPrimitives(PrimitiveType p)
 		{
 			this.sw.Write(Constants.RecordSeparator);
 			this.WriteNewRecord(RecordType.Array, Constants.RecordTypeChar.Array);
@@ -127,7 +120,7 @@ namespace Abstraction.Csn
 		private void WriteVersionRecord()
 		{
 			this.WriteNewRecord(RecordType.Version, Constants.RecordTypeChar.Version);
-			FieldString.F.WriteField(this.sw, Constants.CsnVersion);
+			this.W(Constants.CsnVersion);
 		}
 
 		private void WriteNewRecord(RecordType recType, char rType)
@@ -138,74 +131,5 @@ namespace Abstraction.Csn
 			this.Current = new RecordCode(recType, this.recordCounter);
 		}
 
-		public IFieldWriter W(string value)
-		{
-			FieldString.F.WriteField(this.sw, value);
-			return this;
-		}
-
-		public IFieldWriter W(bool value)
-		{
-			sw.Write(Constants.FieldSeparator);
-			sw.Write(value ? Constants.BoolTrue : Constants.BoolFalse);
-			return this;
-		}
-
-		public IFieldWriter W(bool[] values)
-		{
-			for (int i = 0; i < values.Length; i++)
-			{
-				W(values[i]);
-			}
-			return this;
-		}
-
-		public IFieldWriter W(DateTime value)
-		{
-			FieldDateTime.F.WriteField(this.sw, value);
-			return this;
-		}
-
-		public IFieldWriter W(long value)
-		{
-			sw.Write(Constants.FieldSeparator);
-			sw.Write(value);
-			return this;
-		}
-
-		public IFieldWriter W(long[] values)
-		{
-			for (int i = 0; i < values.Length; i++)
-			{
-				W(values[i]);
-			}
-			return this;
-		}
-
-		public IFieldWriter W(double value)
-		{
-			FieldDouble.F.WriteField(this.sw, value);
-			return this;
-		}
-
-		public IFieldWriter W(RecordCode value)
-		{
-			WriteRecordCode(value);
-			return this;
-		}
-
-		protected void WriteRecordCode(RecordCode value)
-		{
-			if (value == null)
-			{
-				sw.Write(Constants.FieldSeparator);
-			}
-			else
-			{
-				sw.Write(Constants.FieldSeparator);
-				sw.Write(Constants.ReferencePrefix);
-				sw.Write(value.SequenceNo);
-			}
-		}
 	}
 }

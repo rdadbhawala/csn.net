@@ -98,7 +98,7 @@ namespace Performance
 			[Benchmark]
 			public void PerfBoolCsnSerDo()
 			{
-				IFieldWriter fw = w.WriteArrayPrimitives(PrimitiveType.Bool);
+				IWriterField fw = w.WriteArrayPrimitives(PrimitiveType.Bool);
 				for (int i = 0; i < PerfBool.ctr; i++)
 				{
 					fw.W(PerfBool.value);

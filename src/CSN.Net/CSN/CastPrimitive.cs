@@ -13,15 +13,6 @@ namespace Abstraction.Csn
 	public abstract class CastPrimitive : IValue
 	{
 		/// <summary>
-		/// Convert String to A Primitive.
-		/// </summary>
-		/// <param name="s">String to convert.</param>
-		public static implicit operator CastPrimitive(string s)
-		{
-			return new Primitive<string>(FieldString.F, s);
-		}
-
-		/// <summary>
 		/// PrimitiveCast for DateTime values.
 		/// </summary>
 		/// <param name="dt">DateTime value to convert.</param>

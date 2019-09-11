@@ -15,24 +15,6 @@ namespace Abstraction.Csn
 	public abstract class CastArray : IValues
 	{
 		/// <summary>
-		/// Cast array of Strings.
-		/// </summary>
-		/// <param name="array">Strings.</param>
-		public static implicit operator CastArray(string[] array)
-		{
-			return new Array<string>(FieldString.F, array);
-		}
-
-		///// <summary>
-		///// Cast array of Bools.
-		///// </summary>
-		///// <param name="array">Bools.</param>
-		//public static implicit operator CastArray(bool[] array)
-		//{
-		//	return new Array<bool>(FieldBool.F, array);
-		//}
-
-		/// <summary>
 		/// Cast array of DateTimes.
 		/// </summary>
 		/// <param name="array">DateTimes.</param>

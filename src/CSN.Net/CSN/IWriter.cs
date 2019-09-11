@@ -9,7 +9,7 @@ namespace Abstraction.Csn
 	/// <summary>
 	/// ICsnWriter is the raw CSN Writer.
 	/// </summary>
-	public interface IWriter : IFieldWriter
+	public interface IWriter : IWriterField
 	{
 		/// <summary>
 		/// Write a TypeDef Record.
@@ -19,9 +19,9 @@ namespace Abstraction.Csn
 		/// <returns>Record Code.</returns>
 		IWriter WriteTypeDefRecord(string typeName, params string[] typeMembers);
 
-		IFieldWriter WriteInstanceRecord(RecordCode typeRef);
+		IWriterField WriteInstanceRecord(RecordCode typeRef);
 
-		IFieldWriter WriteInstanceFields(RecordCode typeRecCode);
+		IWriterField WriteInstanceFields(RecordCode typeRecCode);
 
 		/// <summary>
 		/// Write an Array Record.
