@@ -20,7 +20,9 @@ namespace Performance
 
 			//BenchmarkRunner.Run<PerfSer>();
 			//BenchmarkRunner.Run<PerfDeser>();
-			PerfBool.Program();
+
+			//PerfBool.Program();
+			PerfLong.Program();
 
 			Console.ReadLine();
 		}

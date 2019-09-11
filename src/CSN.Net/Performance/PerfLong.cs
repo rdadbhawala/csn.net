@@ -10,30 +10,29 @@ using System.Text;
 
 namespace Performance
 {
-	public static class PerfBool
+	public static class PerfLong
 	{
-		public static int ctr = 10000;
-		public static bool value = true;
+		public static long ctr = 10000;
 
 		public static void Program()
 		{
-			BenchmarkRunner.Run<PerfBoolCsnSer>();
-			BenchmarkRunner.Run<PerfBoolJsonSer>();
-			//BenchmarkRunner.Run<PerfBoolCsnDeser>();
-			//BenchmarkRunner.Run<PerfBoolJsonDeser>();
+			BenchmarkRunner.Run<PerfLongCsnSer>();
+			BenchmarkRunner.Run<PerfLongJsonSer>();
+			//BenchmarkRunner.Run<PerfLongCsnDeser>();
+			//BenchmarkRunner.Run<PerfLongJsonDeser>();
 		}
 
 		private static Stream GetStream()
 		{
-			return new MemoryStream();
+			return Stream.Null;
 		}
 
-		public class PerfBoolJsonSer
+		public class PerfLongJsonSer
 		{
 
 			StreamWriter sw = null;
 			JsonTextWriter jw = null;
-			internal Stream tgt = PerfBool.GetStream();
+			internal Stream tgt = PerfLong.GetStream();
 
 			[IterationSetup]
 			public void Setup()
@@ -43,31 +42,31 @@ namespace Performance
 			}
 
 			[Benchmark]
-			public void PerfBoolJsonSerDo()
+			public void PerfLongJsonSerDo()
 			{
 				jw.WriteStartArray();
-				for (int i = 0; i < PerfBool.ctr; i++)
+				for (long i = 0; i < PerfLong.ctr; i++)
 				{
-					jw.WriteValue(PerfBool.value);
+					jw.WriteValue(i);
 				}
 				jw.WriteEndArray();
 				jw.Flush();
 			}
 		}
 
-		public class PerfBoolJsonDeser
+		public class PerfLongJsonDeser
 		{
 			Stream mStream = new MemoryStream();
 			StreamReader sr = null;
 
-			public PerfBoolJsonDeser()
+			public PerfLongJsonDeser()
 			{
-				PerfBoolJsonSer ser = new PerfBoolJsonSer()
+				PerfLongJsonSer ser = new PerfLongJsonSer()
 				{
 					tgt = mStream
 				};
 				ser.Setup();
-				ser.PerfBoolJsonSerDo();
+				ser.PerfLongJsonSerDo();
 			}
 
 			[IterationSetup]
@@ -78,7 +77,7 @@ namespace Performance
 			}
 
 			[Benchmark]
-			public void PerfBookJsonDeserDo()
+			public void PerfLongJsonDeserDo()
 			{
 				JsonTextReader jReader = new JsonTextReader(sr);
 				while (jReader.Read())
@@ -86,11 +85,11 @@ namespace Performance
 			}
 		}
 
-		public class PerfBoolCsnSer
+		public class PerfLongCsnSer
 		{
 			StreamWriter sw = null;
 			Writer w = null;
-			internal Stream tgt = PerfBool.GetStream();
+			internal Stream tgt = PerfLong.GetStream();
 
 			[IterationSetup]
 			public void Setup()
@@ -100,29 +99,29 @@ namespace Performance
 			}
 
 			[Benchmark]
-			public void PerfBoolCsnSerDo()
+			public void PerfLongCsnSerDo()
 			{
-				IWriterField fw = w.WriteArrayPrimitives(PrimitiveType.Bool);
-				for (int i = 0; i < PerfBool.ctr; i++)
+				IWriterField fw = w.WriteArrayPrimitives(PrimitiveType.Int);
+				for (long i = 0; i < PerfLong.ctr; i++)
 				{
-					fw.W(PerfBool.value);
+					fw.W(i);
 				}
 			}
 		}
 
-		public class PerfBoolCsnDeser
+		public class PerfLongCsnDeser
 		{
 			Stream mStream = new MemoryStream();
 			StreamReader sr = null;
 
-			public PerfBoolCsnDeser()
+			public PerfLongCsnDeser()
 			{
-				PerfBoolCsnSer ser = new PerfBoolCsnSer
+				PerfLongCsnSer ser = new PerfLongCsnSer
 				{
 					tgt = mStream
 				};
 				ser.Setup();
-				ser.PerfBoolCsnSerDo();
+				ser.PerfLongCsnSerDo();
 			}
 
 			[IterationSetup]
@@ -133,7 +132,7 @@ namespace Performance
 			}
 
 			[Benchmark]
-			public void PerfBoolCsnDeserDo()
+			public void PerfLongCsnDeserDo()
 			{
 				Reader.Singleton.Read(sr, new ReadRec());
 			}
