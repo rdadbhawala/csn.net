@@ -1,4 +1,5 @@
-﻿using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Running;
 using System;
 using System.IO;
 using System.Text;
@@ -18,7 +19,10 @@ namespace Performance
 			//WriteSer(json2, "d:\\Temp\\tz-json-short.txt", csnTzs);
 
 			//BenchmarkRunner.Run<PerfSer>();
-			BenchmarkRunner.Run<PerfDeser>();
+			//BenchmarkRunner.Run<PerfDeser>();
+
+			PerfBool.Program();
+
 
 			Console.ReadLine();
 		}

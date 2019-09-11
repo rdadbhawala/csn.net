@@ -88,6 +88,38 @@ namespace Abstraction.Csn
 			return this;
 		}
 
+		public IFieldWriter WriteArrayPrimitives(PrimitiveType p)
+		{
+			this.sw.Write(Constants.RecordSeparator);
+			this.WriteRecordCode(RecordType.Array, Constants.RecordTypeChar.Array);
+			WritePrimitiveType(p);
+			return this;
+		}
+
+		private void WritePrimitiveType(PrimitiveType p)
+		{
+			sw.Write(Constants.FieldSeparator);
+			sw.Write(Constants.Primitives.Prefix);
+			switch (p)
+			{
+				case PrimitiveType.Bool:
+					sw.Write(Constants.Primitives.Bool);
+					break;
+				case PrimitiveType.DateTime:
+					sw.Write(Constants.Primitives.DateTime);
+					break;
+				case PrimitiveType.Int:
+					sw.Write(Constants.Primitives.Integer);
+					break;
+				case PrimitiveType.Real:
+					sw.Write(Constants.Primitives.Real);
+					break;
+				case PrimitiveType.String:
+					sw.Write(Constants.Primitives.String);
+					break;
+			}
+		}
+
 		/// <summary>
 		/// Write an Array of Referneces.
 		/// </summary>
@@ -126,6 +158,8 @@ namespace Abstraction.Csn
 		public IFieldWriter W(bool value)
 		{
 			FieldBool.F.WriteField(this.sw, value);
+			//sw.Write(Constants.FieldSeparator);
+			//sw.Write(value ? Constants.BoolTrue : Constants.BoolFalse);
 			return this;
 		}
 
