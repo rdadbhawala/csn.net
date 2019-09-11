@@ -15,15 +15,6 @@ namespace Abstraction.Csn
 	public abstract class CastArray : IValues
 	{
 		/// <summary>
-		/// Cast array of Integers.
-		/// </summary>
-		/// <param name="array">array.</param>
-		public static implicit operator CastArray(long[] array)
-		{
-			return new Array<long>(FieldLong.F, array);
-		}
-
-		/// <summary>
 		/// Cast array of Strings.
 		/// </summary>
 		/// <param name="array">Strings.</param>

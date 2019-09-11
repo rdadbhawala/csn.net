@@ -21,15 +21,6 @@ namespace Abstraction.Csn
 			return new Primitive<string>(FieldString.F, s);
 		}
 
-		///// <summary>
-		///// Convert a boolean to a Primitive.
-		///// </summary>
-		///// <param name="b">boolean to convert.</param>
-		//public static implicit operator CastPrimitive(bool b)
-		//{
-		//	return new Primitive<bool>(FieldBool.F, b);
-		//}
-
 		/// <summary>
 		/// PrimitiveCast for DateTime values.
 		/// </summary>
@@ -37,15 +28,6 @@ namespace Abstraction.Csn
 		public static implicit operator CastPrimitive(DateTime dt)
 		{
 			return new Primitive<DateTime>(FieldDateTime.F, dt);
-		}
-
-		/// <summary>
-		/// PrimitiveCast for Long values.
-		/// </summary>
-		/// <param name="l">long value.</param>
-		public static implicit operator CastPrimitive(long l)
-		{
-			return new Primitive<long>(FieldLong.F, l);
 		}
 
 		/// <summary>

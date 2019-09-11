@@ -21,5 +21,7 @@ namespace Abstraction.Csn
 		RecordCode Current { get; }
 
 		IFieldWriter W(bool[] values);
+
+		IFieldWriter W(long[] values);
 	}
 }

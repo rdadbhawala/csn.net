@@ -168,7 +168,17 @@ namespace Abstraction.Csn
 
 		public IFieldWriter W(long value)
 		{
-			FieldLong.F.WriteField(this.sw, value);
+			sw.Write(Constants.FieldSeparator);
+			sw.Write(value);
+			return this;
+		}
+
+		public IFieldWriter W(long[] values)
+		{
+			for (int i = 0; i < values.Length; i++)
+			{
+				W(values[i]);
+			}
 			return this;
 		}
 
