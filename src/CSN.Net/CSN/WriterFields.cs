@@ -5,16 +5,16 @@ using System.Text;
 
 namespace Abstraction.Csn
 {
-    public class WriterField : IWriterField
+    public partial class Writer
     {
 		protected readonly StreamWriter sw = null;
 
 		public RecordCode Current { get; protected set; }
 
-		public WriterField(StreamWriter pSw)
-		{
-			this.sw = pSw;
-		}
+		//public WriterField(StreamWriter pSw)
+		//{
+		//	this.sw = pSw;
+		//}
 
 		public IWriterField W(string value)
 		{

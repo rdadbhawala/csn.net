@@ -10,7 +10,7 @@ namespace Abstraction.Csn
 	/// <summary>
 	/// CsnWriter is an implementation of ICsnWriter.
 	/// </summary>
-	public class Writer : WriterField, IWriter
+	public partial class Writer : IWriter
 	{
 		private long recordCounter = -1;
 
@@ -20,10 +20,11 @@ namespace Abstraction.Csn
 		/// <param name="pStream">The IO Stream on which to write the CSN Payload.</param>
 		/// <param name="pConfig">Configuration parameters for CSN.</param>
 		public Writer(StreamWriter pStream)
-			: base (pStream)
 		{
+			this.sw = pStream;
 			this.WriteVersionRecord();
 		}
+
 
 		/// <summary>
 		/// Write a TypeDef Record.
