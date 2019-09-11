@@ -41,35 +41,24 @@ namespace Abstraction.Csn
 		public IWriter WriteTypeDefRecord(string typeName, params string[] typeMembers)
 		{
 			this.sw.Write(Constants.RecordSeparator);
-			this.WriteRecordCode(RecordType.TypeDef, Constants.RecordTypeChar.TypeDef);
+			this.WriteNewRecord(RecordType.TypeDef, Constants.RecordTypeChar.TypeDef);
 			FieldString.F.WriteField(this.sw, typeName);
 			FieldString.F.WriteFields(this.sw, typeMembers);
 			return this;
 		}
 
-		/// <summary>
-		/// Write an Instance Record.
-		/// </summary>
-		/// <param name="typeRecCode">Record Code of Instance Type.</param>
-		/// <param name="values">Values of Instance.</param>
-		/// <returns>Record Code.</returns>
-		public IWriter WriteInstanceRecord(RecordCode typeRecCode, params CastPrimitive[] values)
+		public IFieldWriter WriteInstanceRecord(RecordCode typeRef)
 		{
 			this.sw.Write(Constants.RecordSeparator);
-			this.WriteRecordCode(RecordType.Instance, Constants.RecordTypeChar.Instance);
-			FieldReference.F.WriteField(this.sw, typeRecCode);
-			for (int pCtr = 0; pCtr < values.Length; pCtr++)
-			{
-				values[pCtr].WriteValue(this.sw);
-			}
-
+			this.WriteNewRecord(RecordType.Instance, Constants.RecordTypeChar.Instance);
+			this.WriteRecordCode(typeRef);
 			return this;
 		}
 
 		public IFieldWriter WriteInstanceFields(RecordCode typeRecCode)
 		{
 			this.sw.Write(Constants.RecordSeparator);
-			this.WriteRecordCode(RecordType.Instance, Constants.RecordTypeChar.Instance);
+			this.WriteNewRecord(RecordType.Instance, Constants.RecordTypeChar.Instance);
 			FieldReference.F.WriteField(this.sw, typeRecCode);
 			return this;
 		}
@@ -82,7 +71,7 @@ namespace Abstraction.Csn
 		public IWriter WriteArrayRecord(CastArray values)
 		{
 			this.sw.Write(Constants.RecordSeparator);
-			this.WriteRecordCode(RecordType.Array, Constants.RecordTypeChar.Array);
+			this.WriteNewRecord(RecordType.Array, Constants.RecordTypeChar.Array);
 			values.WriteType(this.sw);
 			values.WriteValues(this.sw);
 			return this;
@@ -91,7 +80,7 @@ namespace Abstraction.Csn
 		public IFieldWriter WriteArrayPrimitives(PrimitiveType p)
 		{
 			this.sw.Write(Constants.RecordSeparator);
-			this.WriteRecordCode(RecordType.Array, Constants.RecordTypeChar.Array);
+			this.WriteNewRecord(RecordType.Array, Constants.RecordTypeChar.Array);
 			WritePrimitiveType(p);
 			return this;
 		}
@@ -129,7 +118,7 @@ namespace Abstraction.Csn
 		public IWriter WriteArrayRecord(RecordCode refType, RecordCode[] arrayElements)
 		{
 			this.sw.Write(Constants.RecordSeparator);
-			this.WriteRecordCode(RecordType.Array, Constants.RecordTypeChar.Array);
+			this.WriteNewRecord(RecordType.Array, Constants.RecordTypeChar.Array);
 			FieldReference.F.WriteField(this.sw, refType);
 			FieldReference.F.WriteFields(this.sw, arrayElements);
 			return this;
@@ -137,11 +126,11 @@ namespace Abstraction.Csn
 
 		private void WriteVersionRecord()
 		{
-			this.WriteRecordCode(RecordType.Version, Constants.RecordTypeChar.Version);
+			this.WriteNewRecord(RecordType.Version, Constants.RecordTypeChar.Version);
 			FieldString.F.WriteField(this.sw, Constants.CsnVersion);
 		}
 
-		private void WriteRecordCode(RecordType recType, char rType)
+		private void WriteNewRecord(RecordType recType, char rType)
 		{
 			this.recordCounter++;
 			this.sw.Write(rType);
@@ -157,9 +146,17 @@ namespace Abstraction.Csn
 
 		public IFieldWriter W(bool value)
 		{
-			FieldBool.F.WriteField(this.sw, value);
-			//sw.Write(Constants.FieldSeparator);
-			//sw.Write(value ? Constants.BoolTrue : Constants.BoolFalse);
+			sw.Write(Constants.FieldSeparator);
+			sw.Write(value ? Constants.BoolTrue : Constants.BoolFalse);
+			return this;
+		}
+
+		public IFieldWriter W(bool[] values)
+		{
+			for (int i = 0; i < values.Length; i++)
+			{
+				W(values[i]);
+			}
 			return this;
 		}
 
@@ -183,8 +180,22 @@ namespace Abstraction.Csn
 
 		public IFieldWriter W(RecordCode value)
 		{
-			FieldReference.F.WriteField(this.sw, value);
+			WriteRecordCode(value);
 			return this;
+		}
+
+		protected void WriteRecordCode(RecordCode value)
+		{
+			if (value == null)
+			{
+				sw.Write(Constants.FieldSeparator);
+			}
+			else
+			{
+				sw.Write(Constants.FieldSeparator);
+				sw.Write(Constants.ReferencePrefix);
+				sw.Write(value.SequenceNo);
+			}
 		}
 	}
 }

@@ -21,14 +21,14 @@ namespace Abstraction.Csn
 			return new Primitive<string>(FieldString.F, s);
 		}
 
-		/// <summary>
-		/// Convert a boolean to a Primitive.
-		/// </summary>
-		/// <param name="b">boolean to convert.</param>
-		public static implicit operator CastPrimitive(bool b)
-		{
-			return new Primitive<bool>(FieldBool.F, b);
-		}
+		///// <summary>
+		///// Convert a boolean to a Primitive.
+		///// </summary>
+		///// <param name="b">boolean to convert.</param>
+		//public static implicit operator CastPrimitive(bool b)
+		//{
+		//	return new Primitive<bool>(FieldBool.F, b);
+		//}
 
 		/// <summary>
 		/// PrimitiveCast for DateTime values.

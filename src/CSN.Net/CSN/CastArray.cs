@@ -32,14 +32,14 @@ namespace Abstraction.Csn
 			return new Array<string>(FieldString.F, array);
 		}
 
-		/// <summary>
-		/// Cast array of Bools.
-		/// </summary>
-		/// <param name="array">Bools.</param>
-		public static implicit operator CastArray(bool[] array)
-		{
-			return new Array<bool>(FieldBool.F, array);
-		}
+		///// <summary>
+		///// Cast array of Bools.
+		///// </summary>
+		///// <param name="array">Bools.</param>
+		//public static implicit operator CastArray(bool[] array)
+		//{
+		//	return new Array<bool>(FieldBool.F, array);
+		//}
 
 		/// <summary>
 		/// Cast array of DateTimes.

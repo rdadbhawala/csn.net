@@ -19,13 +19,7 @@ namespace Abstraction.Csn
 		/// <returns>Record Code.</returns>
 		IWriter WriteTypeDefRecord(string typeName, params string[] typeMembers);
 
-		/// <summary>
-		/// Write an Instance Record.
-		/// </summary>
-		/// <param name="typeRecCode">RecordCode of Instance Type.</param>
-		/// <param name="values">Values of Instance.</param>
-		/// <returns>Record Code.</returns>
-		IWriter WriteInstanceRecord(RecordCode typeRecCode, params CastPrimitive[] values);
+		IFieldWriter WriteInstanceRecord(RecordCode typeRef);
 
 		IFieldWriter WriteInstanceFields(RecordCode typeRecCode);
 
