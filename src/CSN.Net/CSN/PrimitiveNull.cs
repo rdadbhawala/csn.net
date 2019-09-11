@@ -4,6 +4,7 @@
 
 namespace Abstraction.Csn
 {
+	using System;
 	using System.IO;
 
 	/// <summary>
@@ -28,7 +29,7 @@ namespace Abstraction.Csn
 		/// <param name="sw">Stream to write unto.</param>
 		public override void WriteValue(StreamWriter sw)
 		{
-			FieldNull.F.WriteField(sw);
+			throw new NotImplementedException();
 		}
 	}
 }

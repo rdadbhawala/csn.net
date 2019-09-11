@@ -22,6 +22,8 @@ namespace Abstraction.Csn
 		IWriterField W(RecordCode value);
 		IWriterField W(RecordCode[] values);
 
+		IWriterField WNull();
+
 		RecordCode Current { get; }
 	}
 }

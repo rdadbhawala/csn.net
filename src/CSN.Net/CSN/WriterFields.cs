@@ -11,11 +11,6 @@ namespace Abstraction.Csn
 
 		public RecordCode Current { get; protected set; }
 
-		//public WriterField(StreamWriter pSw)
-		//{
-		//	this.sw = pSw;
-		//}
-
 		public IWriterField W(string value)
 		{
 			sw.Write(Constants.FieldSeparator);
@@ -118,6 +113,12 @@ namespace Abstraction.Csn
 			{
 				W(values[i]);
 			}
+			return this;
+		}
+
+		public IWriterField WNull()
+		{
+			sw.Write(Constants.FieldSeparator);
 			return this;
 		}
 	}
