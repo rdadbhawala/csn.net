@@ -89,13 +89,29 @@ namespace Abstraction.Csn
 				value /= 10;
 			}
 		}
-		private readonly char[] chDigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
+		private static readonly char[] chDigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+		private static readonly char chMinus = '-';
+		private const int longArrLen = 20;
 
 		public IWriterField W(long value)
 		{
 			sw.Write(Constants.FieldSeparator);
-			sw.Write(value);
+			if (value < 0)
+			{
+				sw.Write(chMinus);
+				value = -value;
+			}
+			char[] chValue = new char[longArrLen];
+			int pos = chValue.Length - 1;
+			do
+			{
+				chValue[pos] = chDigits[value % 10];
+				value /= 10;
+				pos--;
+			} while (value > 0);
+			pos++;
+			sw.Write(chValue, pos, longArrLen - pos);
 			return this;
 		}
 
