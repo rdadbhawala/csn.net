@@ -97,6 +97,12 @@ namespace Abstraction.Csn
 		public IWriterField W(long value)
 		{
 			sw.Write(Constants.FieldSeparator);
+			WriteLongRaw(value);
+			return this;
+		}
+
+		private void WriteLongRaw(long value)
+		{
 			if (value < 0)
 			{
 				sw.Write(chMinus);
@@ -112,7 +118,6 @@ namespace Abstraction.Csn
 			} while (value > 0);
 			pos++;
 			sw.Write(chValue, pos, longArrLen - pos);
-			return this;
 		}
 
 		public IWriterField W(long[] values)
@@ -150,7 +155,7 @@ namespace Abstraction.Csn
 			{
 				sw.Write(Constants.FieldSeparator);
 				sw.Write(Constants.ReferencePrefix);
-				sw.Write(value.SequenceNo);
+				WriteLongRaw(value.SequenceNo);
 			}
 			return this;
 		}
