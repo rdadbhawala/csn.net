@@ -14,7 +14,7 @@ namespace Performance
 		private readonly JsonSer jcore = null;
 		private readonly JsonObjSer jobjcore = new JsonObjSer();
 		private StreamWriter sw = null;
-		private Stream tgt = new MemoryStream();
+		private Stream tgt = null; // new MemoryStream();
 
 		public PerfSer()
 		{
@@ -27,6 +27,7 @@ namespace Performance
 		[IterationSetup]
 		public void IterationSetup()
 		{
+			tgt = new MemoryStream();
 			this.sw = new StreamWriter(tgt, Encoding.UTF8);
 		}
 

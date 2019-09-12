@@ -85,8 +85,9 @@ namespace Abstraction.Csn
 		}
 
 		private static readonly char[] chDigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-		private static readonly char chMinus = '-';
+		private const char chMinus = '-';
 		private const int longArrLen = 20;
+		private const char chDecimal = '.';
 
 		public IWriterField W(long value)
 		{
@@ -127,7 +128,23 @@ namespace Abstraction.Csn
 		public IWriterField W(double value)
 		{
 			sw.Write(Constants.FieldSeparator);
-			sw.Write(value);
+
+			bool hasDecimal = false;
+			String str = value.ToString();
+			foreach (char ch in str)
+			{
+				if (ch == chDecimal)
+				{
+					hasDecimal = true;
+				}
+				sw.Write(ch);
+			}
+			if (!hasDecimal)
+			{
+				sw.Write(chDecimal);
+				sw.Write(chDigits[0]);
+			}
+
 			return this;
 		}
 
