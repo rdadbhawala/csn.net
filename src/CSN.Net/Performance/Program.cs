@@ -23,6 +23,7 @@ namespace Performance
 
 			//PerfBool.Program();
 			//PerfLong.Program();
+			//PerfString.Program();
 
 			Console.ReadLine();
 		}

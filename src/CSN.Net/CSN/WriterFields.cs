@@ -18,20 +18,14 @@ namespace Abstraction.Csn
 			{
 				sw.Write(Constants.StringFieldEncloser);
 
-				int charsLen = value.Length;
-				if (charsLen > 0)
+				foreach (char v in value)
 				{
-					char[] chars = value.ToCharArray();
-					for (int charCtr = 0; charCtr < charsLen; charCtr++)
+					if (v == Constants.StringFieldEncloser || v == Constants.StringEscapeChar)
 					{
-						char v = chars[charCtr];
-						if (v == Constants.StringFieldEncloser || v == Constants.StringEscapeChar)
-						{
-							sw.Write(Constants.StringEscapeChar);
-						}
-
-						sw.Write(v);
+						sw.Write(Constants.StringEscapeChar);
 					}
+
+					sw.Write(v);
 				}
 
 				sw.Write(Constants.StringFieldEncloser);
