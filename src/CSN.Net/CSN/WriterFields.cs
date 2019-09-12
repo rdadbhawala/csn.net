@@ -75,6 +75,15 @@ namespace Abstraction.Csn
 			return this;
 		}
 
+		public IWriterField W(DateTime[] values)
+		{
+			for (int i = 0, j = values.Length; i < j; i++)
+			{
+				W(values[i]);
+			}
+			return this;
+		}
+
 		private void WriteIntToCharArr(char[] arrDt, int index, int len, int value)
 		{
 			for (int i = index + len - 1; i >= index && value > 0; i--)

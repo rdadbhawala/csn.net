@@ -13,6 +13,7 @@ namespace Abstraction.Csn
 		IWriterField W(string[] values);
 
 		IWriterField W(DateTime value);
+		IWriterField W(DateTime[] values);
 
 		IWriterField W(long value);
 		IWriterField W(long[] values);

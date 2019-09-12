@@ -81,18 +81,11 @@ namespace Abstraction.Csn
 			}
 		}
 
-		/// <summary>
-		/// Write an Array of Referneces.
-		/// </summary>
-		/// <param name="refType">Type of References.</param>
-		/// <param name="arrayElements">Elements of Array; Instances of Type.</param>
-		/// <returns>Record Code.</returns>
-		public IWriter WriteArray(RecordCode refType, params RecordCode[] arrayElements)
+		public IWriter WriteArray(RecordCode refType)
 		{
 			this.sw.Write(Constants.RecordSeparator);
 			this.WriteNewRecord(RecordType.Array, Constants.RecordTypeChar.Array);
 			W(refType);
-			W(arrayElements);
 			return this;
 		}
 

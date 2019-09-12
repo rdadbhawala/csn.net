@@ -21,7 +21,7 @@ namespace Performance
 			RecordCode tzsType = w.WriteTypeDef("TimeZones", "AllTimeZones").Current;
 
 			var rcTzs = ctzs.AllTimeZones.Select(x => WriteTz(x, w, tzType, adjType, ttType));
-			RecordCode rc = w.WriteArray(tzType, rcTzs.ToArray()).Current;
+			RecordCode rc = w.WriteArray(tzType).W(rcTzs.ToArray()).Current;
 			w.WriteInstance(tzsType).W(rc);
 			sw.Flush();
 		}
@@ -32,7 +32,7 @@ namespace Performance
 			if (x.Adjustments != null)
 			{
 				var rcAdjs = x.Adjustments.Select(y => WriteAdj(y, w, adjType, ttType));
-				rcAdjArr = w.WriteArray(adjType, rcAdjs.ToArray()).Current;
+				rcAdjArr = w.WriteArray(adjType).W(rcAdjs.ToArray()).Current;
 			}
 			return w.WriteInstance(tzType).W(x.Id).W(x.DisplayName).W(x.DaylightName).W(x.StandardName).W(x.HasDst).W(x.UtcOffsetHours).W(rcAdjArr).Current;
 		}

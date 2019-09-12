@@ -17,6 +17,6 @@ namespace Abstraction.Csn
 
 		IWriterField WriteArray(PrimitiveType p);
 
-		IWriter WriteArray(RecordCode refType, params RecordCode[] arrayElements);
+		IWriter WriteArray(RecordCode refType); //, params RecordCode[] arrayElements);
 	}
 }

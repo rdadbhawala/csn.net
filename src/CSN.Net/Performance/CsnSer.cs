@@ -45,12 +45,12 @@ namespace Performance
 							arrAdjs[adjCtr] = w.WriteInstance(adjType).W(adj.StartDate).W(adj.EndDate).W(adj.DaylightDeltaHours).W(rcTtStart).W(rcTtEnd).Current;
 						}
 
-						rcAdjArr = w.WriteArray(adjType, arrAdjs).Current;
+						rcAdjArr = w.WriteArray(adjType).W(arrAdjs).Current;
 					}
 				}
 				rcTzsArr[tzCtr] = w.WriteInstance(tzType).W(ctz.Id).W(ctz.DisplayName).W(ctz.DaylightName).W(ctz.StandardName).W(ctz.HasDst).W(ctz.UtcOffsetHours).W(rcAdjArr).Current;
 			}
-			RecordCode  rc = w.WriteArray(tzType, rcTzsArr).Current;
+			RecordCode  rc = w.WriteArray(tzType).W(rcTzsArr).Current;
 			w.WriteInstance(tzsType).W(rc);
 			sw.Flush();
 		}
