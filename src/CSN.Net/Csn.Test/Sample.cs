@@ -18,15 +18,15 @@ namespace Abstraction.Csn.Test
 
 			IWriter csnw = new Writer(sWriter);
 
-			RecordCode tRef = csnw.WriteTypeDefRecord("AllPrimitives", "BooleanTrue", "BooleanFalse", "DateTime", "String", "Real", "Integer").Current;
+			RecordCode tRef = csnw.WriteTypeDef("AllPrimitives", "BooleanTrue", "BooleanFalse", "DateTime", "String", "Real", "Integer").Current;
 			Assert.AreEqual(1, tRef.SequenceNo, "Ref Type - All Primitives");
 
-			RecordCode iRef = csnw.WriteInstanceRecord(tRef).W(true).W(false).W(new DateTime(2019, 03, 12, 19, 24, 33, 567, DateTimeKind.Utc)).W("Label").W(-123.45).W(345).Current;
+			RecordCode iRef = csnw.WriteInstance(tRef).W(true).W(false).W(new DateTime(2019, 03, 12, 19, 24, 33, 567, DateTimeKind.Utc)).W("Label").W(-123.45).W(345).Current;
 			Assert.AreEqual(2, iRef.SequenceNo);
 
-			RecordCode paRef = csnw.WriteArrayRecord(new long[]{10, 20, 30, 40, 50}).Current;
+			RecordCode paRef = csnw.WriteArray(PrimitiveType.Int).W(new long[]{10, 20, 30, 40, 50}).Current;
 
-			RecordCode objRef = csnw.WriteArrayRecord(tRef, new RecordCode[] {iRef}).Current;
+			RecordCode objRef = csnw.WriteArray(tRef, iRef).Current;
 
 			// read the contents
 			sWriter.Flush();

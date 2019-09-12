@@ -102,7 +102,7 @@ namespace Performance
 			[Benchmark]
 			public void PerfStringCsnSerDo()
 			{
-				IWriterField fw = w.WriteArrayPrimitives(PrimitiveType.String);
+				IWriterField fw = w.WriteArray(PrimitiveType.String);
 				for (long i = 0; i < PerfString.ctr; i++)
 				{
 					fw.W(PerfString.value);

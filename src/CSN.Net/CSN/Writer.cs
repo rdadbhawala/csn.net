@@ -49,7 +49,7 @@ namespace Abstraction.Csn
 			return this;
 		}
 
-		public IWriterField WriteArrayPrimitives(PrimitiveType p)
+		public IWriterField WriteArray(PrimitiveType p)
 		{
 			this.sw.Write(Constants.RecordSeparator);
 			this.WriteNewRecord(RecordType.Array, Constants.RecordTypeChar.Array);
@@ -87,7 +87,7 @@ namespace Abstraction.Csn
 		/// <param name="refType">Type of References.</param>
 		/// <param name="arrayElements">Elements of Array; Instances of Type.</param>
 		/// <returns>Record Code.</returns>
-		public IWriter WriteArrayRefs(RecordCode refType, params RecordCode[] arrayElements)
+		public IWriter WriteArray(RecordCode refType, params RecordCode[] arrayElements)
 		{
 			this.sw.Write(Constants.RecordSeparator);
 			this.WriteNewRecord(RecordType.Array, Constants.RecordTypeChar.Array);

@@ -54,7 +54,7 @@ namespace FiguringItOut
 				Console.WriteLine("Array " + arrRec.Code.SequenceNo + " of " + arrRec.Primitive.ToString());
 			}
 
-			public void ReadValue(ValueRecord rec, int index, PrimitiveNull value)
+			public void ReadValueNull(ValueRecord rec, int index)
 			{
 				Console.WriteLine(index + ") Value null");
 			}
