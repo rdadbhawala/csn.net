@@ -27,7 +27,7 @@ namespace Performance
 		[IterationSetup]
 		public void IterationSetup()
 		{
-			tgt = new MemoryStream();
+			tgt = Stream.Null;
 			this.sw = new StreamWriter(tgt, Encoding.UTF8);
 		}
 

@@ -24,7 +24,8 @@ namespace Performance
 			//PerfBool.Program();
 			//PerfLong.Program();
 			//PerfString.Program();
-			PerfDouble.Program();
+			//PerfDouble.Program();
+			PerfDateTime.Program();
 
 			Console.ReadLine();
 		}
