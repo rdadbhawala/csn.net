@@ -273,7 +273,7 @@ namespace Abstraction.Csn
 			{
 				readChar = args.Stream.Read();
 				expectedSeqNo = stkSeqNo.Pop();
-				if (ReaderHelper.digitChInts[expectedSeqNo] != readChar)
+				if ((expectedSeqNo + ReaderHelper.iDigit0) != readChar)
 				{
 					throw Error.UnexpectedChars('0', Convert.ToChar(readChar));
 				}
@@ -296,7 +296,8 @@ namespace Abstraction.Csn
 			while (true)
 			{
 				readChar = args.Stream.Read();
-				if (ReaderHelper.DigitMap.TryGetValue(readChar, out mapValue))
+				mapValue = readChar - ReaderHelper.iDigit0;
+				if (mapValue >= 0 && mapValue < 10)
 				{
 					seqNo = (seqNo * 10) + mapValue;
 				}
@@ -317,7 +318,7 @@ namespace Abstraction.Csn
 				}
 				else
 				{
-					throw Error.Unexpected(ErrorCode.UnexpectedChars, '0', mapValue);
+					throw Error.Unexpected(ErrorCode.UnexpectedChars, readChar, mapValue);
 				}
 			}
 
@@ -350,7 +351,7 @@ namespace Abstraction.Csn
 			{
 				int readChar = stream.Read();
 				mapValue = readChar - ReaderHelper.iDigit0;
-				if (mapValue < 10)
+				if (mapValue >= 0 && mapValue < 10)
 				{
 					value = (value * 10) + mapValue;
 				}
@@ -551,11 +552,7 @@ namespace Abstraction.Csn
 		{
 			// read array type: primitive or typeDef
 			int readChar = args.Stream.Read();
-			if (readChar == -1)
-			{
-				throw new Error(ErrorCode.UnexpectedEOF);
-			}
-			else if (readChar == ReaderHelper.iRefPrefix)
+			if (readChar == ReaderHelper.iRefPrefix)
 			{
 				Record refRec = base.ReadRef(args, false);
 				if (refRec.Code.RecType != RecordType.TypeDef)
@@ -565,6 +562,8 @@ namespace Abstraction.Csn
 				ArrayRefsRecord rec = new ArrayRefsRecord(args.CurrentRC, (TypeDefRecord)refRec);
 				args.SetupRecord(rec);
 				args.Read.Read(rec);
+
+				// no need to read extra char as base.readRef has already done that
 			}
 			else if (readChar == ReaderHelper.iPrimitivePrefix)
 			{
@@ -597,7 +596,7 @@ namespace Abstraction.Csn
 			}
 			else
 			{
-				throw Error.UnexpectedChars(Constants.RecordTypeChar.Array, Convert.ToChar(readChar));
+				throw Error.Unexpected(ErrorCode.UnexpectedChars, Constants.RecordTypeChar.Array, readChar);
 			}
 		}
 	}
@@ -675,10 +674,20 @@ namespace Abstraction.Csn
 
 	class ReaderHelper
 	{
-		public static readonly Dictionary<int, long> DigitMap = null;
-		public static readonly Dictionary<int, int> DigitMapInt = null;
-
 		public static readonly int iDigit0 = Convert.ToInt32('0');
+		//public static readonly long[] iDigitsLong =
+		//{
+		//		Convert.ToInt32('0'),
+		//		Convert.ToInt32('1'),
+		//		Convert.ToInt32('2'),
+		//		Convert.ToInt32('3'),
+		//		Convert.ToInt32('4'),
+		//		Convert.ToInt32('5'),
+		//		Convert.ToInt32('6'),
+		//		Convert.ToInt32('7'),
+		//		Convert.ToInt32('8'),
+		//		Convert.ToInt32('9')
+		//};
 
 		public static readonly int iVersion = Convert.ToInt32(Constants.RecordTypeChar.Version);
 		public static readonly int iTypeDef = Convert.ToInt32(Constants.RecordTypeChar.TypeDef);
@@ -699,19 +708,6 @@ namespace Abstraction.Csn
 		public static readonly int iPrimLong = Convert.ToInt32(Constants.Primitives.Integer);
 		public static readonly int iPrimString = Convert.ToInt32(Constants.Primitives.String);
 
-		public static readonly int[] digitChInts = {
-			Convert.ToInt32('0'),
-			Convert.ToInt32('1'),
-			Convert.ToInt32('2'),
-			Convert.ToInt32('3'),
-			Convert.ToInt32('4'),
-			Convert.ToInt32('5'),
-			Convert.ToInt32('6'),
-			Convert.ToInt32('7'),
-			Convert.ToInt32('8'),
-			Convert.ToInt32('9'),
-		};
-
 		public static PrimitiveType GetPrimitiveTypeByReadChar(int readChar)
 		{
 			return (readChar == iPrimBool) ? PrimitiveType.Bool :
@@ -720,36 +716,6 @@ namespace Abstraction.Csn
 				(readChar == iPrimLong) ? PrimitiveType.Int :
 				(readChar == iPrimString) ? PrimitiveType.String :
 				PrimitiveType.Unknown;
-		}
-
-		static ReaderHelper()
-		{
-			DigitMap = new Dictionary<int, long>
-			{
-				[Convert.ToInt32('0')] = 0L,
-				[Convert.ToInt32('1')] = 1L,
-				[Convert.ToInt32('2')] = 2L,
-				[Convert.ToInt32('3')] = 3L,
-				[Convert.ToInt32('4')] = 4L,
-				[Convert.ToInt32('5')] = 5L,
-				[Convert.ToInt32('6')] = 6L,
-				[Convert.ToInt32('7')] = 7L,
-				[Convert.ToInt32('8')] = 8L,
-				[Convert.ToInt32('9')] = 9L
-			};
-			DigitMapInt = new Dictionary<int, int>
-			{
-				[Convert.ToInt32('0')] = 0,
-				[Convert.ToInt32('1')] = 1,
-				[Convert.ToInt32('2')] = 2,
-				[Convert.ToInt32('3')] = 3,
-				[Convert.ToInt32('4')] = 4,
-				[Convert.ToInt32('5')] = 5,
-				[Convert.ToInt32('6')] = 6,
-				[Convert.ToInt32('7')] = 7,
-				[Convert.ToInt32('8')] = 8,
-				[Convert.ToInt32('9')] = 9
-			};
 		}
 
 		public static RecordType ResolveRecordType(int charInt)

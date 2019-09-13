@@ -82,7 +82,7 @@ namespace Performance
 			}
 
 			[Benchmark]
-			public void PerfBookJsonDeserDo()
+			public void PerfDateTimeJsonDeserDo()
 			{
 				JsonTextReader jReader = new JsonTextReader(sr);
 				while (jReader.Read())

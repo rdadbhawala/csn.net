@@ -174,11 +174,11 @@ namespace Performance
 
 				public void ReadValue(ValueRecord rec, int index, bool value)
 				{
+					throw new InvalidOperationException();
 				}
 
 				public void ReadValue(ValueRecord rec, int index, long value)
 				{
-					throw new InvalidOperationException();
 				}
 
 				public void ReadValue(ValueRecord rec, int index, double value)
