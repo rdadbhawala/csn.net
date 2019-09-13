@@ -22,10 +22,10 @@ namespace Performance
 			//BenchmarkRunner.Run<PerfDeser>();
 
 			//PerfBool.Program();
-			//PerfLong.Program();
+			PerfLong.Program();
 			//PerfString.Program();
 			//PerfDouble.Program();
-			PerfDateTime.Program();
+			//PerfDateTime.Program();
 
 			Console.ReadLine();
 		}

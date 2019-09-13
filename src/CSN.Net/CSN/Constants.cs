@@ -55,6 +55,7 @@ namespace Abstraction.Csn
 		/// DateTime field prefix.
 		/// </summary>
 		public const char DateTimePrefix = 'D';
+		public const char DateTimeT = 'T';
 
 		/// <summary>
 		/// Record Type Characters.
