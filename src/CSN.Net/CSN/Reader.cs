@@ -338,10 +338,15 @@ namespace Abstraction.Csn
 			for (int ctr = 0; ctr < len; ctr++)
 			{
 				readChar = stream.Read();
-				if (ReaderHelper.DigitMapInt.TryGetValue(readChar, out mapValue))
+				mapValue = ReaderHelper.getDigitInt(readChar);
+				if (mapValue < 10)
 				{
 					value = (value * 10) + mapValue;
 				}
+				//if (ReaderHelper.DigitMapInt.TryGetValue(readChar, out mapValue))
+				//{
+				//	value = (value * 10) + mapValue;
+				//}
 				else
 				{
 					throw Error.UnexpectedChars('0', Convert.ToChar(readChar));
@@ -686,6 +691,11 @@ namespace Abstraction.Csn
 			Convert.ToInt32('8'),
 			Convert.ToInt32('9'),
 		};
+
+		public static int getDigitInt(int readChar)
+		{
+			return readChar - digitChInts[0];
+		}
 
 		static ReaderHelper()
 		{

@@ -21,10 +21,10 @@ namespace Performance
 			//Console.WriteLine(-val1 / 10);
 			//Console.WriteLine(-val2 / 10);
 			//Console.WriteLine(-val3 / 10);
-			BenchmarkRunner.Run<PerfDateTimeCsnSer>();
-			BenchmarkRunner.Run<PerfDateTimeJsonSer>();
-			//BenchmarkRunner.Run<PerfDateTimeCsnDeser>();
-			//BenchmarkRunner.Run<PerfDateTimeJsonDeser>();
+			//BenchmarkRunner.Run<PerfDateTimeCsnSer>();
+			//BenchmarkRunner.Run<PerfDateTimeJsonSer>();
+			BenchmarkRunner.Run<PerfDateTimeCsnDeser>();
+			BenchmarkRunner.Run<PerfDateTimeJsonDeser>();
 		}
 
 		private static Stream GetStream()
@@ -111,6 +111,7 @@ namespace Performance
 				{
 					fw.W(PerfDateTime.value);
 				}
+				sw.Flush();
 			}
 		}
 
@@ -179,6 +180,7 @@ namespace Performance
 
 				public void ReadValue(ValueRecord rec, int index, bool value)
 				{
+					throw new InvalidOperationException();
 				}
 
 				public void ReadValue(ValueRecord rec, int index, long value)
@@ -203,7 +205,6 @@ namespace Performance
 
 				public void ReadValue(ValueRecord rec, int index, DateTime value)
 				{
-					throw new InvalidOperationException();
 				}
 			}
 		}
