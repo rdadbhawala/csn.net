@@ -324,32 +324,39 @@ namespace Abstraction.Csn
 			return seqNo;
 		}
 
+		protected ReadStateBase ReadSkipOne(StreamReader stream)
+		{
+			if (stream.Read() == -1)
+			{
+				throw new Error(ErrorCode.UnexpectedEOF);
+			}
+			return this;
+		}
+
 		protected ReadStateBase ReadSkip(StreamReader stream, int skipInitial)
 		{
-			stream.Read(new char[skipInitial], 0, skipInitial);
+			if (stream.Read(new char[skipInitial], 0, skipInitial) != skipInitial)
+			{
+				throw new Error(ErrorCode.UnexpectedEOF);
+			}
 			return this;
 		}
 
 		public int ReadDateTimeDigits(StreamReader stream, int len)
 		{
 			int value = 0;
-			int readChar = 0;
 			int mapValue = 0;
 			for (int ctr = 0; ctr < len; ctr++)
 			{
-				readChar = stream.Read();
-				mapValue = ReaderHelper.getDigitInt(readChar);
+				int readChar = stream.Read();
+				mapValue = readChar - ReaderHelper.iDigit0;
 				if (mapValue < 10)
 				{
 					value = (value * 10) + mapValue;
 				}
-				//if (ReaderHelper.DigitMapInt.TryGetValue(readChar, out mapValue))
-				//{
-				//	value = (value * 10) + mapValue;
-				//}
 				else
 				{
-					throw Error.UnexpectedChars('0', Convert.ToChar(readChar));
+					throw Error.Unexpected(ErrorCode.UnexpectedChars, '0', readChar);
 				}
 			}
 			return value;
@@ -477,7 +484,7 @@ namespace Abstraction.Csn
 					base.ReadDateTimeDigits(args.Stream, 4),
 					base.ReadDateTimeDigits(args.Stream, 2),
 					base.ReadDateTimeDigits(args.Stream, 2),
-					base.ReadSkip(args.Stream, 1).ReadDateTimeDigits(args.Stream, 2),
+					base.ReadSkipOne(args.Stream).ReadDateTimeDigits(args.Stream, 2),
 					base.ReadDateTimeDigits(args.Stream, 2),
 					base.ReadDateTimeDigits(args.Stream, 2),
 					base.ReadDateTimeDigits(args.Stream, 3)
@@ -666,6 +673,8 @@ namespace Abstraction.Csn
 		public static readonly Dictionary<int, int> DigitMapCh = null;
 		public static readonly Dictionary<int, PrimitiveType> PrimitiveMap = null;
 
+		public static readonly int iDigit0 = Convert.ToInt32('0');
+
 		public static readonly int iVersion = Convert.ToInt32(Constants.RecordTypeChar.Version);
 		public static readonly int iTypeDef = Convert.ToInt32(Constants.RecordTypeChar.TypeDef);
 		public static readonly int iArray = Convert.ToInt32(Constants.RecordTypeChar.Array);
@@ -691,11 +700,6 @@ namespace Abstraction.Csn
 			Convert.ToInt32('8'),
 			Convert.ToInt32('9'),
 		};
-
-		public static int getDigitInt(int readChar)
-		{
-			return readChar - digitChInts[0];
-		}
 
 		static ReaderHelper()
 		{
