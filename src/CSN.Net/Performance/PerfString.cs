@@ -130,7 +130,7 @@ namespace Performance
 			public void Setup()
 			{
 				mStream.Position = 0;
-				sr = new StreamReader(mStream, Encoding.UTF8);
+				sr = new StreamReader(new BufferedStream(mStream), Encoding.UTF8);
 			}
 
 			[Benchmark]
@@ -165,7 +165,7 @@ namespace Performance
 					throw new InvalidOperationException();
 				}
 
-				public void Read(ArrayPrimitivesRecod arrRec)
+				public void Read(ArrayPrimitivesRecord arrRec)
 				{
 				}
 

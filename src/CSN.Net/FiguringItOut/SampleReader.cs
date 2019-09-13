@@ -49,7 +49,7 @@ namespace FiguringItOut
 				Console.WriteLine("Array " + arrRec.Code.SequenceNo + " of " + arrRec.TypeRef.Name);
 			}
 
-			public void Read(ArrayPrimitivesRecod arrRec)
+			public void Read(ArrayPrimitivesRecord arrRec)
 			{
 				Console.WriteLine("Array " + arrRec.Code.SequenceNo + " of " + arrRec.Primitive.ToString());
 			}

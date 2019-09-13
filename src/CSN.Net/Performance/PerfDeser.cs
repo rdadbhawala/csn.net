@@ -68,7 +68,7 @@ namespace Performance
 
 			}
 
-			public void Read(ArrayPrimitivesRecod arrRec)
+			public void Read(ArrayPrimitivesRecord arrRec)
 			{
 
 			}

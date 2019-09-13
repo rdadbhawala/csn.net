@@ -78,7 +78,7 @@ namespace Performance
 			}
 
 			[Benchmark]
-			public void PerfBookJsonDeserDo()
+			public void PerfBoolJsonDeserDo()
 			{
 				JsonTextReader jReader = new JsonTextReader(sr);
 				while (jReader.Read())
@@ -164,7 +164,7 @@ namespace Performance
 					throw new InvalidOperationException();
 				}
 
-				public void Read(ArrayPrimitivesRecod arrRec)
+				public void Read(ArrayPrimitivesRecord arrRec)
 				{
 				}
 

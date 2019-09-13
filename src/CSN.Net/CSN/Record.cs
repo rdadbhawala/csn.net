@@ -61,9 +61,9 @@ namespace Abstraction.Csn
 		{ }
 	}
 
-	public class ArrayPrimitivesRecod : ArrayRecord
+	public class ArrayPrimitivesRecord : ArrayRecord
 	{
-		public ArrayPrimitivesRecod(RecordCode rc, PrimitiveType pType)
+		public ArrayPrimitivesRecord(RecordCode rc, PrimitiveType pType)
 			: base(rc)
 		{
 			this.Primitive = pType;

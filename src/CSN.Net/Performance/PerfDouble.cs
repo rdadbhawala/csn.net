@@ -190,7 +190,7 @@ namespace Performance
 					throw new InvalidOperationException();
 				}
 
-				public void Read(ArrayPrimitivesRecod arrRec)
+				public void Read(ArrayPrimitivesRecord arrRec)
 				{
 				}
 

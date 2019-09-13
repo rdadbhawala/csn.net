@@ -119,7 +119,7 @@ namespace Abstraction.Csn.Test
 			Assert.AreEqual(sRefSeqNos.Dequeue(), arrRec.TypeRef.Code.SequenceNo);
 		}
 
-		public void VerifyArrayPrims(ArrayPrimitivesRecod arrRec)
+		public void VerifyArrayPrims(ArrayPrimitivesRecord arrRec)
 		{
 			Verify(arrRec.Code);
 			Assert.AreEqual(sPrimTypes.Dequeue(), arrRec.Primitive);
@@ -183,7 +183,7 @@ namespace Abstraction.Csn.Test
 			this.VerifyArrayRefs(arrRec);
 		}
 
-		public void Read(ArrayPrimitivesRecod arrRec)
+		public void Read(ArrayPrimitivesRecord arrRec)
 		{
 			this.VerifyArrayPrims(arrRec);
 		}

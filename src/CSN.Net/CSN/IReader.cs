@@ -16,7 +16,7 @@ namespace Abstraction.Csn
 		void Read(TypeDefRecord typeRec);
 		void Read(InstanceRecord instRec);
 		void Read(ArrayRefsRecord arrayRec);
-		void Read(ArrayPrimitivesRecod arrRec);
+		void Read(ArrayPrimitivesRecord arrRec);
 
 		IReadValue GetReadValue();
 	}
