@@ -570,9 +570,16 @@ namespace Abstraction.Csn
 			{
 				// read one more char to get primitive type
 				readChar = args.Stream.Read();
-				ArrayPrimitivesRecord arrRec = new ArrayPrimitivesRecord(args.CurrentRC, ReaderHelper.PrimitiveMap[readChar]);
+				PrimitiveType pType = ReaderHelper.GetPrimitiveTypeByReadChar(readChar);
+				if (pType == PrimitiveType.Unknown)
+				{
+					throw Error.Unexpected(ErrorCode.UnexpectedChars, Constants.Primitives.Prefix, readChar);
+				}
+
+				ArrayPrimitivesRecord arrRec = new ArrayPrimitivesRecord(args.CurrentRC, pType);
 				args.SetupRecord(arrRec);
 				args.Read.Read(arrRec);
+
 				// read a field sep
 				readChar = args.Stream.Read();
 				if (readChar == -1)
@@ -670,8 +677,6 @@ namespace Abstraction.Csn
 	{
 		public static readonly Dictionary<int, long> DigitMap = null;
 		public static readonly Dictionary<int, int> DigitMapInt = null;
-		public static readonly Dictionary<int, int> DigitMapCh = null;
-		public static readonly Dictionary<int, PrimitiveType> PrimitiveMap = null;
 
 		public static readonly int iDigit0 = Convert.ToInt32('0');
 
@@ -688,6 +693,12 @@ namespace Abstraction.Csn
 		public static readonly int iBoolFalse = Convert.ToInt32(Constants.BoolFalse);
 		public static readonly int iDateTimePrefix = Convert.ToInt32(Constants.DateTimePrefix);
 		public static readonly int iPrimitivePrefix = Convert.ToInt32(Constants.Primitives.Prefix);
+		public static readonly int iPrimBool = Convert.ToInt32(Constants.Primitives.Bool);
+		public static readonly int iPrimDateTime = Convert.ToInt32(Constants.Primitives.DateTime);
+		public static readonly int iPrimReal = Convert.ToInt32(Constants.Primitives.Real);
+		public static readonly int iPrimLong = Convert.ToInt32(Constants.Primitives.Integer);
+		public static readonly int iPrimString = Convert.ToInt32(Constants.Primitives.String);
+
 		public static readonly int[] digitChInts = {
 			Convert.ToInt32('0'),
 			Convert.ToInt32('1'),
@@ -701,16 +712,18 @@ namespace Abstraction.Csn
 			Convert.ToInt32('9'),
 		};
 
+		public static PrimitiveType GetPrimitiveTypeByReadChar(int readChar)
+		{
+			return (readChar == iPrimBool) ? PrimitiveType.Bool :
+				(readChar == iPrimDateTime) ? PrimitiveType.DateTime :
+				(readChar == iPrimReal) ? PrimitiveType.Real :
+				(readChar == iPrimLong) ? PrimitiveType.Int :
+				(readChar == iPrimString) ? PrimitiveType.String :
+				PrimitiveType.Unknown;
+		}
+
 		static ReaderHelper()
 		{
-			PrimitiveMap = new Dictionary<int, PrimitiveType>
-			{
-				[Convert.ToInt32(Constants.Primitives.Bool)] = PrimitiveType.Bool,
-				[Convert.ToInt32(Constants.Primitives.DateTime)] = PrimitiveType.DateTime,
-				[Convert.ToInt32(Constants.Primitives.Integer)] = PrimitiveType.Int,
-				[Convert.ToInt32(Constants.Primitives.Real)] = PrimitiveType.Real,
-				[Convert.ToInt32(Constants.Primitives.String)] = PrimitiveType.String
-			};
 			DigitMap = new Dictionary<int, long>
 			{
 				[Convert.ToInt32('0')] = 0L,
@@ -737,11 +750,6 @@ namespace Abstraction.Csn
 				[Convert.ToInt32('8')] = 8,
 				[Convert.ToInt32('9')] = 9
 			};
-			DigitMapCh = new Dictionary<int, int>();
-			foreach (KeyValuePair<int, int> p in DigitMapInt)
-			{
-				DigitMapCh[p.Value] = p.Key;
-			}
 		}
 
 		public static RecordType ResolveRecordType(int charInt)

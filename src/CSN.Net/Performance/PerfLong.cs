@@ -16,10 +16,10 @@ namespace Performance
 
 		public static void Program()
 		{
-			BenchmarkRunner.Run<PerfLongCsnSer>();
-			BenchmarkRunner.Run<PerfLongJsonSer>();
-			//BenchmarkRunner.Run<PerfLongCsnDeser>();
-			//BenchmarkRunner.Run<PerfLongJsonDeser>();
+			//BenchmarkRunner.Run<PerfLongCsnSer>();
+			//BenchmarkRunner.Run<PerfLongJsonSer>();
+			BenchmarkRunner.Run<PerfLongCsnDeser>();
+			BenchmarkRunner.Run<PerfLongJsonDeser>();
 		}
 
 		private static Stream GetStream()

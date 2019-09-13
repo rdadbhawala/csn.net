@@ -12,7 +12,7 @@ namespace Abstraction.Csn
 		public override void Read(ReadArgs args)
 		{
 			// read Version Record Code 'V0,'
-			if (args.Stream.Read() != ReaderHelper.iVersion || args.Stream.Read() != ReaderHelper.DigitMapCh[0] || args.Stream.Read() != ReaderHelper.iFieldSep)
+			if (args.Stream.Read() != ReaderHelper.iVersion || args.Stream.Read() != ReaderHelper.iDigit0 || args.Stream.Read() != ReaderHelper.iFieldSep)
 			{
 				throw Error.UnexpectedRecordType(RecordType.Version, RecordType.Unknown);
 			}
