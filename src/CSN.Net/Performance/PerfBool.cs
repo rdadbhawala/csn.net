@@ -17,10 +17,10 @@ namespace Performance
 
 		public static void Program()
 		{
-			BenchmarkRunner.Run<PerfBoolCsnSer>();
-			BenchmarkRunner.Run<PerfBoolJsonSer>();
-			//BenchmarkRunner.Run<PerfBoolCsnDeser>();
-			//BenchmarkRunner.Run<PerfBoolJsonDeser>();
+			//BenchmarkRunner.Run<PerfBoolCsnSer>();
+			//BenchmarkRunner.Run<PerfBoolJsonSer>();
+			BenchmarkRunner.Run<PerfBoolCsnDeser>();
+			BenchmarkRunner.Run<PerfBoolJsonDeser>();
 		}
 
 		private static Stream GetStream()

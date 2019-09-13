@@ -19,15 +19,16 @@ namespace Abstraction.Csn
 		public void Read(StreamReader sr, IRead callback)
 		{
 			ReadArgs args = new ReadArgs(sr, callback);
-			while (args.State.ReadState != ReadStateEnum.End)
+			do
 			{
 				args.State.Read(args);
-			}
+			} while (args.State != ReadStateEnd.Singleton);
 		}
 	}
 
 	enum ReadStateEnum
 	{
+		Unknown,
 		NewRecord,
 		VersionRecord,
 		TypeDefRecord,
@@ -43,7 +44,7 @@ namespace Abstraction.Csn
 		// parser vars
 		public StreamReader Stream = null;
 		public IRead Read = null;
-		public ReadStateBase State = ReadStateVersionRecord.Singleton;
+		public ReadStateBase State = ReaderVersionSelector.Singleton;
 
 		// data
 		public RecordCode CurrentRC = null;
@@ -65,6 +66,9 @@ namespace Abstraction.Csn
 
 	abstract class ReadStateBase
 	{
+		public ReadStateBase() : this(ReadStateEnum.Unknown)
+		{ }
+
 		public ReadStateBase(ReadStateEnum pState)
 		{
 			this.ReadState = pState;
@@ -77,7 +81,6 @@ namespace Abstraction.Csn
 		//protected IEnumerable<int> ReadTill(ReadArgs args, int tillChar, bool includeTillChar = false)
 		//{
 		//	LinkedList<int> charInts = new LinkedList<int>();
-
 		//	int readChar = -1;
 		//	while ((readChar = args.Stream.Read()) != -1)
 		//	{
@@ -90,7 +93,6 @@ namespace Abstraction.Csn
 		//			break;
 		//		}
 		//	}
-
 		//	return charInts;
 		//}
 
@@ -121,6 +123,69 @@ namespace Abstraction.Csn
 			}
 
 			return charInts;
+		}
+
+		protected String ReadStringStrict(ReadArgs args, bool expectOpenEncl = true)
+		{
+			int readChar = 0;
+			// opening encloser
+			if (expectOpenEncl)
+			{
+				readChar = args.Stream.Read();
+				if (readChar != ReaderHelper.iStringEncl)
+				{
+					throw Error.UnexpectedChars(Constants.StringFieldEncloser, Convert.ToChar(readChar));
+				}
+			}
+
+			StringBuilder sb = new StringBuilder();
+			while (true)
+			{
+				readChar = args.Stream.Read();
+				if (readChar == ReaderHelper.iStringEncl)
+				{
+					break;
+				}
+				else if (readChar == ReaderHelper.iStringEsc)
+				{
+					readChar = args.Stream.Read();
+					if (readChar == ReaderHelper.iStringEsc)
+					{
+						sb.Append(Constants.StringEscapeChar);
+					}
+					else if (readChar == ReaderHelper.iStringEncl)
+					{
+						sb.Append(Constants.StringFieldEncloser);
+					}
+					else if (readChar == -1)
+					{
+						throw new Error(ErrorCode.UnexpectedEOF);
+					}
+					else
+					{
+						throw new Error(ErrorCode.NotEscapeChar).AddData(ErrorDataKeys.Actual, Convert.ToChar(readChar));
+					}
+					continue;
+				}
+				else if (readChar >= 0)
+				{
+					sb.Append(Convert.ToChar(readChar));
+				} else
+				{
+					throw new Error(ErrorCode.UnexpectedEOF);
+				}
+
+				//else if (readChar == -1)
+				//{
+				//	throw new Error(ErrorCode.UnexpectedEOF);
+				//}
+				//else
+				//{
+				//	sb.Append(Convert.ToChar(readChar));
+				//}
+			}
+
+			return sb.ToString();
 		}
 
 
@@ -186,29 +251,30 @@ namespace Abstraction.Csn
 			return sb.ToString();
 		}
 
-		protected void ReadRecordCode(ReadArgs args)
-		{
-			// read & Assign RecordCode
-			int readChar = args.Stream.Read();
+		//protected void ReadNonVersionRecordCode(ReadArgs args)
+		//{
+		//	// read & Assign RecordCode
+		//	int readChar = args.Stream.Read();
+		//	RecordCode rc = null;
+		//	if (readChar == ReaderHelper.iInstance)
+		//	{
+		//		rc = new RecordCode(RecordType.Instance, ReadSeqNo(args));
+		//	}
+		//	else if (readChar == ReaderHelper.iArray)
+		//	{
+		//		rc = new RecordCode(RecordType.Array, ReadSeqNo(args));
+		//	}
+		//	else if (readChar == ReaderHelper.iTypeDef)
+		//	{
+		//		rc = new RecordCode(RecordType.TypeDef, ReadSeqNo(args));
+		//	}
+		//	else
+		//	{
+		//		throw new Error(ErrorCode.UnknownRecordType).AddData(ErrorDataKeys.Actual, readChar);
+		//	}
 
-			if (readChar == -1)
-			{
-				throw new Error(ErrorCode.UnexpectedEOF);
-			}
-
-			RecordType recType = ReaderHelper.ResolveRecordType(readChar);
-			switch (recType)
-			{
-				case RecordType.Version:
-				case RecordType.Array:
-				case RecordType.Instance:
-				case RecordType.TypeDef:
-					args.CurrentRC = new RecordCode(ReaderHelper.ResolveRecordType(readChar), ReadSeqNo(args));
-					break;
-				default:
-					throw new Error(ErrorCode.UnknownRecordType);
-			}
-		}
+		//	args.CurrentRC = rc;
+		//}
 
 		protected Record ReadRef(ReadArgs args, bool checkFirstChar = true)
 		{
@@ -288,6 +354,22 @@ namespace Abstraction.Csn
 			}
 			return value;
 		}
+
+		protected void ReadExpectNewRecord(ReadArgs args, int readChar)
+		{
+			if (readChar == -1)
+			{
+				args.State = ReadStateEnd.Singleton;
+			}
+			else if (readChar == ReaderHelper.iRecordSep)
+			{
+				args.State = ReadStateNewRecord.Singleton;
+			}
+			else
+			{
+				throw Error.UnexpectedChars(Constants.RecordSeparator, Convert.ToChar(readChar));
+			}
+		}
 	}
 
 	class ReadStateNewRecord : ReadStateBase
@@ -300,25 +382,32 @@ namespace Abstraction.Csn
 
 		public override void Read(ReadArgs args)
 		{
-			ReadRecordCode(args);
+			//ReadNonVersionRecordCode(args);
 			// set next state
-			switch (args.CurrentRC.RecType)
+
+			// read & Assign RecordCode
+			int readChar = args.Stream.Read();
+			RecordCode rc = null;
+			if (readChar == ReaderHelper.iInstance)
 			{
-				case RecordType.Instance:
-					args.State = ReadStateInstanceRecord.Singleton;
-					break;
-
-				case RecordType.Array:
-					args.State = ReadStateArrayRecord.Singleton;
-					break;
-
-				case RecordType.TypeDef:
-					args.State = ReadStateTypeDefRecord.Singleton;
-					break;
-
-				default:
-					throw new Error(ErrorCode.UnexpectedRecordType);
+				args.CurrentRC = new RecordCode(RecordType.Instance, ReadSeqNo(args));
+				args.State = ReadStateInstanceRecord.Singleton;
 			}
+			else if (readChar == ReaderHelper.iArray)
+			{
+				args.CurrentRC = new RecordCode(RecordType.Array, ReadSeqNo(args));
+				args.State = ReadStateArrayRecord.Singleton;
+			}
+			else if (readChar == ReaderHelper.iTypeDef)
+			{
+				args.CurrentRC = new RecordCode(RecordType.TypeDef, ReadSeqNo(args));
+				args.State = ReadStateTypeDefRecord.Singleton;
+			}
+			else
+			{
+				throw new Error(ErrorCode.UnknownRecordType).AddData(ErrorDataKeys.Actual, readChar);
+			}
+
 		}
 	}
 
@@ -390,7 +479,7 @@ namespace Abstraction.Csn
 			}
 			else if (readChar == ReaderHelper.iStringEncl)
 			{
-				String str = base.ReadStringField(args, false);
+				String str = base.ReadStringStrict(args, false);
 				vr.Values.Add(str);
 				rv.ReadValue(vr, vr.Values.Count, str);
 			}
@@ -542,38 +631,27 @@ namespace Abstraction.Csn
 		}
 	}
 
-	class ReadStateVersionRecord : ReadStateBase
-	{
-		public static readonly ReadStateVersionRecord Singleton = new ReadStateVersionRecord();
+	//class ReadStateVersionRecord : ReadStateBase
+	//{
+	//	public static readonly ReadStateVersionRecord Singleton = new ReadStateVersionRecord();
 
-		private ReadStateVersionRecord() : base(ReadStateEnum.VersionRecord) { }
+	//	private ReadStateVersionRecord() : base(ReadStateEnum.VersionRecord) { }
 
-		public override void Read(ReadArgs args)
-		{
-			base.ReadRecordCode(args);
-			if (args.CurrentRC.RecType != RecordType.Version)
-			{
-				throw new Error(ErrorCode.UnexpectedRecordType);
-			}
-			VersionRecord vr = new VersionRecord(args.CurrentRC, base.ReadStringField(args));
-			args.dcRecords[vr.Code.SequenceNo] = vr;
-			args.Read.Read(vr);
+	//	public override void Read(ReadArgs args)
+	//	{
+	//		base.ReadNonVersionRecordCode(args);
+	//		if (args.CurrentRC.RecType != RecordType.Version)
+	//		{
+	//			throw new Error(ErrorCode.UnexpectedRecordType);
+	//		}
+	//		VersionRecord vr = new VersionRecord(args.CurrentRC, base.ReadStringField(args));
+	//		args.dcRecords[vr.Code.SequenceNo] = vr;
+	//		args.Read.Read(vr);
 
-			int readChar = args.Stream.Read();
-			if (readChar == -1)
-			{
-				args.State = ReadStateEnd.Singleton;
-			}
-			else if (readChar == ReaderHelper.iRecordSep)
-			{
-				args.State = ReadStateNewRecord.Singleton;
-			}
-			else
-			{
-				throw Error.UnexpectedChars(Constants.RecordSeparator, Convert.ToChar(readChar));
-			}
-		}
-	}
+	//		int readChar = args.Stream.Read();
+	//		ReadExpectNewRecord(args, readChar);
+	//	}
+	//}
 
 	class ReadStateEnd : ReadStateBase
 	{
@@ -591,6 +669,7 @@ namespace Abstraction.Csn
 	{
 		public static readonly Dictionary<int, long> DigitMap = null;
 		public static readonly Dictionary<int, int> DigitMapInt = null;
+		public static readonly Dictionary<int, int> DigitMapCh = null;
 		public static readonly Dictionary<int, PrimitiveType> PrimitiveMap = null;
 
 		public static readonly int iVersion = Convert.ToInt32(Constants.RecordTypeChar.Version);
@@ -643,6 +722,11 @@ namespace Abstraction.Csn
 				[Convert.ToInt32('8')] = 8,
 				[Convert.ToInt32('9')] = 9
 			};
+			DigitMapCh = new Dictionary<int, int>();
+			foreach (KeyValuePair<int, int> p in DigitMapInt)
+			{
+				DigitMapCh[p.Value] = p.Key;
+			}
 		}
 
 		public static RecordType ResolveRecordType(int charInt)
@@ -650,7 +734,6 @@ namespace Abstraction.Csn
 			return (charInt == iInstance) ? RecordType.Instance :
 				(charInt == iArray) ? RecordType.Array :
 				(charInt == iTypeDef) ? RecordType.TypeDef :
-				(charInt == iVersion) ? RecordType.Version :
 				RecordType.Unknown;
 		}
 	}
