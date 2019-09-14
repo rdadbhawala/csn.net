@@ -104,14 +104,13 @@ namespace Abstraction.Csn
 				{
 					valueLong = (valueLong * 10) + digitValue;
 				}
-				else if (readChar == ReaderHelper.iDecimal)
-				{
-					isDecimal = true;
-					break;
-				}
 				else
 				{
-					if (readChar == ReaderHelper.iFieldSep)
+					if (readChar == ReaderHelper.iDecimal)
+					{
+						isDecimal = true;
+					}
+					else if (readChar == ReaderHelper.iFieldSep)
 					{
 						args.State = ReaderField.Singleton;
 					}
@@ -132,17 +131,53 @@ namespace Abstraction.Csn
 				readChar = args.Stream.Read();
 			} while (true);
 
+			ValueRecord vr = args.ValueRec;
+
 			if (!isDecimal)
 			{
 				valueLong *= multiply;
-				ValueRecord vr = args.ValueRec;
 				vr.Values.Add(valueLong);
 				args.Read.GetReadValue().ReadValue(vr, vr.Values.Count, valueLong);
 			}
 			else
 			{
 				// get a double value
-				ReadTill(args, new int[] { ReaderHelper.iFieldSep, ReaderHelper.iRecordSep });
+				long decimalValue = 0;
+				double factor = 1;
+
+				do
+				{
+					readChar = args.Stream.Read();
+					int digitValue = readChar - ReaderHelper.iDigit0;
+					if (digitValue >= 0 && digitValue < 10)
+					{
+						decimalValue = (decimalValue * 10) + digitValue;
+						factor *= 10;
+					}
+					else
+					{
+						if (readChar == ReaderHelper.iFieldSep)
+						{
+							args.State = ReaderField.Singleton;
+						}
+						else if (readChar == ReaderHelper.iRecordSep)
+						{
+							args.State = ReaderNewRecord.Singleton;
+						}
+						else if (readChar == -1)
+						{
+							args.State = ReaderEnd.Singleton;
+						}
+						else
+						{
+							throw Error.Unexpected(ErrorCode.UnexpectedChars, ReaderHelper.iDigit0, readChar);
+						}
+						break;
+					}
+				} while (true);
+
+				double realValue = (valueLong + (decimalValue / factor)) * multiply;
+				args.Read.GetReadValue().ReadValue(vr, vr.Values.Count, realValue);
 			}
 		}
 

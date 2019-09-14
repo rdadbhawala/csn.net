@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Linq;
 
 namespace Performance
 {
@@ -36,10 +37,10 @@ namespace Performance
 			//Console.WriteLine((123.123) - Math.Floor(123.123));
 			//Console.WriteLine((123.456).ToString("#.0"));
 
-			BenchmarkRunner.Run<PerfDoubleCsnSer>();
-			BenchmarkRunner.Run<PerfDoubleJsonSer>();
-			//BenchmarkRunner.Run<PerfDoubleCsnDeser>();
-			//BenchmarkRunner.Run<PerfDoubleJsonDeser>();
+			//BenchmarkRunner.Run<PerfDoubleCsnSer>();
+			//BenchmarkRunner.Run<PerfDoubleJsonSer>();
+			BenchmarkRunner.Run<PerfDoubleCsnDeser>();
+			BenchmarkRunner.Run<PerfDoubleJsonDeser>();
 
 			//PerfDoubleCsnSer ser = new PerfDoubleCsnSer();
 			//ser.Setup();
@@ -140,6 +141,7 @@ namespace Performance
 		{
 			Stream mStream = new MemoryStream();
 			StreamReader sr = null;
+			ReadRec rr = null;
 
 			public PerfDoubleCsnDeser()
 			{
@@ -156,12 +158,13 @@ namespace Performance
 			{
 				mStream.Position = 0;
 				sr = new StreamReader(mStream, Encoding.UTF8);
+				rr = new ReadRec();
 			}
 
 			[Benchmark]
 			public void PerfDoubleCsnDeserDo()
 			{
-				Reader.Singleton.Read(sr, new ReadRec());
+				Reader.Singleton.Read(sr, rr);
 			}
 
 			class ReadRec : IRead, IReadValue
@@ -201,6 +204,7 @@ namespace Performance
 
 				public void ReadValue(ValueRecord rec, int index, bool value)
 				{
+					throw new InvalidOperationException();
 				}
 
 				public void ReadValue(ValueRecord rec, int index, long value)
@@ -210,7 +214,6 @@ namespace Performance
 
 				public void ReadValue(ValueRecord rec, int index, double value)
 				{
-					throw new InvalidOperationException();
 				}
 
 				public void ReadValue(ValueRecord rec, int index, string value)

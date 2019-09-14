@@ -19,10 +19,10 @@ namespace Performance
 			//WriteSer(json2, "d:\\Temp\\tz-json-short.txt", csnTzs);
 
 			//BenchmarkRunner.Run<PerfSer>();
-			//BenchmarkRunner.Run<PerfDeser>();
+			BenchmarkRunner.Run<PerfDeser>();
 
 			//PerfBool.Program();
-			PerfLong.Program();
+			//PerfLong.Program();
 			//PerfString.Program();
 			//PerfDouble.Program();
 			//PerfDateTime.Program();
