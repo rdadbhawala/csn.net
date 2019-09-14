@@ -50,8 +50,9 @@ namespace Abstraction.Csn
 			this.ValueRec = rec as ValueRecord;
 		}
 
-		char[] strChars = new char[1000];
 		int strPos = 0;
+		int strLen = 1000;
+		char[] strChars = new char[1000];
 
 		public void StrReset()
 		{
@@ -60,11 +61,12 @@ namespace Abstraction.Csn
 
 		public void StrAppend(char readChar)
 		{
-			if (strPos == strChars.Length)
+			if (strPos == strLen)
 			{
 				char[] newCharArr = new char[strPos + 1000];
 				Array.Copy(strChars, newCharArr, strPos);
 				strChars = newCharArr;
+				strLen += 1000;
 			}
 			strChars[strPos] = readChar;
 			strPos++;
@@ -499,7 +501,7 @@ namespace Abstraction.Csn
 			}
 			else
 			{
-				throw Error.UnexpectedChars(Constants.FieldSeparator, Convert.ToChar(readChar));
+				throw Error.UnexpectedChars(Constants.FieldSeparator, (char)readChar);
 			}
 		}
 	}
@@ -518,28 +520,28 @@ namespace Abstraction.Csn
 
 	class ReaderHelper
 	{
-		public static readonly int iDigit0 = Convert.ToInt32('0');
-		public static readonly int iVersion = Convert.ToInt32(Constants.RecordTypeChar.Version);
-		public static readonly int iTypeDef = Convert.ToInt32(Constants.RecordTypeChar.TypeDef);
-		public static readonly int iArray = Convert.ToInt32(Constants.RecordTypeChar.Array);
-		public static readonly int iInstance = Convert.ToInt32(Constants.RecordTypeChar.Instance);
-		public static readonly int iFieldSep = Convert.ToInt32(Constants.FieldSeparator);
-		public static readonly int iRecordSep = Convert.ToInt32(Constants.RecordSeparator);
-		public static readonly int iStringEncl = Convert.ToInt32(Constants.StringFieldEncloser);
-		public static readonly int iStringEsc = Convert.ToInt32(Constants.StringEscapeChar);
-		public static readonly int iRefPrefix = Convert.ToInt32(Constants.ReferencePrefix);
-		public static readonly int iBoolTrue = Convert.ToInt32(Constants.BoolTrue);
-		public static readonly int iBoolFalse = Convert.ToInt32(Constants.BoolFalse);
-		public static readonly int iDateTimePrefix = Convert.ToInt32(Constants.DateTimePrefix);
-		public static readonly int iPrimitivePrefix = Convert.ToInt32(Constants.Primitives.Prefix);
-		public static readonly int iPrimBool = Convert.ToInt32(Constants.Primitives.Bool);
-		public static readonly int iPrimDateTime = Convert.ToInt32(Constants.Primitives.DateTime);
-		public static readonly int iPrimReal = Convert.ToInt32(Constants.Primitives.Real);
-		public static readonly int iPrimLong = Convert.ToInt32(Constants.Primitives.Integer);
-		public static readonly int iPrimString = Convert.ToInt32(Constants.Primitives.String);
-		public static readonly int iDateTimeT = Convert.ToInt32(Constants.DateTimeT);
-		public static readonly int iMinus = Convert.ToInt32('-');
-		public static readonly int iDecimal = Convert.ToInt32('.');
+		public const int iDigit0 = '0';
+		public const int iVersion = Constants.RecordTypeChar.Version;
+		public const int iTypeDef = Constants.RecordTypeChar.TypeDef;
+		public const int iArray = Constants.RecordTypeChar.Array;
+		public const int iInstance = Constants.RecordTypeChar.Instance;
+		public const int iFieldSep = Constants.FieldSeparator;
+		public const int iRecordSep = Constants.RecordSeparator;
+		public const int iStringEncl = Constants.StringFieldEncloser;
+		public const int iStringEsc = Constants.StringEscapeChar;
+		public const int iRefPrefix = Constants.ReferencePrefix;
+		public const int iBoolTrue = Constants.BoolTrue;
+		public const int iBoolFalse = Constants.BoolFalse;
+		public const int iDateTimePrefix = Constants.DateTimePrefix;
+		public const int iPrimitivePrefix = Constants.Primitives.Prefix;
+		public const int iPrimBool = Constants.Primitives.Bool;
+		public const int iPrimDateTime = Constants.Primitives.DateTime;
+		public const int iPrimReal = Constants.Primitives.Real;
+		public const int iPrimLong = Constants.Primitives.Integer;
+		public const int iPrimString = Constants.Primitives.String;
+		public const int iDateTimeT = Constants.DateTimeT;
+		public const int iMinus = '-';
+		public const int iDecimal = '.';
 
 		public static PrimitiveType GetPrimitiveTypeByReadChar(int readChar)
 		{
