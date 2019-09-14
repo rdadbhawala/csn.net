@@ -28,6 +28,37 @@ namespace Abstraction.Csn
 		}
 	}
 
+	// except version record
+	class ReaderNewRecord : ReaderBase
+	{
+		public static readonly ReaderNewRecord Singleton = new ReaderNewRecord();
+		private ReaderNewRecord() { }
+
+		public override void Read(ReadArgs args)
+		{
+			int readChar = args.Stream.Read();
+			if (readChar == ReaderHelper.iInstance)
+			{
+				args.CurrentRC = new RecordCode(RecordType.Instance, ExpectSeqNo(args));
+				args.State = ReaderInstance.Singleton;
+			}
+			else if (readChar == ReaderHelper.iArray)
+			{
+				args.CurrentRC = new RecordCode(RecordType.Array, ExpectSeqNo(args));
+				args.State = ReaderArray.Singleton;
+			}
+			else if (readChar == ReaderHelper.iTypeDef)
+			{
+				args.CurrentRC = new RecordCode(RecordType.TypeDef, ExpectSeqNo(args));
+				args.State = ReaderTypeDef.Singleton;
+			}
+			else
+			{
+				throw new Error(ErrorCode.UnknownRecordType).AddData(ErrorDataKeys.Actual, readChar);
+			}
+		}
+	}
+
 	class ReaderTypeDef : ReaderBase
 	{
 		public static readonly ReaderTypeDef Singleton = new ReaderTypeDef();
@@ -53,7 +84,7 @@ namespace Abstraction.Csn
 					rec.Members = members.ToArray();
 					args.SetupRecord(rec);
 					args.Read.Read(rec);
-					args.State = ReadStateNewRecord.Singleton;
+					args.State = ReaderNewRecord.Singleton;
 					break;
 				}
 				else
@@ -104,7 +135,7 @@ namespace Abstraction.Csn
 				readChar = args.Stream.Read();
 				if (readChar == ReaderHelper.iFieldSep)
 				{
-					args.State = ReadStateField.Singleton;
+					args.State = ReaderField.Singleton;
 				}
 				else if (readChar == -1)
 				{

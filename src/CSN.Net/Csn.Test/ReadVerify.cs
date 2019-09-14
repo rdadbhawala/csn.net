@@ -19,6 +19,7 @@ namespace Abstraction.Csn.Test
 		protected Queue<long> sValuesLong = new Queue<long>();
 		protected Queue<string> sValuesStr = new Queue<string>();
 		protected Queue<PrimitiveType> sPrimTypes = new Queue<PrimitiveType>();
+		protected Queue<object> sValuesNull = new Queue<object>();
 
 		public void SetupVersionRecord(string version)
 		{
@@ -80,6 +81,12 @@ namespace Abstraction.Csn.Test
 		public ReadSetup SetupRefs(long refSeq)
 		{
 			sRefSeqNos.Enqueue(refSeq);
+			return this;
+		}
+
+		public ReadSetup SetupNull()
+		{
+			sValuesNull.Enqueue(null);
 			return this;
 		}
 	}
@@ -154,6 +161,11 @@ namespace Abstraction.Csn.Test
 		{
 			Assert.AreEqual(sRefSeqNos.Dequeue(), refSeqNo);
 		}
+
+		internal void VerifyNull()
+		{
+			Assert.IsNull(sValuesNull.Dequeue());
+		}
 	}
 
 	class ReadTest : ReadVerify, IRead, IReadValue
@@ -190,7 +202,7 @@ namespace Abstraction.Csn.Test
 
 		public void ReadValueNull(ValueRecord rec, int index)
 		{
-			Console.WriteLine(index + ") Value null");
+			this.VerifyNull();
 		}
 
 		public void ReadValue(ValueRecord rec, int index, bool value)

@@ -67,6 +67,7 @@ namespace FiguringItOut
 			public void ReadValue(ValueRecord rec, int index, long value)
 			{
 				Console.WriteLine(index + ") Value " + value);
+				//Console.ReadLine();
 			}
 
 			public void ReadValue(ValueRecord rec, int index, double value)
@@ -81,7 +82,7 @@ namespace FiguringItOut
 
 			public void ReadValue(ValueRecord rec, int index, Record obj)
 			{
-				Console.WriteLine(index + ") Value " + obj.Code.SequenceNo);
+				Console.WriteLine(index + ") Value #" + obj.Code.SequenceNo);
 			}
 
 			public void ReadValue(ValueRecord rec, int index, DateTime value)

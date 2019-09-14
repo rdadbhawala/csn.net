@@ -22,7 +22,8 @@ namespace Performance
 		[IterationSetup]
 		public void Setup()
 		{
-			readerJson = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(Resources.tz_json_long)), Encoding.UTF8);
+			//readerJson = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(Resources.tz_json_long)), Encoding.UTF8);
+			readerJson = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(Resources.tz_json_short)), Encoding.UTF8);
 			readerCsn = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(Resources.tz_csn)), Encoding.UTF8);
 		}
 

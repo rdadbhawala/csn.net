@@ -26,19 +26,6 @@ namespace Abstraction.Csn
 		}
 	}
 
-	enum ReadStateEnum
-	{
-		Unknown,
-		NewRecord,
-		VersionRecord,
-		TypeDefRecord,
-		InstanceRecord,
-		ArrayRecord,
-		End,
-		WhatNext,
-		Field
-	}
-
 	class ReadArgs
 	{
 		// parser vars
@@ -85,11 +72,11 @@ namespace Abstraction.Csn
 			}
 			if (readChar == ReaderHelper.iFieldSep)
 			{
-				args.State = ReadStateField.Singleton;
+				args.State = ReaderField.Singleton;
 			}
 			else if (readChar == ReaderHelper.iRecordSep)
 			{
-				args.State = ReadStateNewRecord.Singleton;
+				args.State = ReaderNewRecord.Singleton;
 			}
 			else if (readChar == -1)
 			{
@@ -97,6 +84,66 @@ namespace Abstraction.Csn
 			}
 
 			return charInts;
+		}
+
+		protected void ReadNumber(ReadArgs args, int readChar)
+		{
+			long valueLong = 0;
+			long multiply = 1;
+			bool isDecimal = false;
+			if (readChar == ReaderHelper.iMinus)
+			{
+				multiply = -1;
+				readChar = args.Stream.Read();
+			}
+
+			do
+			{
+				int digitValue = readChar - ReaderHelper.iDigit0;
+				if (digitValue >= 0 && digitValue < 10)
+				{
+					valueLong = (valueLong * 10) + digitValue;
+				}
+				else if (readChar == ReaderHelper.iDecimal)
+				{
+					isDecimal = true;
+					break;
+				}
+				else
+				{
+					if (readChar == ReaderHelper.iFieldSep)
+					{
+						args.State = ReaderField.Singleton;
+					}
+					else if (readChar == ReaderHelper.iRecordSep)
+					{
+						args.State = ReaderNewRecord.Singleton;
+					}
+					else if (readChar == -1)
+					{
+						args.State = ReaderEnd.Singleton;
+					}
+					else
+					{
+						throw Error.Unexpected(ErrorCode.UnexpectedChars, ReaderHelper.iDigit0, readChar);
+					}
+					break;
+				}
+				readChar = args.Stream.Read();
+			} while (true);
+
+			if (!isDecimal)
+			{
+				valueLong *= multiply;
+				ValueRecord vr = args.ValueRec;
+				vr.Values.Add(valueLong);
+				args.Read.GetReadValue().ReadValue(vr, vr.Values.Count, valueLong);
+			}
+			else
+			{
+				// get a double value
+				ReadTill(args, new int[] { ReaderHelper.iFieldSep, ReaderHelper.iRecordSep });
+			}
 		}
 
 		// optimized
@@ -180,12 +227,12 @@ namespace Abstraction.Csn
 				}
 				else if (readChar == ReaderHelper.iFieldSep)
 				{
-					args.State = ReadStateField.Singleton;
+					args.State = ReaderField.Singleton;
 					break;
 				}
 				else if (readChar == ReaderHelper.iRecordSep)
 				{
-					args.State = ReadStateNewRecord.Singleton;
+					args.State = ReaderNewRecord.Singleton;
 					break;
 				}
 				else if (readChar == -1)
@@ -279,7 +326,7 @@ namespace Abstraction.Csn
 		{
 			if (readChar == ReaderHelper.iRecordSep)
 			{
-				args.State = ReadStateNewRecord.Singleton;
+				args.State = ReaderNewRecord.Singleton;
 			}
 			else if (readChar == -1)
 			{
@@ -292,45 +339,10 @@ namespace Abstraction.Csn
 		}
 	}
 
-	class ReadStateNewRecord : ReaderBase
+	class ReaderField : ReaderBase
 	{
-		public static readonly ReadStateNewRecord Singleton = new ReadStateNewRecord();
-
-		private ReadStateNewRecord() { }
-
-		public override void Read(ReadArgs args)
-		{
-			//ReadNonVersionRecordCode(args);
-			// set next state
-
-			// read & Assign RecordCode
-			int readChar = args.Stream.Read();
-			if (readChar == ReaderHelper.iInstance)
-			{
-				args.CurrentRC = new RecordCode(RecordType.Instance, ExpectSeqNo(args));
-				args.State = ReaderInstance.Singleton;
-			}
-			else if (readChar == ReaderHelper.iArray)
-			{
-				args.CurrentRC = new RecordCode(RecordType.Array, ExpectSeqNo(args));
-				args.State = ReaderArray.Singleton;
-			}
-			else if (readChar == ReaderHelper.iTypeDef)
-			{
-				args.CurrentRC = new RecordCode(RecordType.TypeDef, ExpectSeqNo(args));
-				args.State = ReaderTypeDef.Singleton;
-			}
-			else
-			{
-				throw new Error(ErrorCode.UnknownRecordType).AddData(ErrorDataKeys.Actual, readChar);
-			}
-		}
-	}
-
-	class ReadStateField : ReaderBase
-	{
-		public static readonly ReadStateField Singleton = new ReadStateField();
-		private ReadStateField() { }
+		public static readonly ReaderField Singleton = new ReaderField();
+		private ReaderField() { }
 
 		public override void Read(ReadArgs args)
 		{
@@ -390,16 +402,17 @@ namespace Abstraction.Csn
 			{
 				vr.Values.Add(null);
 				rv.ReadValueNull(vr, vr.Values.Count);
-				args.State = ReadStateNewRecord.Singleton;
+				args.State = ReaderNewRecord.Singleton;
 				return;
 			}
 			else if (readChar >= 0)
 			{
 				//TODO read number
-				base.ReadTill(args, new int[] { ReaderHelper.iFieldSep, ReaderHelper.iRecordSep });
+				//base.ReadTill(args, new int[] { ReaderHelper.iFieldSep, ReaderHelper.iRecordSep });
+				base.ReadNumber(args, readChar);
 				return;
 			}
-			if (readChar == -1)
+			else if (readChar == -1)
 			{
 				vr.Values.Add(null);
 				rv.ReadValueNull(vr, vr.Values.Count);
@@ -412,11 +425,11 @@ namespace Abstraction.Csn
 			readChar = args.Stream.Read();
 			if (readChar == ReaderHelper.iFieldSep)
 			{
-				args.State = ReadStateField.Singleton;
+				args.State = ReaderField.Singleton;
 			}
 			else if (readChar == ReaderHelper.iRecordSep)
 			{
-				args.State = ReadStateNewRecord.Singleton;
+				args.State = ReaderNewRecord.Singleton;
 			}
 			else if (readChar == -1)
 			{
@@ -463,6 +476,8 @@ namespace Abstraction.Csn
 		public static readonly int iPrimLong = Convert.ToInt32(Constants.Primitives.Integer);
 		public static readonly int iPrimString = Convert.ToInt32(Constants.Primitives.String);
 		public static readonly int iDateTimeT = Convert.ToInt32(Constants.DateTimeT);
+		public static readonly int iMinus = Convert.ToInt32('-');
+		public static readonly int iDecimal = Convert.ToInt32('.');
 
 		public static PrimitiveType GetPrimitiveTypeByReadChar(int readChar)
 		{
