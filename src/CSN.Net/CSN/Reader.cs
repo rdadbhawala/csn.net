@@ -49,6 +49,31 @@ namespace Abstraction.Csn
 			dcRecords[rec.Code.SequenceNo] = rec;
 			this.ValueRec = rec as ValueRecord;
 		}
+
+		char[] strChars = new char[1000];
+		int strPos = 0;
+
+		public void StrReset()
+		{
+			strPos = 0;
+		}
+
+		public void StrAppend(char readChar)
+		{
+			if (strPos == strChars.Length)
+			{
+				char[] newCharArr = new char[strPos + 1000];
+				Array.Copy(strChars, newCharArr, strPos);
+				strChars = newCharArr;
+			}
+			strChars[strPos] = readChar;
+			strPos++;
+		}
+
+		public String StrGet()
+		{
+			return new string(strChars, 0, strPos);
+		}
 	}
 
 	abstract class ReaderBase
@@ -195,7 +220,7 @@ namespace Abstraction.Csn
 				}
 			}
 
-			StringBuilder sb = new StringBuilder();
+			args.StrReset();
 			while (true)
 			{
 				readChar = args.Stream.Read();
@@ -208,11 +233,13 @@ namespace Abstraction.Csn
 					readChar = args.Stream.Read();
 					if (readChar == ReaderHelper.iStringEsc)
 					{
-						sb.Append(Constants.StringEscapeChar);
+						//sb.Append(Constants.StringEscapeChar);
+						args.StrAppend(Constants.StringEscapeChar);
 					}
 					else if (readChar == ReaderHelper.iStringEncl)
 					{
-						sb.Append(Constants.StringFieldEncloser);
+						//sb.Append(Constants.StringFieldEncloser);
+						args.StrAppend(Constants.StringFieldEncloser);
 					}
 					else if (readChar == -1)
 					{
@@ -226,15 +253,15 @@ namespace Abstraction.Csn
 				}
 				else if (readChar >= 0)
 				{
-					sb.Append(Convert.ToChar(readChar));
+					//sb.Append(Convert.ToChar(readChar));
+					args.StrAppend((char)readChar);
 				}
 				else
 				{
 					throw new Error(ErrorCode.UnexpectedEOF);
 				}
 			}
-
-			return sb.ToString();
+			return args.StrGet();
 		}
 
 		// optimized
