@@ -20,10 +20,11 @@ namespace Performance
 
 			//BenchmarkRunner.Run<PerfSer>();
 			//BenchmarkRunner.Run<PerfDeser>();
+			BenchmarkRunner.Run<StreamReadChunks>();
 
 			//PerfBool.Program();
 			//PerfLong.Program();
-			PerfString.Program();
+			//PerfString.Program();
 			//PerfDouble.Program();
 			//PerfDateTime.Program();
 

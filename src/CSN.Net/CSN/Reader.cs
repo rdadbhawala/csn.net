@@ -50,14 +50,42 @@ namespace Abstraction.Csn
 			this.ValueRec = rec as ValueRecord;
 		}
 
+		#region stream buffer
+
+		const int readMax = 1024;
+		readonly char[] readBlock = new char[readMax];
+		int readPos = 0;
+		int readLen = 0;
+
+		public int ReadOne()
+		{
+			if (readPos == readLen)
+			{
+				readPos = 0;
+				readLen = this.Stream.Read(readBlock, 0, readMax);
+			}
+
+			int readChar = -1;
+			if (readPos < readLen)
+			{
+				readChar = readBlock[readPos];
+				readPos++;
+			}
+			else
+			{
+				readPos = readLen + 1;
+			}
+
+			return readChar;
+		}
+
+		#endregion
+
+		#region String Fields
+
 		int strPos = 0;
 		int strLen = 1000;
 		char[] strChars = new char[1000];
-
-		public void StrReset()
-		{
-			strPos = 0;
-		}
 
 		public void StrAppend(char readChar)
 		{
@@ -74,8 +102,12 @@ namespace Abstraction.Csn
 
 		public String StrGet()
 		{
-			return new string(strChars, 0, strPos);
+			int len = strPos;
+			strPos = 0;
+			return new string(strChars, 0, len);
 		}
+
+		#endregion
 	}
 
 	abstract class ReaderBase
@@ -222,7 +254,7 @@ namespace Abstraction.Csn
 				}
 			}
 
-			args.StrReset();
+			//args.StrReset();
 			while (true)
 			{
 				readChar = args.Stream.Read();
@@ -414,75 +446,132 @@ namespace Abstraction.Csn
 			ValueRecord vr = args.ValueRec;
 
 			int readChar = args.Stream.Read();
-			if (readChar == ReaderHelper.iBoolTrue)
+
+			switch (readChar)
 			{
-				vr.Values.Add(true);
-				rv.ReadValue(vr, vr.Values.Count, true);
+				case ReaderHelper.iBoolTrue:
+					vr.Values.Add(true);
+					rv.ReadValue(vr, vr.Values.Count, true);
+					break;
+				case ReaderHelper.iBoolFalse:
+					vr.Values.Add(false);
+					rv.ReadValue(vr, vr.Values.Count, false);
+					break;
+				case ReaderHelper.iStringEncl:
+					String str = base.ReadStringStrict(args, false);
+					vr.Values.Add(str);
+					rv.ReadValue(vr, vr.Values.Count, str);
+					break;
+				case ReaderHelper.iRefPrefix:
+					Record rc = base.ReadRef(args, false);
+					if (rc.Code.RecType != RecordType.Instance && rc.Code.RecType != RecordType.Array)
+					{
+						throw Error.UnexpectedRecordType(RecordType.Instance, rc.Code.RecType);
+					}
+					vr.Values.Add(rc);
+					rv.ReadValue(vr, vr.Values.Count, rc);
+					return;
+				case ReaderHelper.iDateTimePrefix:
+					//base.ReadTill(args, new int[] { ReaderHelper.iFieldSep, ReaderHelper.iRecordSep });
+					DateTime dt = new DateTime(
+						base.ReadDateTimeDigits(args.Stream, 4),
+						base.ReadDateTimeDigits(args.Stream, 2),
+						base.ReadDateTimeDigits(args.Stream, 2),
+						base.ReadSkipOne(args.Stream, ReaderHelper.iDateTimeT).ReadDateTimeDigits(args.Stream, 2),
+						base.ReadDateTimeDigits(args.Stream, 2),
+						base.ReadDateTimeDigits(args.Stream, 2),
+						base.ReadDateTimeDigits(args.Stream, 3)
+					);
+					vr.Values.Add(dt);
+					rv.ReadValue(vr, vr.Values.Count, dt);
+					break;
+				case ReaderHelper.iFieldSep:
+					vr.Values.Add(null);
+					rv.ReadValueNull(vr, vr.Values.Count);
+					return;
+				case ReaderHelper.iRecordSep:
+					vr.Values.Add(null);
+					rv.ReadValueNull(vr, vr.Values.Count);
+					args.State = ReaderNewRecord.Singleton;
+					return;
+				case -1:
+					vr.Values.Add(null);
+					rv.ReadValueNull(vr, vr.Values.Count);
+					args.State = ReaderEnd.Singleton;
+					return;
+				default:
+					base.ReadNumber(args, readChar);
+					return;
 			}
-			else if (readChar == ReaderHelper.iBoolFalse)
-			{
-				vr.Values.Add(false);
-				rv.ReadValue(vr, vr.Values.Count, false);
-			}
-			else if (readChar == ReaderHelper.iStringEncl)
-			{
-				String str = base.ReadStringStrict(args, false);
-				vr.Values.Add(str);
-				rv.ReadValue(vr, vr.Values.Count, str);
-			}
-			else if (readChar == ReaderHelper.iRefPrefix)
-			{
-				Record rc = base.ReadRef(args, false);
-				if (rc.Code.RecType != RecordType.Instance && rc.Code.RecType != RecordType.Array)
-				{
-					throw Error.UnexpectedRecordType(RecordType.Instance, rc.Code.RecType);
-				}
-				vr.Values.Add(rc);
-				rv.ReadValue(vr, vr.Values.Count, rc);
-				return;
-			}
-			else if (readChar == ReaderHelper.iDateTimePrefix)
-			{
-				//base.ReadTill(args, new int[] { ReaderHelper.iFieldSep, ReaderHelper.iRecordSep });
-				DateTime dt = new DateTime(
-					base.ReadDateTimeDigits(args.Stream, 4),
-					base.ReadDateTimeDigits(args.Stream, 2),
-					base.ReadDateTimeDigits(args.Stream, 2),
-					base.ReadSkipOne(args.Stream, ReaderHelper.iDateTimeT).ReadDateTimeDigits(args.Stream, 2),
-					base.ReadDateTimeDigits(args.Stream, 2),
-					base.ReadDateTimeDigits(args.Stream, 2),
-					base.ReadDateTimeDigits(args.Stream, 3)
-				);
-				vr.Values.Add(dt);
-				rv.ReadValue(vr, vr.Values.Count, dt);
-			}
-			else if (readChar == ReaderHelper.iFieldSep)
-			{
-				vr.Values.Add(null);
-				rv.ReadValueNull(vr, vr.Values.Count);
-				return;
-			}
-			else if (readChar == ReaderHelper.iRecordSep)
-			{
-				vr.Values.Add(null);
-				rv.ReadValueNull(vr, vr.Values.Count);
-				args.State = ReaderNewRecord.Singleton;
-				return;
-			}
-			else if (readChar >= 0)
-			{
-				//TODO read number
-				//base.ReadTill(args, new int[] { ReaderHelper.iFieldSep, ReaderHelper.iRecordSep });
-				base.ReadNumber(args, readChar);
-				return;
-			}
-			else if (readChar == -1)
-			{
-				vr.Values.Add(null);
-				rv.ReadValueNull(vr, vr.Values.Count);
-				args.State = ReaderEnd.Singleton;
-				return;
-			}
+			//if (readChar == ReaderHelper.iBoolTrue)
+			//{
+			//	vr.Values.Add(true);
+			//	rv.ReadValue(vr, vr.Values.Count, true);
+			//}
+			//else if (readChar == ReaderHelper.iBoolFalse)
+			//{
+			//	vr.Values.Add(false);
+			//	rv.ReadValue(vr, vr.Values.Count, false);
+			//}
+			//else if (readChar == ReaderHelper.iStringEncl)
+			//{
+			//	String str = base.ReadStringStrict(args, false);
+			//	vr.Values.Add(str);
+			//	rv.ReadValue(vr, vr.Values.Count, str);
+			//}
+			//else if (readChar == ReaderHelper.iRefPrefix)
+			//{
+			//	Record rc = base.ReadRef(args, false);
+			//	if (rc.Code.RecType != RecordType.Instance && rc.Code.RecType != RecordType.Array)
+			//	{
+			//		throw Error.UnexpectedRecordType(RecordType.Instance, rc.Code.RecType);
+			//	}
+			//	vr.Values.Add(rc);
+			//	rv.ReadValue(vr, vr.Values.Count, rc);
+			//	return;
+			//}
+			//else if (readChar == ReaderHelper.iDateTimePrefix)
+			//{
+			//	//base.ReadTill(args, new int[] { ReaderHelper.iFieldSep, ReaderHelper.iRecordSep });
+			//	DateTime dt = new DateTime(
+			//		base.ReadDateTimeDigits(args.Stream, 4),
+			//		base.ReadDateTimeDigits(args.Stream, 2),
+			//		base.ReadDateTimeDigits(args.Stream, 2),
+			//		base.ReadSkipOne(args.Stream, ReaderHelper.iDateTimeT).ReadDateTimeDigits(args.Stream, 2),
+			//		base.ReadDateTimeDigits(args.Stream, 2),
+			//		base.ReadDateTimeDigits(args.Stream, 2),
+			//		base.ReadDateTimeDigits(args.Stream, 3)
+			//	);
+			//	vr.Values.Add(dt);
+			//	rv.ReadValue(vr, vr.Values.Count, dt);
+			//}
+			//else if (readChar == ReaderHelper.iFieldSep)
+			//{
+			//	vr.Values.Add(null);
+			//	rv.ReadValueNull(vr, vr.Values.Count);
+			//	return;
+			//}
+			//else if (readChar == ReaderHelper.iRecordSep)
+			//{
+			//	vr.Values.Add(null);
+			//	rv.ReadValueNull(vr, vr.Values.Count);
+			//	args.State = ReaderNewRecord.Singleton;
+			//	return;
+			//}
+			//else if (readChar >= 0)
+			//{
+			//	//TODO read number
+			//	//base.ReadTill(args, new int[] { ReaderHelper.iFieldSep, ReaderHelper.iRecordSep });
+			//	base.ReadNumber(args, readChar);
+			//	return;
+			//}
+			//else if (readChar == -1)
+			//{
+			//	vr.Values.Add(null);
+			//	rv.ReadValueNull(vr, vr.Values.Count);
+			//	args.State = ReaderEnd.Singleton;
+			//	return;
+			//}
 
 			// fixed width values (bool, datetime) or values with delimiter (string)
 			// still have one extra character to read in order to determine next step
