@@ -12,7 +12,7 @@ namespace Abstraction.Csn
 		public override void Read(ReadArgs args)
 		{
 			// read Version Record Code 'V0,'
-			if (args.Stream.Read() != ReaderHelper.iVersion || args.Stream.Read() != ReaderHelper.iDigit0 || args.Stream.Read() != ReaderHelper.iFieldSep)
+			if (args.ReadOne() != ReaderHelper.iVersion || args.ReadOne() != ReaderHelper.iDigit0 || args.ReadOne() != ReaderHelper.iFieldSep)
 			{
 				throw Error.UnexpectedRecordType(RecordType.Version, RecordType.Unknown);
 			}
@@ -24,7 +24,7 @@ namespace Abstraction.Csn
 			args.dcRecords[vr.Code.SequenceNo] = vr;
 			args.Read.Read(vr);
 
-			base.ReadExpectNewRecord(args, args.Stream.Read());
+			base.ReadExpectNewRecord(args, args.ReadOne());
 		}
 	}
 
@@ -36,7 +36,7 @@ namespace Abstraction.Csn
 
 		public override void Read(ReadArgs args)
 		{
-			int readChar = args.Stream.Read();
+			int readChar = args.ReadOne();
 			if (readChar == ReaderHelper.iInstance)
 			{
 				args.CurrentRC = new RecordCode(RecordType.Instance, ExpectSeqNo(args));
@@ -74,7 +74,7 @@ namespace Abstraction.Csn
 			List<String> members = new List<string>();
 			while (true)
 			{
-				readChar = args.Stream.Read();
+				readChar = args.ReadOne();
 				if (readChar == ReaderHelper.iFieldSep)
 				{
 					members.Add(base.ReadStringStrict(args));
@@ -103,7 +103,7 @@ namespace Abstraction.Csn
 		public override void Read(ReadArgs args)
 		{
 			// read array type: primitive or typeDef
-			int readChar = args.Stream.Read();
+			int readChar = args.ReadOne();
 			if (readChar == ReaderHelper.iRefPrefix)
 			{
 				Record refRec = base.ReadRef(args, false);
@@ -120,7 +120,7 @@ namespace Abstraction.Csn
 			else if (readChar == ReaderHelper.iPrimitivePrefix)
 			{
 				// read one more char to get primitive type
-				readChar = args.Stream.Read();
+				readChar = args.ReadOne();
 				PrimitiveType pType = ReaderHelper.GetPrimitiveTypeByReadChar(readChar);
 				if (pType == PrimitiveType.Unknown)
 				{
@@ -132,7 +132,7 @@ namespace Abstraction.Csn
 				args.Read.Read(arrRec);
 
 				// read a field sep
-				readChar = args.Stream.Read();
+				readChar = args.ReadOne();
 				if (readChar == ReaderHelper.iFieldSep)
 				{
 					args.State = ReaderField.Singleton;

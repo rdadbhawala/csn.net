@@ -29,7 +29,7 @@ namespace Abstraction.Csn
 	class ReadArgs
 	{
 		// parser vars
-		public StreamReader Stream = null;
+		readonly StreamReader sReader = null;
 		public IRead Read = null;
 		public ReaderBase State = ReaderVersion.Singleton;
 
@@ -40,7 +40,7 @@ namespace Abstraction.Csn
 
 		public ReadArgs(StreamReader pStream, IRead pRead)
 		{
-			this.Stream = pStream;
+			this.sReader = pStream;
 			this.Read = pRead;
 		}
 
@@ -59,24 +59,45 @@ namespace Abstraction.Csn
 
 		public int ReadOne()
 		{
-			if (readPos == readLen)
-			{
-				readPos = 0;
-				readLen = this.Stream.Read(readBlock, 0, readMax);
-			}
-
-			int readChar = -1;
 			if (readPos < readLen)
 			{
-				readChar = readBlock[readPos];
-				readPos++;
+				return readBlock[readPos++];
+				//readPos++;
+				//return readChar;
 			}
 			else
 			{
-				readPos = readLen + 1;
+				if (readPos == readLen)
+				{
+					readPos = 0;
+					readLen = this.sReader.Read(readBlock, 0, readMax);
+					if (readLen == 0)
+					{
+						readPos = 1;
+						return -1;
+					}
+					else
+					{
+						return readBlock[readPos++];
+						//readPos++;
+						//return readChar;
+					}
+				} else
+				{
+					return -1;
+				}
 			}
 
-			return readChar;
+			//int readChar = -1;
+			//if (readPos < readLen)
+			//{
+			//	readChar = readBlock[readPos];
+			//	readPos++;
+			//}
+			//else
+			//{
+			//	readPos = readLen + 1;
+			//}
 		}
 
 		#endregion
@@ -121,7 +142,7 @@ namespace Abstraction.Csn
 			LinkedList<int> charInts = new LinkedList<int>();
 
 			int readChar = -1;
-			while ((readChar = args.Stream.Read()) != -1)
+			while ((readChar = args.ReadOne()) != -1)
 			{
 				if (tillChars.Contains(readChar))
 				{
@@ -153,7 +174,7 @@ namespace Abstraction.Csn
 			if (readChar == ReaderHelper.iMinus)
 			{
 				multiply = -1;
-				readChar = args.Stream.Read();
+				readChar = args.ReadOne();
 			}
 
 			do
@@ -187,7 +208,7 @@ namespace Abstraction.Csn
 					}
 					break;
 				}
-				readChar = args.Stream.Read();
+				readChar = args.ReadOne();
 			} while (true);
 
 			ValueRecord vr = args.ValueRec;
@@ -206,7 +227,7 @@ namespace Abstraction.Csn
 
 				do
 				{
-					readChar = args.Stream.Read();
+					readChar = args.ReadOne();
 					int digitValue = readChar - ReaderHelper.iDigit0;
 					if (digitValue >= 0 && digitValue < 10)
 					{
@@ -247,7 +268,7 @@ namespace Abstraction.Csn
 			// opening encloser
 			if (expectOpenEncl)
 			{
-				readChar = args.Stream.Read();
+				readChar = args.ReadOne();
 				if (readChar != ReaderHelper.iStringEncl)
 				{
 					throw Error.UnexpectedChars(Constants.StringFieldEncloser, Convert.ToChar(readChar));
@@ -257,14 +278,14 @@ namespace Abstraction.Csn
 			//args.StrReset();
 			while (true)
 			{
-				readChar = args.Stream.Read();
+				readChar = args.ReadOne();
 				if (readChar == ReaderHelper.iStringEncl)
 				{
 					break;
 				}
 				else if (readChar == ReaderHelper.iStringEsc)
 				{
-					readChar = args.Stream.Read();
+					readChar = args.ReadOne();
 					if (readChar == ReaderHelper.iStringEsc)
 					{
 						//sb.Append(Constants.StringEscapeChar);
@@ -304,7 +325,7 @@ namespace Abstraction.Csn
 			int readChar = 0;
 			if (checkFirstChar)
 			{
-				readChar = args.Stream.Read();
+				readChar = args.ReadOne();
 				if (readChar != ReaderHelper.iRefPrefix)
 				{
 					throw Error.Unexpected(ErrorCode.UnexpectedChars, Constants.ReferencePrefix, readChar);
@@ -315,7 +336,7 @@ namespace Abstraction.Csn
 			long mapValue = 0;
 			while (true)
 			{
-				readChar = args.Stream.Read();
+				readChar = args.ReadOne();
 				mapValue = readChar - ReaderHelper.iDigit0;
 				if (mapValue >= 0 && mapValue < 10)
 				{
@@ -359,7 +380,7 @@ namespace Abstraction.Csn
 			int readChar = -1;
 			while (stkSeqNo.Count > 0)
 			{
-				readChar = args.Stream.Read();
+				readChar = args.ReadOne();
 				expectedSeqNo = stkSeqNo.Pop();
 				if ((expectedSeqNo + ReaderHelper.iDigit0) != readChar)
 				{
@@ -368,7 +389,7 @@ namespace Abstraction.Csn
 			}
 
 			// read the fieldsep
-			if ((readChar = args.Stream.Read()) != ReaderHelper.iFieldSep)
+			if ((readChar = args.ReadOne()) != ReaderHelper.iFieldSep)
 			{
 				throw Error.UnexpectedChars(Constants.FieldSeparator, Convert.ToChar(readChar));
 			}
@@ -377,9 +398,9 @@ namespace Abstraction.Csn
 		}
 
 		// optimized
-		protected ReaderBase ReadSkipOne(StreamReader stream, int expectedChar)
+		protected ReaderBase ReadSkipOne(ReadArgs args, int expectedChar)
 		{
-			int readChar = stream.Read();
+			int readChar = args.ReadOne();
 			if (readChar != expectedChar)
 			{
 				throw Error.Unexpected(ErrorCode.UnexpectedChars, expectedChar, readChar);
@@ -397,13 +418,13 @@ namespace Abstraction.Csn
 		//}
 
 		// optimized
-		public int ReadDateTimeDigits(StreamReader stream, int len)
+		public int ReadDateTimeDigits(ReadArgs args, int len)
 		{
 			int value = 0;
 			int mapValue = 0;
 			for (int ctr = 0; ctr < len; ctr++)
 			{
-				int readChar = stream.Read();
+				int readChar = args.ReadOne();
 				mapValue = readChar - ReaderHelper.iDigit0;
 				if (mapValue >= 0 && mapValue < 10)
 				{
@@ -445,7 +466,7 @@ namespace Abstraction.Csn
 			IReadValue rv = args.Read.GetReadValue();
 			ValueRecord vr = args.ValueRec;
 
-			int readChar = args.Stream.Read();
+			int readChar = args.ReadOne();
 
 			switch (readChar)
 			{
@@ -474,13 +495,13 @@ namespace Abstraction.Csn
 				case ReaderHelper.iDateTimePrefix:
 					//base.ReadTill(args, new int[] { ReaderHelper.iFieldSep, ReaderHelper.iRecordSep });
 					DateTime dt = new DateTime(
-						base.ReadDateTimeDigits(args.Stream, 4),
-						base.ReadDateTimeDigits(args.Stream, 2),
-						base.ReadDateTimeDigits(args.Stream, 2),
-						base.ReadSkipOne(args.Stream, ReaderHelper.iDateTimeT).ReadDateTimeDigits(args.Stream, 2),
-						base.ReadDateTimeDigits(args.Stream, 2),
-						base.ReadDateTimeDigits(args.Stream, 2),
-						base.ReadDateTimeDigits(args.Stream, 3)
+						base.ReadDateTimeDigits(args, 4),
+						base.ReadDateTimeDigits(args, 2),
+						base.ReadDateTimeDigits(args, 2),
+						base.ReadSkipOne(args, ReaderHelper.iDateTimeT).ReadDateTimeDigits(args, 2),
+						base.ReadDateTimeDigits(args, 2),
+						base.ReadDateTimeDigits(args, 2),
+						base.ReadDateTimeDigits(args, 3)
 					);
 					vr.Values.Add(dt);
 					rv.ReadValue(vr, vr.Values.Count, dt);
@@ -575,7 +596,7 @@ namespace Abstraction.Csn
 
 			// fixed width values (bool, datetime) or values with delimiter (string)
 			// still have one extra character to read in order to determine next step
-			readChar = args.Stream.Read();
+			readChar = args.ReadOne();
 			if (readChar == ReaderHelper.iFieldSep)
 			{
 				args.State = ReaderField.Singleton;
