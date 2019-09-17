@@ -128,6 +128,11 @@ namespace Abstraction.Csn
 			return new string(strChars, 0, len);
 		}
 
+		public void StrReset()
+		{
+			strPos = 0;
+		}
+
 		#endregion
 	}
 
@@ -174,6 +179,8 @@ namespace Abstraction.Csn
 			if (readChar == ReaderHelper.iMinus)
 			{
 				multiply = -1;
+				args.StrAppend((char)readChar);
+
 				readChar = args.ReadOne();
 			}
 
@@ -183,11 +190,13 @@ namespace Abstraction.Csn
 				if (digitValue >= 0 && digitValue < 10)
 				{
 					valueLong = (valueLong * 10) + digitValue;
+					args.StrAppend((char)readChar);
 				}
 				else
 				{
 					if (readChar == ReaderHelper.iDecimal)
 					{
+						args.StrAppend((char)readChar);
 						isDecimal = true;
 					}
 					else if (readChar == ReaderHelper.iFieldSep)
@@ -218,21 +227,18 @@ namespace Abstraction.Csn
 				valueLong *= multiply;
 				vr.Values.Add(valueLong);
 				args.Read.GetReadValue().ReadValue(vr, vr.Values.Count, valueLong);
+				args.StrReset();
 			}
 			else
 			{
 				// get a double value
-				long decimalValue = 0;
-				double factor = 1;
-
 				do
 				{
 					readChar = args.ReadOne();
 					int digitValue = readChar - ReaderHelper.iDigit0;
 					if (digitValue >= 0 && digitValue < 10)
 					{
-						decimalValue = (decimalValue * 10) + digitValue;
-						factor *= 10;
+						args.StrAppend((char)readChar);
 					}
 					else
 					{
@@ -256,7 +262,8 @@ namespace Abstraction.Csn
 					}
 				} while (true);
 
-				double realValue = (valueLong + (decimalValue / factor)) * multiply;
+				double realValue = double.Parse(args.StrGet());
+				args.ValueRec.Values.Add(realValue);
 				args.Read.GetReadValue().ReadValue(vr, vr.Values.Count, realValue);
 			}
 		}
