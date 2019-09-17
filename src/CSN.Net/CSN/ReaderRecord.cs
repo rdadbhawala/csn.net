@@ -12,7 +12,7 @@ namespace Abstraction.Csn
 		public override void Read(ReadArgs args)
 		{
 			// read Version Record Code 'V0,'
-			if (args.ReadOne() != ReaderHelper.iVersion || args.ReadOne() != ReaderHelper.iDigit0 || args.ReadOne() != ReaderHelper.iFieldSep)
+			if (args.ReadOne() != iVersion || args.ReadOne() != iDigit0 || args.ReadOne() != iFieldSep)
 			{
 				throw Error.UnexpectedRecordType(RecordType.Version, RecordType.Unknown);
 			}
@@ -37,17 +37,17 @@ namespace Abstraction.Csn
 		public override void Read(ReadArgs args)
 		{
 			int readChar = args.ReadOne();
-			if (readChar == ReaderHelper.iInstance)
+			if (readChar == iInstance)
 			{
 				args.CurrentRC = new RecordCode(RecordType.Instance, ExpectSeqNo(args));
 				args.State = ReaderInstance.Singleton;
 			}
-			else if (readChar == ReaderHelper.iArray)
+			else if (readChar == iArray)
 			{
 				args.CurrentRC = new RecordCode(RecordType.Array, ExpectSeqNo(args));
 				args.State = ReaderArray.Singleton;
 			}
-			else if (readChar == ReaderHelper.iTypeDef)
+			else if (readChar == iTypeDef)
 			{
 				args.CurrentRC = new RecordCode(RecordType.TypeDef, ExpectSeqNo(args));
 				args.State = ReaderTypeDef.Singleton;
@@ -75,11 +75,11 @@ namespace Abstraction.Csn
 			while (true)
 			{
 				readChar = args.ReadOne();
-				if (readChar == ReaderHelper.iFieldSep)
+				if (readChar == iFieldSep)
 				{
 					members.Add(base.ReadStringStrict(args));
 				}
-				else if (readChar == ReaderHelper.iRecordSep)
+				else if (readChar == iRecordSep)
 				{
 					rec.Members = members.ToArray();
 					args.SetupRecord(rec);
@@ -104,7 +104,7 @@ namespace Abstraction.Csn
 		{
 			// read array type: primitive or typeDef
 			int readChar = args.ReadOne();
-			if (readChar == ReaderHelper.iRefPrefix)
+			if (readChar == iRefPrefix)
 			{
 				Record refRec = base.ReadRef(args, false);
 				if (refRec.Code.RecType != RecordType.TypeDef)
@@ -117,11 +117,11 @@ namespace Abstraction.Csn
 
 				// no need to read extra char as base.readRef has already done that
 			}
-			else if (readChar == ReaderHelper.iPrimitivePrefix)
+			else if (readChar == iPrimitivePrefix)
 			{
 				// read one more char to get primitive type
 				readChar = args.ReadOne();
-				PrimitiveType pType = ReaderHelper.GetPrimitiveTypeByReadChar(readChar);
+				PrimitiveType pType = GetPrimitiveTypeByReadChar(readChar);
 				if (pType == PrimitiveType.Unknown)
 				{
 					throw Error.Unexpected(ErrorCode.UnexpectedChars, Constants.Primitives.Prefix, readChar);
@@ -133,7 +133,7 @@ namespace Abstraction.Csn
 
 				// read a field sep
 				readChar = args.ReadOne();
-				if (readChar == ReaderHelper.iFieldSep)
+				if (readChar == iFieldSep)
 				{
 					args.State = ReaderField.Singleton;
 				}
