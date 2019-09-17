@@ -120,6 +120,16 @@ namespace Abstraction.Csn
 			/// DateTime type.
 			/// </summary>
 			public const char DateTime = 'D';
+
+			public static PrimitiveType GetPrimitiveTypeByReadChar(char readChar)
+			{
+				return (readChar == Bool) ? PrimitiveType.Bool :
+					(readChar == DateTime) ? PrimitiveType.DateTime :
+					(readChar == Real) ? PrimitiveType.Real :
+					(readChar == Integer) ? PrimitiveType.Int :
+					(readChar == String) ? PrimitiveType.String :
+					PrimitiveType.Unknown;
+			}
 		}
 	}
 }

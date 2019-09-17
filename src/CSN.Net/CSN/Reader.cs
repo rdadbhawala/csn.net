@@ -178,27 +178,248 @@ namespace Abstraction.Csn
 		public const int iMinus = '-';
 		public const int iDecimal = '.';
 
-		public static PrimitiveType GetPrimitiveTypeByReadChar(int readChar)
-		{
-			return (readChar == iPrimBool) ? PrimitiveType.Bool :
-				(readChar == iPrimDateTime) ? PrimitiveType.DateTime :
-				(readChar == iPrimReal) ? PrimitiveType.Real :
-				(readChar == iPrimLong) ? PrimitiveType.Int :
-				(readChar == iPrimString) ? PrimitiveType.String :
-				PrimitiveType.Unknown;
-		}
-
-		public static RecordType ResolveRecordType(int charInt)
-		{
-			return (charInt == iInstance) ? RecordType.Instance :
-				(charInt == iArray) ? RecordType.Array :
-				(charInt == iTypeDef) ? RecordType.TypeDef :
-				RecordType.Unknown;
-		}
-
-		protected ReaderBase() { }
-
 		abstract public void Read(ReadArgs args);
+
+		protected String ReadStringStrict(ReadArgs args, bool expectOpenEncl = true)
+		{
+			int readChar = 0;
+			// opening encloser
+			if (expectOpenEncl)
+			{
+				readChar = args.ReadOne();
+				if (readChar != iStringEncl)
+				{
+					throw Error.UnexpectedChars(Constants.StringFieldEncloser, Convert.ToChar(readChar));
+				}
+			}
+
+			//args.StrReset();
+			while (true)
+			{
+				readChar = args.ReadOne();
+				if (readChar == iStringEncl)
+				{
+					break;
+				}
+				else if (readChar == iStringEsc)
+				{
+					readChar = args.ReadOne();
+					if (readChar == iStringEsc)
+					{
+						//sb.Append(Constants.StringEscapeChar);
+						args.StrAppend(Constants.StringEscapeChar);
+					}
+					else if (readChar == iStringEncl)
+					{
+						//sb.Append(Constants.StringFieldEncloser);
+						args.StrAppend(Constants.StringFieldEncloser);
+					}
+					else if (readChar == -1)
+					{
+						throw new Error(ErrorCode.UnexpectedEOF);
+					}
+					else
+					{
+						throw new Error(ErrorCode.NotEscapeChar).AddData(ErrorDataKeys.Actual, Convert.ToChar(readChar));
+					}
+					continue;
+				}
+				else if (readChar >= 0)
+				{
+					//sb.Append(Convert.ToChar(readChar));
+					args.StrAppend((char)readChar);
+				}
+				else
+				{
+					throw new Error(ErrorCode.UnexpectedEOF);
+				}
+			}
+			return args.StrGet();
+		}
+
+		protected Record ReadRef(ReadArgs args, bool checkFirstChar = true)
+		{
+			int readChar = 0;
+			if (checkFirstChar)
+			{
+				readChar = args.ReadOne();
+				if (readChar != iRefPrefix)
+				{
+					throw Error.Unexpected(ErrorCode.UnexpectedChars, Constants.ReferencePrefix, readChar);
+				}
+			}
+
+			long seqNo = 0;
+			long mapValue = 0;
+			while (true)
+			{
+				readChar = args.ReadOne();
+				mapValue = readChar - iDigit0;
+				if (mapValue >= 0 && mapValue < 10)
+				{
+					seqNo = (seqNo * 10) + mapValue;
+				}
+				else if (readChar == iFieldSep)
+				{
+					args.State = ReaderField.Singleton;
+					break;
+				}
+				else if (readChar == iRecordSep)
+				{
+					args.State = ReaderNewRecord.Singleton;
+					break;
+				}
+				else if (readChar == -1)
+				{
+					args.State = ReaderEnd.Singleton;
+					break;
+				}
+				else
+				{
+					throw Error.Unexpected(ErrorCode.UnexpectedChars, readChar, mapValue);
+				}
+			}
+
+			return args.dcRecords[seqNo];
+		}
+
+		// for seq no > 0 in the Record Code only
+		protected long ExpectSeqNo(ReadArgs args)
+		{
+			int expectedSeqNo = args.dcRecords.Count;
+			Stack<int> stkSeqNo = new Stack<int>();
+			while (expectedSeqNo > 0)
+			{
+				stkSeqNo.Push(expectedSeqNo % 10);
+				expectedSeqNo /= 10;
+			}
+
+			int readChar = -1;
+			while (stkSeqNo.Count > 0)
+			{
+				readChar = args.ReadOne();
+				expectedSeqNo = stkSeqNo.Pop();
+				if ((expectedSeqNo + iDigit0) != readChar)
+				{
+					throw Error.UnexpectedChars('0', Convert.ToChar(readChar));
+				}
+			}
+
+			// read the fieldsep
+			if ((readChar = args.ReadOne()) != iFieldSep)
+			{
+				throw Error.UnexpectedChars(Constants.FieldSeparator, Convert.ToChar(readChar));
+			}
+
+			return args.dcRecords.Count;
+		}
+
+		protected void ReadExpectNewRecord(ReadArgs args, int readChar)
+		{
+			if (readChar == iRecordSep)
+			{
+				args.State = ReaderNewRecord.Singleton;
+			}
+			else if (readChar == -1)
+			{
+				args.State = ReaderEnd.Singleton;
+			}
+			else
+			{
+				throw Error.UnexpectedChars(Constants.RecordSeparator, Convert.ToChar(readChar));
+			}
+		}
+	}
+
+	class ReaderField : ReaderBase
+	{
+		public static readonly ReaderField Singleton = new ReaderField();
+		private ReaderField() { }
+
+		public override void Read(ReadArgs args)
+		{
+			IReadValue rv = args.Read.GetReadValue();
+			ValueRecord vr = args.ValueRec;
+
+			int readChar = args.ReadOne();
+
+			switch (readChar)
+			{
+				case iBoolTrue:
+					vr.Values.Add(true);
+					rv.ReadValue(vr, vr.Values.Count, true);
+					break;
+				case iBoolFalse:
+					vr.Values.Add(false);
+					rv.ReadValue(vr, vr.Values.Count, false);
+					break;
+				case iStringEncl:
+					String str = base.ReadStringStrict(args, false);
+					vr.Values.Add(str);
+					rv.ReadValue(vr, vr.Values.Count, str);
+					break;
+				case iRefPrefix:
+					Record rc = base.ReadRef(args, false);
+					if (rc.Code.RecType != RecordType.Instance && rc.Code.RecType != RecordType.Array)
+					{
+						throw Error.UnexpectedRecordType(RecordType.Instance, rc.Code.RecType);
+					}
+					vr.Values.Add(rc);
+					rv.ReadValue(vr, vr.Values.Count, rc);
+					return;
+				case iDateTimePrefix:
+					//base.ReadTill(args, new int[] { iFieldSep, iRecordSep });
+					DateTime dt = new DateTime(
+						ReadDateTimeDigits(args, 4),
+						ReadDateTimeDigits(args, 2),
+						ReadDateTimeDigits(args, 2),
+						ReadSkipOne(args, iDateTimeT).ReadDateTimeDigits(args, 2),
+						ReadDateTimeDigits(args, 2),
+						ReadDateTimeDigits(args, 2),
+						ReadDateTimeDigits(args, 3)
+					);
+					vr.Values.Add(dt);
+					rv.ReadValue(vr, vr.Values.Count, dt);
+					break;
+				case iFieldSep:
+					vr.Values.Add(null);
+					rv.ReadValueNull(vr, vr.Values.Count);
+					return;
+				case iRecordSep:
+					vr.Values.Add(null);
+					rv.ReadValueNull(vr, vr.Values.Count);
+					args.State = ReaderNewRecord.Singleton;
+					return;
+				case -1:
+					vr.Values.Add(null);
+					rv.ReadValueNull(vr, vr.Values.Count);
+					args.State = ReaderEnd.Singleton;
+					return;
+				default:
+					ReadNumber(args, readChar);
+					return;
+			}
+
+			// fixed width values (bool, datetime) or values with delimiter (string)
+			// still have one extra character to read in order to determine next step
+			readChar = args.ReadOne();
+			if (readChar == iFieldSep)
+			{
+				args.State = ReaderField.Singleton;
+			}
+			else if (readChar == iRecordSep)
+			{
+				args.State = ReaderNewRecord.Singleton;
+			}
+			else if (readChar == -1)
+			{
+				args.State = ReaderEnd.Singleton;
+			}
+			else
+			{
+				throw Error.UnexpectedChars(Constants.FieldSeparator, (char)readChar);
+			}
+		}
 
 		protected void ReadNumber(ReadArgs args, int readChar)
 		{
@@ -297,144 +518,7 @@ namespace Abstraction.Csn
 			}
 		}
 
-		// optimized
-		protected String ReadStringStrict(ReadArgs args, bool expectOpenEncl = true)
-		{
-			int readChar = 0;
-			// opening encloser
-			if (expectOpenEncl)
-			{
-				readChar = args.ReadOne();
-				if (readChar != iStringEncl)
-				{
-					throw Error.UnexpectedChars(Constants.StringFieldEncloser, Convert.ToChar(readChar));
-				}
-			}
-
-			//args.StrReset();
-			while (true)
-			{
-				readChar = args.ReadOne();
-				if (readChar == iStringEncl)
-				{
-					break;
-				}
-				else if (readChar == iStringEsc)
-				{
-					readChar = args.ReadOne();
-					if (readChar == iStringEsc)
-					{
-						//sb.Append(Constants.StringEscapeChar);
-						args.StrAppend(Constants.StringEscapeChar);
-					}
-					else if (readChar == iStringEncl)
-					{
-						//sb.Append(Constants.StringFieldEncloser);
-						args.StrAppend(Constants.StringFieldEncloser);
-					}
-					else if (readChar == -1)
-					{
-						throw new Error(ErrorCode.UnexpectedEOF);
-					}
-					else
-					{
-						throw new Error(ErrorCode.NotEscapeChar).AddData(ErrorDataKeys.Actual, Convert.ToChar(readChar));
-					}
-					continue;
-				}
-				else if (readChar >= 0)
-				{
-					//sb.Append(Convert.ToChar(readChar));
-					args.StrAppend((char)readChar);
-				}
-				else
-				{
-					throw new Error(ErrorCode.UnexpectedEOF);
-				}
-			}
-			return args.StrGet();
-		}
-
-		// optimized
-		protected Record ReadRef(ReadArgs args, bool checkFirstChar = true)
-		{
-			int readChar = 0;
-			if (checkFirstChar)
-			{
-				readChar = args.ReadOne();
-				if (readChar != iRefPrefix)
-				{
-					throw Error.Unexpected(ErrorCode.UnexpectedChars, Constants.ReferencePrefix, readChar);
-				}
-			}
-
-			long seqNo = 0;
-			long mapValue = 0;
-			while (true)
-			{
-				readChar = args.ReadOne();
-				mapValue = readChar - iDigit0;
-				if (mapValue >= 0 && mapValue < 10)
-				{
-					seqNo = (seqNo * 10) + mapValue;
-				}
-				else if (readChar == iFieldSep)
-				{
-					args.State = ReaderField.Singleton;
-					break;
-				}
-				else if (readChar == iRecordSep)
-				{
-					args.State = ReaderNewRecord.Singleton;
-					break;
-				}
-				else if (readChar == -1)
-				{
-					args.State = ReaderEnd.Singleton;
-					break;
-				}
-				else
-				{
-					throw Error.Unexpected(ErrorCode.UnexpectedChars, readChar, mapValue);
-				}
-			}
-
-			return args.dcRecords[seqNo];
-		}
-
-		// optimized // for seq no > 0 in the Record Code only
-		protected long ExpectSeqNo(ReadArgs args)
-		{
-			int expectedSeqNo = args.dcRecords.Count;
-			Stack<int> stkSeqNo = new Stack<int>();
-			while (expectedSeqNo > 0)
-			{
-				stkSeqNo.Push(expectedSeqNo % 10);
-				expectedSeqNo /= 10;
-			}
-
-			int readChar = -1;
-			while (stkSeqNo.Count > 0)
-			{
-				readChar = args.ReadOne();
-				expectedSeqNo = stkSeqNo.Pop();
-				if ((expectedSeqNo + iDigit0) != readChar)
-				{
-					throw Error.UnexpectedChars('0', Convert.ToChar(readChar));
-				}
-			}
-
-			// read the fieldsep
-			if ((readChar = args.ReadOne()) != iFieldSep)
-			{
-				throw Error.UnexpectedChars(Constants.FieldSeparator, Convert.ToChar(readChar));
-			}
-
-			return args.dcRecords.Count;
-		}
-
-		// optimized
-		protected ReaderBase ReadSkipOne(ReadArgs args, int expectedChar)
+		protected ReaderField ReadSkipOne(ReadArgs args, int expectedChar)
 		{
 			int readChar = args.ReadOne();
 			if (readChar != expectedChar)
@@ -444,16 +528,6 @@ namespace Abstraction.Csn
 			return this;
 		}
 
-		//protected ReadStateBase ReadSkip(StreamReader stream, int skipInitial)
-		//{
-		//	if (stream.Read(new char[skipInitial], 0, skipInitial) != skipInitial)
-		//	{
-		//		throw new Error(ErrorCode.UnexpectedEOF);
-		//	}
-		//	return this;
-		//}
-
-		// optimized
 		public int ReadDateTimeDigits(ReadArgs args, int len)
 		{
 			int value = 0;
@@ -472,114 +546,6 @@ namespace Abstraction.Csn
 				}
 			}
 			return value;
-		}
-
-		// optimized
-		protected void ReadExpectNewRecord(ReadArgs args, int readChar)
-		{
-			if (readChar == iRecordSep)
-			{
-				args.State = ReaderNewRecord.Singleton;
-			}
-			else if (readChar == -1)
-			{
-				args.State = ReaderEnd.Singleton;
-			}
-			else
-			{
-				throw Error.UnexpectedChars(Constants.RecordSeparator, Convert.ToChar(readChar));
-			}
-		}
-	}
-
-	class ReaderField : ReaderBase
-	{
-		public static readonly ReaderField Singleton = new ReaderField();
-		private ReaderField() { }
-
-		public override void Read(ReadArgs args)
-		{
-			IReadValue rv = args.Read.GetReadValue();
-			ValueRecord vr = args.ValueRec;
-
-			int readChar = args.ReadOne();
-
-			switch (readChar)
-			{
-				case iBoolTrue:
-					vr.Values.Add(true);
-					rv.ReadValue(vr, vr.Values.Count, true);
-					break;
-				case iBoolFalse:
-					vr.Values.Add(false);
-					rv.ReadValue(vr, vr.Values.Count, false);
-					break;
-				case iStringEncl:
-					String str = base.ReadStringStrict(args, false);
-					vr.Values.Add(str);
-					rv.ReadValue(vr, vr.Values.Count, str);
-					break;
-				case iRefPrefix:
-					Record rc = base.ReadRef(args, false);
-					if (rc.Code.RecType != RecordType.Instance && rc.Code.RecType != RecordType.Array)
-					{
-						throw Error.UnexpectedRecordType(RecordType.Instance, rc.Code.RecType);
-					}
-					vr.Values.Add(rc);
-					rv.ReadValue(vr, vr.Values.Count, rc);
-					return;
-				case iDateTimePrefix:
-					//base.ReadTill(args, new int[] { iFieldSep, iRecordSep });
-					DateTime dt = new DateTime(
-						base.ReadDateTimeDigits(args, 4),
-						base.ReadDateTimeDigits(args, 2),
-						base.ReadDateTimeDigits(args, 2),
-						base.ReadSkipOne(args, iDateTimeT).ReadDateTimeDigits(args, 2),
-						base.ReadDateTimeDigits(args, 2),
-						base.ReadDateTimeDigits(args, 2),
-						base.ReadDateTimeDigits(args, 3)
-					);
-					vr.Values.Add(dt);
-					rv.ReadValue(vr, vr.Values.Count, dt);
-					break;
-				case iFieldSep:
-					vr.Values.Add(null);
-					rv.ReadValueNull(vr, vr.Values.Count);
-					return;
-				case iRecordSep:
-					vr.Values.Add(null);
-					rv.ReadValueNull(vr, vr.Values.Count);
-					args.State = ReaderNewRecord.Singleton;
-					return;
-				case -1:
-					vr.Values.Add(null);
-					rv.ReadValueNull(vr, vr.Values.Count);
-					args.State = ReaderEnd.Singleton;
-					return;
-				default:
-					base.ReadNumber(args, readChar);
-					return;
-			}
-
-			// fixed width values (bool, datetime) or values with delimiter (string)
-			// still have one extra character to read in order to determine next step
-			readChar = args.ReadOne();
-			if (readChar == iFieldSep)
-			{
-				args.State = ReaderField.Singleton;
-			}
-			else if (readChar == iRecordSep)
-			{
-				args.State = ReaderNewRecord.Singleton;
-			}
-			else if (readChar == -1)
-			{
-				args.State = ReaderEnd.Singleton;
-			}
-			else
-			{
-				throw Error.UnexpectedChars(Constants.FieldSeparator, (char)readChar);
-			}
 		}
 	}
 

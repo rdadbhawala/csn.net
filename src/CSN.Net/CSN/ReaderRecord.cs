@@ -104,6 +104,7 @@ namespace Abstraction.Csn
 		{
 			// read array type: primitive or typeDef
 			int readChar = args.ReadOne();
+			char charRead = ChEOF;
 			if (readChar == iRefPrefix)
 			{
 				Record refRec = base.ReadRef(args, false);
@@ -120,8 +121,8 @@ namespace Abstraction.Csn
 			else if (readChar == iPrimitivePrefix)
 			{
 				// read one more char to get primitive type
-				readChar = args.ReadOne();
-				PrimitiveType pType = GetPrimitiveTypeByReadChar(readChar);
+				charRead = args.ReadOneChar();
+				PrimitiveType pType = Primitives.GetPrimitiveTypeByReadChar(charRead);
 				if (pType == PrimitiveType.Unknown)
 				{
 					throw Error.Unexpected(ErrorCode.UnexpectedChars, Constants.Primitives.Prefix, readChar);
