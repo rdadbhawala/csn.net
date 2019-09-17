@@ -120,10 +120,40 @@ namespace Abstraction.Csn
 		}
 
 		#endregion
+
+		#region read chars
+
+		public char ReadOneChar()
+		{
+			if (readPos < readLen)
+			{
+				return readBlock[readPos++];
+			}
+			else if (readPos == readLen)
+			{
+				readPos = 0;
+				readLen = this.sReader.Read(readBlock, 0, readMax);
+				if (readLen == 0)
+				{
+					readPos = 1;
+					return Constants.ChEOF;
+				}
+				else
+				{
+					return readBlock[readPos++];
+				}
+			}
+			else
+			{
+				return Constants.ChEOF;
+			}
+		}
+
+		#endregion
 	}
 
 
-	abstract class ReaderBase
+	abstract class ReaderBase : Constants
 	{
 		public const int iDigit0 = '0';
 		public const int iVersion = Constants.RecordTypeChar.Version;

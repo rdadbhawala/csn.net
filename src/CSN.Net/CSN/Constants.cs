@@ -9,8 +9,11 @@ namespace Abstraction.Csn
 	/// <summary>
 	/// CSN Constants.
 	/// </summary>
-    public static class Constants
+    public class Constants
     {
+		public const char ChEOF = '0';
+		public const char ChNull = (char)0;
+
 		/// <summary>
 		/// Default Field Separator.
 		/// </summary>
