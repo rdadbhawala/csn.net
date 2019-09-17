@@ -48,7 +48,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Double.cs" />
+    <Compile Include="DoubleCheck.cs" />
+    <Compile Include="LongCheck.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadVerify.cs" />
     <Compile Include="SampleReader.cs" />
