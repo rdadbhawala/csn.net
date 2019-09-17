@@ -120,36 +120,6 @@ namespace Abstraction.Csn
 		}
 
 		#endregion
-
-		#region read chars
-
-		public char ReadOneChar()
-		{
-			if (readPos < readLen)
-			{
-				return readBlock[readPos++];
-			}
-			else if (readPos == readLen)
-			{
-				readPos = 0;
-				readLen = this.sReader.Read(readBlock, 0, readMax);
-				if (readLen == 0)
-				{
-					readPos = 1;
-					return Constants.ChEOF;
-				}
-				else
-				{
-					return readBlock[readPos++];
-				}
-			}
-			else
-			{
-				return Constants.ChEOF;
-			}
-		}
-
-		#endregion
 	}
 
 
@@ -179,6 +149,16 @@ namespace Abstraction.Csn
 		public const int iDecimal = '.';
 
 		abstract public void Read(ReadArgs args);
+
+		protected PrimitiveType GetPrimitiveTypeByReadChar(int readChar)
+		{
+			return (readChar == iPrimBool) ? PrimitiveType.Bool :
+				(readChar == iPrimDateTime) ? PrimitiveType.DateTime :
+				(readChar == iPrimReal) ? PrimitiveType.Real :
+				(readChar == iPrimLong) ? PrimitiveType.Int :
+				(readChar == iPrimString) ? PrimitiveType.String :
+				PrimitiveType.Unknown;
+		}
 
 		protected String ReadStringStrict(ReadArgs args, bool expectOpenEncl = true)
 		{

@@ -12,7 +12,7 @@ namespace Performance
 {
 	public static class PerfString
 	{
-		public static long ctr = 10000;
+		public static long ctr = 100000;
 		public const string value = "ABCDEFGHIJ"; // "\"AB\\CD\\E\""; // 
 
 		public static void Program()
@@ -20,7 +20,7 @@ namespace Performance
 			//BenchmarkRunner.Run<PerfStringCsnSer>();
 			//BenchmarkRunner.Run<PerfStringJsonSer>();
 			BenchmarkRunner.Run<PerfStringCsnDeser>();
-			BenchmarkRunner.Run<PerfStringJsonDeser>();
+			//BenchmarkRunner.Run<PerfStringJsonDeser>();
 		}
 
 		private static Stream GetStream()
