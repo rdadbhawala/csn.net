@@ -2,7 +2,7 @@
 // Copyright (c) Abstraction. All rights reserved.
 // </copyright>
 
-namespace Abstraction.Csn
+namespace Csn
 {
 	/// <summary>
 	/// Record Type enumerates the type of CSN Records.

@@ -2,7 +2,7 @@
 // Copyright (c) Abstraction. All rights reserved.
 // </copyright>
 
-namespace Abstraction.Csn
+namespace Csn
 {
 	using System;
 	using System.IO;

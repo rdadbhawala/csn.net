@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Abstraction.Csn
+namespace Csn
 {
 	public class Reader
 		: IReader
@@ -63,26 +63,23 @@ namespace Abstraction.Csn
 			{
 				return readBlock[readPos++];
 			}
-			else
+			else if (readPos == readLen)
 			{
-				if (readPos == readLen)
+				readPos = 0;
+				readLen = this.sReader.Read(readBlock, 0, readMax);
+				if (readLen == 0)
 				{
-					readPos = 0;
-					readLen = this.sReader.Read(readBlock, 0, readMax);
-					if (readLen == 0)
-					{
-						readPos = 1;
-						return -1;
-					}
-					else
-					{
-						return readBlock[readPos++];
-					}
+					readPos = 1;
+					return -1;
 				}
 				else
 				{
-					return -1;
+					return readBlock[readPos++];
 				}
+			}
+			else
+			{
+				return -1;
 			}
 		}
 
@@ -173,7 +170,6 @@ namespace Abstraction.Csn
 				}
 			}
 
-			//args.StrReset();
 			while (true)
 			{
 				readChar = args.ReadOne();
@@ -186,12 +182,10 @@ namespace Abstraction.Csn
 					readChar = args.ReadOne();
 					if (readChar == iStringEsc)
 					{
-						//sb.Append(Constants.StringEscapeChar);
 						args.StrAppend(Constants.StringEscapeChar);
 					}
 					else if (readChar == iStringEncl)
 					{
-						//sb.Append(Constants.StringFieldEncloser);
 						args.StrAppend(Constants.StringFieldEncloser);
 					}
 					else if (readChar == -1)
@@ -206,7 +200,6 @@ namespace Abstraction.Csn
 				}
 				else if (readChar >= 0)
 				{
-					//sb.Append(Convert.ToChar(readChar));
 					args.StrAppend((char)readChar);
 				}
 				else
@@ -230,14 +223,14 @@ namespace Abstraction.Csn
 			}
 
 			long seqNo = 0;
-			long mapValue = 0;
+			long digitValue = 0;
 			while (true)
 			{
 				readChar = args.ReadOne();
-				mapValue = readChar - iDigit0;
-				if (mapValue >= 0 && mapValue < 10)
+				digitValue = readChar - iDigit0;
+				if (digitValue >= 0 && digitValue < 10)
 				{
-					seqNo = (seqNo * 10) + mapValue;
+					seqNo = (seqNo * 10) + digitValue;
 				}
 				else if (readChar == iFieldSep)
 				{
@@ -256,7 +249,7 @@ namespace Abstraction.Csn
 				}
 				else
 				{
-					throw Error.Unexpected(ErrorCode.UnexpectedChars, readChar, mapValue);
+					throw Error.Unexpected(ErrorCode.UnexpectedChars, readChar, digitValue);
 				}
 			}
 

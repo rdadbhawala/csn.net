@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Abstraction.Csn.Test {
+namespace Csn.Test {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Abstraction.Csn.Test {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Abstraction.Csn.Test.TestResources", typeof(TestResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Csn.Test.TestResources", typeof(TestResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -63,7 +63,9 @@ namespace Abstraction.Csn.Test {
         /// <summary>
         ///   Looks up a localized string similar to V0,&quot;0.1.0&quot;
         ///T1,&quot;AllPrimitives&quot;,&quot;BooleanTrue&quot;,&quot;BooleanFalse&quot;,&quot;DateTime&quot;,&quot;String&quot;,&quot;Real&quot;,&quot;Integer&quot;
-        ///I2,#1,T,F,D20190312T1924335670000Z,&quot;Label&quot;,-123.45,345.
+        ///I2,#1,T,F,D20190312T192433567,&quot;Label&quot;,-123.45,345
+        ///A3,PI,10,20,30,40,50
+        ///A4,#1,#2.
         /// </summary>
         internal static string AllPrimitives {
             get {

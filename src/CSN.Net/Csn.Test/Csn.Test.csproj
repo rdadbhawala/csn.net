@@ -7,7 +7,7 @@
     <ProjectGuid>{F367AC70-CCBA-4283-8206-442CD25055D3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Abstraction.Csn.Test</RootNamespace>
+    <RootNamespace>Csn.Test</RootNamespace>
     <AssemblyName>Csn.Test</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

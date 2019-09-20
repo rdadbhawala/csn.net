@@ -2,7 +2,7 @@
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Abstraction.Csn.Test
+namespace Csn.Test
 {
 	[TestClass]
 	public class SampleReader

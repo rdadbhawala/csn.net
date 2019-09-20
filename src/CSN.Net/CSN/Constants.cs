@@ -1,10 +1,6 @@
-﻿// <copyright file="Constants.cs" company="Abstraction">
-// Copyright (c) Abstraction. All rights reserved.
-// </copyright>
+﻿using System;
 
-using System;
-
-namespace Abstraction.Csn
+namespace Csn
 {
 	/// <summary>
 	/// CSN Constants.

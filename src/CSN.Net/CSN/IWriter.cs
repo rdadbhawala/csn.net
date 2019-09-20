@@ -4,7 +4,7 @@
 
 using System;
 
-namespace Abstraction.Csn
+namespace Csn
 {
 	/// <summary>
 	/// ICsnWriter is the raw CSN Writer.

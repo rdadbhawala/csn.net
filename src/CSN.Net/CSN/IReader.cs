@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Abstraction.Csn
+namespace Csn
 {
     public interface IReader
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Abstraction.Csn
+namespace Csn
 {
     public abstract class Record
     {

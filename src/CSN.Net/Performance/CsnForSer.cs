@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System.Linq;
 
-using Abstraction.Csn;
+using Csn;
 
 namespace Performance
 {
