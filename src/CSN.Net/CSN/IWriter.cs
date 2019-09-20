@@ -1,10 +1,4 @@
-﻿// <copyright file="IWriter.cs" company="Abstraction">
-// Copyright (c) Abstraction. All rights reserved.
-// </copyright>
-
-using System;
-
-namespace Csn
+﻿namespace Csn
 {
 	/// <summary>
 	/// ICsnWriter is the raw CSN Writer.

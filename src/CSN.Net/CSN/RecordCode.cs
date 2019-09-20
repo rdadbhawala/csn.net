@@ -1,8 +1,4 @@
-﻿// <copyright file="RecordCode.cs" company="Abstraction">
-// Copyright (c) Abstraction. All rights reserved.
-// </copyright>
-
-namespace Csn
+﻿namespace Csn
 {
 	/// <summary>
 	/// Record Code class.

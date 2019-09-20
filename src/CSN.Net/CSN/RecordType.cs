@@ -1,8 +1,4 @@
-﻿// <copyright file="RecordType.cs" company="Abstraction">
-// Copyright (c) Abstraction. All rights reserved.
-// </copyright>
-
-namespace Csn
+﻿namespace Csn
 {
 	/// <summary>
 	/// Record Type enumerates the type of CSN Records.

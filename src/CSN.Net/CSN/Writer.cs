@@ -1,8 +1,4 @@
-﻿// <copyright file="Writer.cs" company="Abstraction">
-// Copyright (c) Abstraction. All rights reserved.
-// </copyright>
-
-namespace Csn
+﻿namespace Csn
 {
 	using System;
 	using System.IO;
