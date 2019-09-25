@@ -18,15 +18,17 @@ namespace Csn.Test
 
 			IWriter csnw = new Writer(sWriter);
 
-			RecordCode tRef = csnw.WriteTypeDef("AllPrimitives", "BooleanTrue", "BooleanFalse", "DateTime", "String", "Real", "Integer").Current;
-			Assert.AreEqual(1, tRef.SequenceNo, "Ref Type - All Primitives");
+			Assert.AreEqual(0, csnw.Current, "Version Record Seq No Mismatch");
 
-			RecordCode iRef = csnw.WriteInstance(tRef).W(true).W(false).W(new DateTime(2019, 03, 12, 19, 24, 33, 567, DateTimeKind.Utc)).W("Label").W(-123.45).W(345).Current;
-			Assert.AreEqual(2, iRef.SequenceNo);
+			long tRef = csnw.WriteTypeDef("AllPrimitives", "BooleanTrue", "BooleanFalse", "DateTime", "String", "Real", "Integer").Current;
+			Assert.AreEqual(1, tRef, "Ref Type - All Primitives");
 
-			RecordCode paRef = csnw.WriteArray(PrimitiveType.Int).W(new long[]{10, 20, 30, 40, 50}).Current;
+			long iRef = csnw.WriteInstance(tRef).W(true).W(false).W(new DateTime(2019, 03, 12, 19, 24, 33, 567, DateTimeKind.Utc)).W("Label").W(-123.45).W(345).Current;
+			Assert.AreEqual(2, iRef);
 
-			RecordCode objRef = csnw.WriteArray(tRef).W(iRef).Current;
+			long paRef = csnw.WriteArray().W(new long[]{10, 20, 30, 40, 50}).Current;
+
+			long objRef = csnw.WriteArray().WRef(iRef).Current;
 
 			// read the contents
 			sWriter.Flush();

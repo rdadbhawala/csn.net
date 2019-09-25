@@ -106,7 +106,7 @@ namespace Performance
 			[Benchmark]
 			public void PerfDateTimeCsnSerDo()
 			{
-				IWriterField fw = w.WriteArray(PrimitiveType.DateTime);
+				IWriterField fw = w.WriteArray();
 				for (int i = 0; i < PerfDateTime.ctr; i++)
 				{
 					fw.W(PerfDateTime.value);

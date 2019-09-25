@@ -102,7 +102,7 @@ namespace Performance
 			[Benchmark]
 			public void PerfBoolCsnSerDo()
 			{
-				IWriterField fw = w.WriteArray(PrimitiveType.Bool);
+				IWriterField fw = w.WriteArray();
 				for (int i = 0; i < PerfBool.ctr; i++)
 				{
 					fw.W(PerfBool.value);

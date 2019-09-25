@@ -7,10 +7,8 @@
 	{
 		IWriter WriteTypeDef(string typeName, params string[] typeMembers);
 
-		IWriterField WriteInstance(RecordCode typeRecCode);
+		IWriterField WriteInstance(long refType);
 
-		IWriterField WriteArray(PrimitiveType p);
-
-		IWriter WriteArray(RecordCode refType); //, params RecordCode[] arrayElements);
+		IWriterField WriteArray();
 	}
 }

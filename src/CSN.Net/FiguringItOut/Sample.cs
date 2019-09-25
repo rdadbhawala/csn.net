@@ -18,8 +18,8 @@ namespace FiguringItOut
 
 			Writer csnw = new Writer(sWriter);
 
-			RecordCode tRef = csnw.WriteTypeDef("AllPrimitives", "BooleanTrue", "BooleanFalse", "DateTime", "String", "Real", "Integer").Current;
-			RecordCode iRef = csnw.WriteInstance(tRef).W(true).W(false).W(new DateTime(2019, 03, 12, 19, 24, 33, 567, DateTimeKind.Utc)).W("Label").W(-123.45).W(345).Current;
+			long tRef = csnw.WriteTypeDef("AllPrimitives", "BooleanTrue", "BooleanFalse", "DateTime", "String", "Real", "Integer").Current;
+			long iRef = csnw.WriteInstance(tRef).W(true).W(false).W(new DateTime(2019, 03, 12, 19, 24, 33, 567, DateTimeKind.Utc)).W("Label").W(-123.45).W(345).Current;
 			sWriter.Flush();
 		}
 	}

@@ -21,9 +21,9 @@ namespace Csn
 		Actual,
 	}
 
-    public class Error
+	public class Error
 		: ApplicationException
-    {
+	{
 		public static Error UnexpectedChars(char expected, char actual)
 		{
 			return Unexpected(ErrorCode.UnexpectedChars, expected, actual);
@@ -60,5 +60,5 @@ namespace Csn
 			this.Data[key] = value;
 			return this;
 		}
-    }
+	}
 }

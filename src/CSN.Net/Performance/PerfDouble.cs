@@ -128,7 +128,7 @@ namespace Performance
 			[Benchmark]
 			public void PerfDoubleCsnSerDo()
 			{
-				IWriterField fw = w.WriteArray(PrimitiveType.Int);
+				IWriterField fw = w.WriteArray();
 				for (long i = 0; i < PerfDouble.ctr; i++)
 				{
 					fw.W(values[i]);

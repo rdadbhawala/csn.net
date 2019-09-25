@@ -53,7 +53,7 @@ namespace Performance
 
 			public void DoubleSerDo()
 			{
-				IWriterField fw = w.WriteArray(PrimitiveType.Int);
+				IWriterField fw = w.WriteArray();
 				for (long i = 0; i < DoubleCheck.ctr; i++)
 				{
 					fw.W(values[i]);

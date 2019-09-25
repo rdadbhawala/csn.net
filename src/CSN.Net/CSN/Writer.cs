@@ -8,8 +8,6 @@
 	/// </summary>
 	public partial class Writer : IWriter
 	{
-		private long recordCounter = -1;
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Writer"/> class.
 		/// </summary>
@@ -17,6 +15,7 @@
 		/// <param name="pConfig">Configuration parameters for CSN.</param>
 		public Writer(StreamWriter pStream)
 		{
+			this.mCurrent = -1;
 			this.sw = pStream;
 			this.WriteVersionRecord();
 		}
@@ -31,73 +30,70 @@
 		public IWriter WriteTypeDef(string typeName, params string[] typeMembers)
 		{
 			this.sw.Write(Constants.RecordSeparator);
-			this.WriteNewRecord(RecordType.TypeDef, Constants.RecordTypeChar.TypeDef);
+			this.WriteNewRecord();
 			this.W(typeName);
 			W(typeMembers);
 			return this;
 		}
 
-		public IWriterField WriteInstance(RecordCode typeRecCode)
+		public IWriterField WriteInstance(long refTypeSeqNo)
 		{
 			this.sw.Write(Constants.RecordSeparator);
-			this.WriteNewRecord(RecordType.Instance, Constants.RecordTypeChar.Instance);
-			W(typeRecCode);
+			this.WriteNewRecord();
+			WRef(refTypeSeqNo);
 			return this;
 		}
 
-		public IWriterField WriteArray(PrimitiveType p)
+		public IWriterField WriteArray()
 		{
 			this.sw.Write(Constants.RecordSeparator);
-			this.WriteNewRecord(RecordType.Array, Constants.RecordTypeChar.Array);
-			WritePrimitiveType(p);
+			this.WriteNewRecord();
+			this.sw.Write(Constants.FieldSeparator);
+			this.sw.Write(Constants.RecordTypeChar.Array);
 			return this;
 		}
 
-		private void WritePrimitiveType(PrimitiveType p)
-		{
-			sw.Write(Constants.FieldSeparator);
-			sw.Write(Constants.Primitives.Prefix);
-			switch (p)
-			{
-				case PrimitiveType.Bool:
-					sw.Write(Constants.Primitives.Bool);
-					break;
-				case PrimitiveType.DateTime:
-					sw.Write(Constants.Primitives.DateTime);
-					break;
-				case PrimitiveType.Int:
-					sw.Write(Constants.Primitives.Integer);
-					break;
-				case PrimitiveType.Real:
-					sw.Write(Constants.Primitives.Real);
-					break;
-				case PrimitiveType.String:
-					sw.Write(Constants.Primitives.String);
-					break;
-			}
-		}
+		//private void WritePrimitiveType(PrimitiveType p)
+		//{
+		//	sw.Write(Constants.FieldSeparator);
+		//	sw.Write(Constants.Primitives.Prefix);
+		//	switch (p)
+		//	{
+		//		case PrimitiveType.Bool:
+		//			sw.Write(Constants.Primitives.Bool);
+		//			break;
+		//		case PrimitiveType.DateTime:
+		//			sw.Write(Constants.Primitives.DateTime);
+		//			break;
+		//		case PrimitiveType.Int:
+		//			sw.Write(Constants.Primitives.Integer);
+		//			break;
+		//		case PrimitiveType.Real:
+		//			sw.Write(Constants.Primitives.Real);
+		//			break;
+		//		case PrimitiveType.String:
+		//			sw.Write(Constants.Primitives.String);
+		//			break;
+		//	}
+		//}
 
-		public IWriter WriteArray(RecordCode refType)
-		{
-			this.sw.Write(Constants.RecordSeparator);
-			this.WriteNewRecord(RecordType.Array, Constants.RecordTypeChar.Array);
-			W(refType);
-			return this;
-		}
+		//public IWriter WriteArray(long refType)
+		//{
+		//	this.sw.Write(Constants.RecordSeparator);
+		//	this.WriteNewRecord(RecordType.Array, Constants.RecordTypeChar.Array);
+		//	WRef(refType);
+		//	return this;
+		//}
 
 		private void WriteVersionRecord()
 		{
-			this.WriteNewRecord(RecordType.Version, Constants.RecordTypeChar.Version);
+			this.WriteNewRecord();
 			this.W(Constants.CsnVersion);
 		}
 
-		private void WriteNewRecord(RecordType recType, char rType)
+		private void WriteNewRecord()
 		{
-			this.recordCounter++;
-			this.sw.Write(rType);
-			this.sw.Write(this.recordCounter);
-			this.Current = new RecordCode(recType, this.recordCounter);
+			this.sw.Write(++this.mCurrent);
 		}
-
 	}
 }

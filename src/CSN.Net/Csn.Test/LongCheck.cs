@@ -40,7 +40,7 @@ namespace Performance
 
 			public void LongSerDo()
 			{
-				IWriterField fw = w.WriteArray(PrimitiveType.Int);
+				IWriterField fw = w.WriteArray();
 				for (long i = -LongCheck.ctr; i < LongCheck.ctr; i++)
 				{
 					fw.W(i);

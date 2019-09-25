@@ -9,7 +9,8 @@ namespace Csn
     {
 		protected readonly StreamWriter sw = null;
 
-		public RecordCode Current { get; protected set; }
+		private long mCurrent = -1;
+		public long Current { get { return mCurrent; } }
 
 		public IWriterField W(string value)
 		{
@@ -166,26 +167,26 @@ namespace Csn
 			return this;
 		}
 
-		public IWriterField W(RecordCode value)
+		public IWriterField WRef(long? value)
 		{
-			if (value == null)
-			{
-				WNull();
-			}
-			else
+			if (value.HasValue)
 			{
 				sw.Write(Constants.FieldSeparator);
 				sw.Write(Constants.ReferencePrefix);
-				WriteLongRaw(value.SequenceNo);
+				WriteLongRaw(value.Value);
+				return this;
 			}
-			return this;
+			else
+			{
+				return this.WNull();
+			}
 		}
 
-		public IWriterField W(RecordCode[] values)
+		public IWriterField WRef(long?[] values)
 		{
 			for (int i = 0, j = values.Length; i < j; i++)
 			{
-				W(values[i]);
+				WRef(values[i]);
 			}
 			return this;
 		}

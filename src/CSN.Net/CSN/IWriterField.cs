@@ -21,11 +21,11 @@ namespace Csn
 		IWriterField W(double value);
 		IWriterField W(double[] values);
 
-		IWriterField W(RecordCode value);
-		IWriterField W(RecordCode[] values);
+		IWriterField WRef(long? value);
+		IWriterField WRef(long?[] values);
 
 		IWriterField WNull();
 
-		RecordCode Current { get; }
+		long Current { get; }
 	}
 }

@@ -101,7 +101,7 @@ namespace Performance
 			[Benchmark]
 			public void PerfLongCsnSerDo()
 			{
-				IWriterField fw = w.WriteArray(PrimitiveType.Int);
+				IWriterField fw = w.WriteArray();
 				for (long i = 0; i < PerfLong.ctr; i++)
 				{
 					fw.W(i);
