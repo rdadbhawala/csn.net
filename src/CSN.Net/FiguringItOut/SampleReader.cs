@@ -41,22 +41,12 @@ namespace FiguringItOut
 
 			public void Read(InstanceRecord instRec)
 			{
-				Console.WriteLine("Instance " + instRec.Code.SequenceNo + " of " + instRec.Ref.Name);
+				Console.WriteLine("Instance " + instRec.SequenceNo + " of " + instRec.Ref.Name);
 			}
 
 			public void Read(ArrayRecord arrRec)
 			{
-				Console.WriteLine("Array " + arrRec.Code.SequenceNo);
-			}
-
-			public void Read(ArrayRefsRecord arrRec)
-			{
-				Console.WriteLine("Array " + arrRec.Code.SequenceNo + " of " + arrRec.TypeRef.Name);
-			}
-
-			public void Read(ArrayPrimitivesRecord arrRec)
-			{
-				Console.WriteLine("Array " + arrRec.Code.SequenceNo + " of " + arrRec.Primitive.ToString());
+				Console.WriteLine("Array " + arrRec.SequenceNo);
 			}
 
 			public void ReadValueNull(ValueRecord rec, int index)
@@ -87,7 +77,7 @@ namespace FiguringItOut
 
 			public void ReadValue(ValueRecord rec, int index, Record obj)
 			{
-				Console.WriteLine(index + ") Value #" + obj.Code.SequenceNo);
+				Console.WriteLine(index + ") Value #" + obj.SequenceNo);
 			}
 
 			public void ReadValue(ValueRecord rec, int index, DateTime value)

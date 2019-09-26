@@ -31,16 +31,6 @@ namespace Csn
 			throw new InvalidOperationException();
 		}
 
-		public virtual void Read(ArrayRefsRecord arrayRec)
-		{
-			throw new InvalidOperationException();
-		}
-
-		public virtual void Read(ArrayPrimitivesRecord arrRec)
-		{
-			throw new InvalidOperationException();
-		}
-
 		public virtual void ReadValue(ValueRecord rec, int index, bool value)
 		{
 			throw new InvalidOperationException();
@@ -94,12 +84,6 @@ namespace Csn
 		{ }
 
 		public virtual void Read(ArrayRecord arrRec)
-		{ }
-
-		public virtual void Read(ArrayRefsRecord arrayRec)
-		{ }
-
-		public virtual void Read(ArrayPrimitivesRecord arrRec)
 		{ }
 
 		public virtual void ReadValue(ValueRecord rec, int index, bool value)

@@ -17,15 +17,6 @@ namespace Csn
 
 		private readonly RecordType mRecType;
 		public RecordType RecType { get { return mRecType; } }
-
-		[Obsolete]
-		protected Record (RecordCode rc)
-		{
-			this.Code = rc;
-		}
-
-		[Obsolete]
-		public RecordCode Code { get; private set; }
     }
 
 	public class VersionRecord : Record
@@ -57,12 +48,6 @@ namespace Csn
 			this.Values = new List<object>();
 		}
 
-		[Obsolete]
-		public ValueRecord(RecordCode rc) : base(rc)
-		{
-			this.Values = new List<object>();
-		}
-
 		public List<object> Values { get; private set; }
 	}
 
@@ -81,28 +66,5 @@ namespace Csn
 	{
 		public ArrayRecord(long seqNo) : base(seqNo, RecordType.Array)
 		{ }
-	}
-
-	[Obsolete]
-	public class ArrayPrimitivesRecord : ArrayRecord
-	{
-		public ArrayPrimitivesRecord(RecordCode rc, PrimitiveType pType)
-			: base(rc.SequenceNo)
-		{
-			this.Primitive = pType;
-		}
-
-		public PrimitiveType Primitive { get; private set; }
-	}
-
-	[Obsolete]
-	public class ArrayRefsRecord : ArrayRecord
-	{
-		public ArrayRefsRecord(RecordCode rc, TypeDefRecord refRec) : base(rc.SequenceNo)
-		{
-			this.TypeRef = refRec;
-		}
-
-		public TypeDefRecord TypeRef { get; private set; }
 	}
 }

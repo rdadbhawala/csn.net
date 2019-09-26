@@ -167,15 +167,6 @@ namespace Performance
 				public void Read(ArrayRecord arrRec)
 				{ }
 
-				public void Read(ArrayRefsRecord arrayRec)
-				{
-					throw new InvalidOperationException();
-				}
-
-				public void Read(ArrayPrimitivesRecord arrRec)
-				{
-				}
-
 				public void ReadValueNull(ValueRecord rec, int index)
 				{
 					throw new InvalidOperationException();

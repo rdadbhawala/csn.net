@@ -33,9 +33,6 @@ namespace Csn
 		public IRead Read = null;
 		public ReaderBase State = ReaderVersion.Singleton;
 
-		// data
-		[Obsolete]
-		public RecordCode CurrentRC = null;
 		public long CurrentSeqNo = -1;
 		public ValueRecord ValueRec = null;
 		public Dictionary<long, Record> dcRecords = new Dictionary<long, Record>();

@@ -184,64 +184,6 @@ namespace Csn
 		}
 	}
 
-	class ReaderArray : ReaderBase
-	{
-		public static readonly ReaderArray Singleton = new ReaderArray();
-		private ReaderArray() { }
-
-		public override void Read(ReadArgs args)
-		{
-			// read array type: primitive or typeDef
-			int readChar = args.ReadOne();
-			if (readChar == iRefPrefix)
-			{
-				Record refRec = base.ReadRef(args, false);
-				if (refRec.Code.RecType != RecordType.TypeDef)
-				{
-					throw new Error(ErrorCode.UnexpectedRecordType);
-				}
-				ArrayRefsRecord rec = new ArrayRefsRecord(args.CurrentRC, (TypeDefRecord)refRec);
-				args.SetupRecord(rec);
-				args.Read.Read(rec);
-
-				// no need to read extra char as base.readRef has already done that
-			}
-			else if (readChar == iPrimitivePrefix)
-			{
-				// read one more char to get primitive type
-				readChar = args.ReadOne();
-				PrimitiveType pType = GetPrimitiveTypeByReadChar(readChar);
-				if (pType == PrimitiveType.Unknown)
-				{
-					throw Error.Unexpected(ErrorCode.UnexpectedChars, Constants.Primitives.Prefix, readChar);
-				}
-
-				ArrayPrimitivesRecord arrRec = new ArrayPrimitivesRecord(args.CurrentRC, pType);
-				args.SetupRecord(arrRec);
-				args.Read.Read(arrRec);
-
-				// read a field sep
-				readChar = args.ReadOne();
-				if (readChar == iFieldSep)
-				{
-					args.State = ReaderField.Singleton;
-				}
-				else if (readChar == -1)
-				{
-					args.State = ReaderEnd.Singleton;
-				}
-				else
-				{
-					throw Error.Unexpected(ErrorCode.UnexpectedChars, Constants.FieldSeparator, readChar);
-				}
-			}
-			else
-			{
-				throw Error.Unexpected(ErrorCode.UnexpectedChars, Constants.RecordTypeChar.Array, readChar);
-			}
-		}
-	}
-
 	class ReaderInstance : ReaderBase
 	{
 		public static readonly ReaderInstance Singleton = new ReaderInstance();
@@ -251,11 +193,12 @@ namespace Csn
 		public override void Read(ReadArgs args)
 		{
 			Record refRec = base.ReadRef(args, false);
-			TypeDefRecord refType = refRec as TypeDefRecord;
-			if (refType == null)
+			if (refRec.RecType != RecordType.TypeDef)
 			{
 				throw Error.Unexpected(ErrorCode.UnexpectedRecordType, RecordType.TypeDef, refRec.RecType);
 			}
+
+			TypeDefRecord refType = refRec as TypeDefRecord;
 			InstanceRecord rec = new InstanceRecord(args.CurrentSeqNo, refType);
 			args.SetupRecord(rec);
 			args.Read.Read(rec);
