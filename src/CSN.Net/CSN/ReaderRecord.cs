@@ -79,6 +79,7 @@ namespace Csn
 			}
 		}
 
+		// for seq no > 0 in the Record Code only
 		private long ExpectNextSeqNo(ReadArgs args)
 		{
 			long actualSeqNo = 0;
@@ -110,38 +111,6 @@ namespace Csn
 
 			return actualSeqNo;
 		}
-
-		// for seq no > 0 in the Record Code only
-		protected long ExpectSeqNo(ReadArgs args)
-		{
-			int expectedSeqNo = args.dcRecords.Count;
-			Stack<int> stkSeqNo = new Stack<int>();
-			while (expectedSeqNo > 0)
-			{
-				stkSeqNo.Push(expectedSeqNo % 10);
-				expectedSeqNo /= 10;
-			}
-
-			int readChar = -1;
-			while (stkSeqNo.Count > 0)
-			{
-				readChar = args.ReadOne();
-				expectedSeqNo = stkSeqNo.Pop();
-				if ((expectedSeqNo + iDigit0) != readChar)
-				{
-					throw Error.UnexpectedChars('0', Convert.ToChar(readChar));
-				}
-			}
-
-			// read the fieldsep
-			if ((readChar = args.ReadOne()) != iFieldSep)
-			{
-				throw Error.UnexpectedChars(Constants.FieldSeparator, Convert.ToChar(readChar));
-			}
-
-			return args.dcRecords.Count;
-		}
-
 	}
 
 	class ReaderTypeDef : ReaderBase

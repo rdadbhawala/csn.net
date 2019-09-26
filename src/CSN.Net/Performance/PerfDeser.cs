@@ -27,7 +27,7 @@ namespace Performance
 			readerCsn = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(Resources.tz_csn)), Encoding.UTF8);
 		}
 
-		[Benchmark]
+		//[Benchmark]
 		public void JsonDeser()
 		{
 			JsonTextReader jReader = new JsonTextReader(readerJson);

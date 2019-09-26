@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace Performance
+namespace Csn.Test
 {
 	[TestClass]
 	public class LongCheck
