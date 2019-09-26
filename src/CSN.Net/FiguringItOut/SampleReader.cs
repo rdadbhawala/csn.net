@@ -44,6 +44,11 @@ namespace FiguringItOut
 				Console.WriteLine("Instance " + instRec.Code.SequenceNo + " of " + instRec.Ref.Name);
 			}
 
+			public void Read(ArrayRecord arrRec)
+			{
+				Console.WriteLine("Array " + arrRec.Code.SequenceNo);
+			}
+
 			public void Read(ArrayRefsRecord arrRec)
 			{
 				Console.WriteLine("Array " + arrRec.Code.SequenceNo + " of " + arrRec.TypeRef.Name);

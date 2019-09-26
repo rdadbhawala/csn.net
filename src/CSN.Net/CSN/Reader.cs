@@ -34,7 +34,9 @@ namespace Csn
 		public ReaderBase State = ReaderVersion.Singleton;
 
 		// data
+		[Obsolete]
 		public RecordCode CurrentRC = null;
+		public long CurrentSeqNo = -1;
 		public ValueRecord ValueRec = null;
 		public Dictionary<long, Record> dcRecords = new Dictionary<long, Record>();
 
@@ -46,7 +48,7 @@ namespace Csn
 
 		public void SetupRecord(Record rec)
 		{
-			dcRecords[rec.Code.SequenceNo] = rec;
+			dcRecords[rec.SequenceNo] = rec;
 			this.ValueRec = rec as ValueRecord;
 		}
 
@@ -255,53 +257,6 @@ namespace Csn
 
 			return args.dcRecords[seqNo];
 		}
-
-		// for seq no > 0 in the Record Code only
-		protected long ExpectSeqNo(ReadArgs args)
-		{
-			int expectedSeqNo = args.dcRecords.Count;
-			Stack<int> stkSeqNo = new Stack<int>();
-			while (expectedSeqNo > 0)
-			{
-				stkSeqNo.Push(expectedSeqNo % 10);
-				expectedSeqNo /= 10;
-			}
-
-			int readChar = -1;
-			while (stkSeqNo.Count > 0)
-			{
-				readChar = args.ReadOne();
-				expectedSeqNo = stkSeqNo.Pop();
-				if ((expectedSeqNo + iDigit0) != readChar)
-				{
-					throw Error.UnexpectedChars('0', Convert.ToChar(readChar));
-				}
-			}
-
-			// read the fieldsep
-			if ((readChar = args.ReadOne()) != iFieldSep)
-			{
-				throw Error.UnexpectedChars(Constants.FieldSeparator, Convert.ToChar(readChar));
-			}
-
-			return args.dcRecords.Count;
-		}
-
-		protected void ReadExpectNewRecord(ReadArgs args, int readChar)
-		{
-			if (readChar == iRecordSep)
-			{
-				args.State = ReaderNewRecord.Singleton;
-			}
-			else if (readChar == -1)
-			{
-				args.State = ReaderEnd.Singleton;
-			}
-			else
-			{
-				throw Error.UnexpectedChars(Constants.RecordSeparator, Convert.ToChar(readChar));
-			}
-		}
 	}
 
 	class ReaderField : ReaderBase
@@ -333,9 +288,9 @@ namespace Csn
 					break;
 				case iRefPrefix:
 					Record rc = base.ReadRef(args, false);
-					if (rc.Code.RecType != RecordType.Instance && rc.Code.RecType != RecordType.Array)
+					if (rc.RecType != RecordType.Instance && rc.RecType != RecordType.Array)
 					{
-						throw Error.UnexpectedRecordType(RecordType.Instance, rc.Code.RecType);
+						throw Error.UnexpectedRecordType(RecordType.Instance, rc.RecType);
 					}
 					vr.Values.Add(rc);
 					rv.ReadValue(vr, vr.Values.Count, rc);

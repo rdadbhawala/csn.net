@@ -20,7 +20,7 @@ namespace Performance
 			//BenchmarkRunner.Run<PerfBoolCsnSer>();
 			//BenchmarkRunner.Run<PerfBoolJsonSer>();
 			BenchmarkRunner.Run<PerfBoolCsnDeser>();
-			BenchmarkRunner.Run<PerfBoolJsonDeser>();
+			//BenchmarkRunner.Run<PerfBoolJsonDeser>();
 		}
 
 		private static Stream GetStream()
@@ -138,68 +138,23 @@ namespace Performance
 				Reader.Singleton.Read(sr, new ReadRec());
 			}
 
-			class ReadRec : IRead, IReadValue
+			class ReadRec : ReadImplExc, IRead, IReadValue
 			{
-				public IReadValue GetReadValue()
+				public override IReadValue GetReadValue()
 				{
 					return this;
 				}
 
-				public void Read(VersionRecord verRec)
+				public override void Read(VersionRecord verRec)
 				{
 				}
 
-				public void Read(TypeDefRecord typeRec)
-				{
-					throw new InvalidOperationException();
-				}
-
-				public void Read(InstanceRecord instRec)
-				{
-					throw new InvalidOperationException();
-				}
-
-				public void Read(ArrayRefsRecord arrayRec)
-				{
-					throw new InvalidOperationException();
-				}
-
-				public void Read(ArrayPrimitivesRecord arrRec)
+				public override void Read(ArrayRecord arrRec)
 				{
 				}
 
-				public void ReadValueNull(ValueRecord rec, int index)
+				public override void ReadValue(ValueRecord rec, int index, bool value)
 				{
-					throw new InvalidOperationException();
-				}
-
-				public void ReadValue(ValueRecord rec, int index, bool value)
-				{
-				}
-
-				public void ReadValue(ValueRecord rec, int index, long value)
-				{
-					throw new InvalidOperationException();
-				}
-
-				public void ReadValue(ValueRecord rec, int index, double value)
-				{
-					throw new InvalidOperationException();
-				}
-
-				public void ReadValue(ValueRecord rec, int index, string value)
-				{
-					throw new InvalidOperationException();
-				}
-
-				public void ReadValue(ValueRecord rec, int index, Record value)
-				{
-					throw new InvalidOperationException();
-				}
-
-				public void ReadValue(ValueRecord rec, int index, DateTime value)
-				{
-					throw new InvalidOperationException();
 				}
 			}
 		}

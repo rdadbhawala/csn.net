@@ -6,16 +6,31 @@ namespace Csn
 {
     public abstract class Record
     {
+		protected Record(long seqNo, RecordType recType)
+		{
+			this.mSequenceNo = seqNo;
+			this.mRecType = recType;
+		}
+
+		private readonly long mSequenceNo;
+		public long SequenceNo { get { return mSequenceNo; } }
+
+		private readonly RecordType mRecType;
+		public RecordType RecType { get { return mRecType; } }
+
+		[Obsolete]
 		protected Record (RecordCode rc)
 		{
 			this.Code = rc;
 		}
+
+		[Obsolete]
 		public RecordCode Code { get; private set; }
     }
 
 	public class VersionRecord : Record
 	{
-		public VersionRecord(RecordCode rc, String ver) : base(rc)
+		public VersionRecord(String ver) : base(0, RecordType.Version)
 		{
 			this.Version = ver;
 		}
@@ -25,9 +40,10 @@ namespace Csn
 
 	public class TypeDefRecord : Record
 	{
-		public TypeDefRecord(RecordCode rc, String pName) : base(rc)
+		public TypeDefRecord(long seqNo, String pName, string[] pMembers) : base(seqNo, RecordType.TypeDef)
 		{
 			this.Name = pName;
+			this.Members = pMembers;
 		}
 
 		public string Name { get; internal set; }
@@ -36,6 +52,12 @@ namespace Csn
 
 	public abstract class ValueRecord : Record
 	{
+		public ValueRecord(long seqNo, RecordType recType) : base(seqNo, recType)
+		{
+			this.Values = new List<object>();
+		}
+
+		[Obsolete]
 		public ValueRecord(RecordCode rc) : base(rc)
 		{
 			this.Values = new List<object>();
@@ -46,7 +68,7 @@ namespace Csn
 
 	public class InstanceRecord : ValueRecord
 	{
-		public InstanceRecord(RecordCode rc, TypeDefRecord refRec) : base(rc)
+		public InstanceRecord(long seqNo, TypeDefRecord refRec) : base(seqNo, RecordType.Instance)
 		{
 			this.Ref = refRec;
 		}
@@ -57,14 +79,15 @@ namespace Csn
 
 	public class ArrayRecord : ValueRecord
 	{
-		public ArrayRecord(RecordCode rc) : base(rc)
+		public ArrayRecord(long seqNo) : base(seqNo, RecordType.Array)
 		{ }
 	}
 
+	[Obsolete]
 	public class ArrayPrimitivesRecord : ArrayRecord
 	{
 		public ArrayPrimitivesRecord(RecordCode rc, PrimitiveType pType)
-			: base(rc)
+			: base(rc.SequenceNo)
 		{
 			this.Primitive = pType;
 		}
@@ -72,9 +95,10 @@ namespace Csn
 		public PrimitiveType Primitive { get; private set; }
 	}
 
-	public class ArrayRefsRecord : ValueRecord
+	[Obsolete]
+	public class ArrayRefsRecord : ArrayRecord
 	{
-		public ArrayRefsRecord(RecordCode rc, TypeDefRecord refRec) : base(rc)
+		public ArrayRefsRecord(RecordCode rc, TypeDefRecord refRec) : base(rc.SequenceNo)
 		{
 			this.TypeRef = refRec;
 		}

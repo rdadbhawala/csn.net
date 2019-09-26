@@ -11,20 +11,32 @@ namespace Csn
 
 		public override void Read(ReadArgs args)
 		{
-			// read Version Record Code 'V0,'
-			if (args.ReadOne() != iVersion || args.ReadOne() != iDigit0 || args.ReadOne() != iFieldSep)
+			// read Version Record Code '0,'
+			if (args.ReadOne() != iDigit0 || args.ReadOne() != iFieldSep)
 			{
 				throw Error.UnexpectedRecordType(RecordType.Version, RecordType.Unknown);
 			}
-			args.CurrentRC = new RecordCode(RecordType.Version, 0);
+			args.CurrentSeqNo = 0;
 
 			// TODO - version validation ??
 
-			VersionRecord vr = new VersionRecord(args.CurrentRC, base.ReadStringStrict(args));
-			args.dcRecords[vr.Code.SequenceNo] = vr;
+			VersionRecord vr = new VersionRecord(base.ReadStringStrict(args));
+			args.dcRecords[args.CurrentSeqNo] = vr;
 			args.Read.Read(vr);
 
-			base.ReadExpectNewRecord(args, args.ReadOne());
+			int readChar = args.ReadOne();
+			if (readChar == iRecordSep)
+			{
+				args.State = ReaderNewRecord.Singleton;
+			}
+			else if (readChar == -1)
+			{
+				args.State = ReaderEnd.Singleton;
+			}
+			else
+			{
+				throw Error.Unexpected(ErrorCode.UnexpectedChars, Constants.RecordSeparator, readChar);
+			}
 		}
 	}
 
@@ -36,20 +48,29 @@ namespace Csn
 
 		public override void Read(ReadArgs args)
 		{
+			args.CurrentSeqNo = ExpectNextSeqNo(args);
+
 			int readChar = args.ReadOne();
-			if (readChar == iInstance)
+			if (readChar == iRefPrefix)
 			{
-				args.CurrentRC = new RecordCode(RecordType.Instance, ExpectSeqNo(args));
 				args.State = ReaderInstance.Singleton;
 			}
 			else if (readChar == iArray)
 			{
-				args.CurrentRC = new RecordCode(RecordType.Array, ExpectSeqNo(args));
-				args.State = ReaderArray.Singleton;
+				readChar = args.ReadOne();
+				if (readChar != iFieldSep)
+				{
+					throw Error.Unexpected(ErrorCode.UnexpectedChars, FieldSeparator, readChar);
+				}
+
+				ArrayRecord rec = new ArrayRecord(args.CurrentSeqNo);
+				args.SetupRecord(rec);
+				args.Read.Read(rec);
+
+				args.State = ReaderField.Singleton;
 			}
-			else if (readChar == iTypeDef)
+			else if (readChar == iStringEncl)
 			{
-				args.CurrentRC = new RecordCode(RecordType.TypeDef, ExpectSeqNo(args));
 				args.State = ReaderTypeDef.Singleton;
 			}
 			else
@@ -57,6 +78,70 @@ namespace Csn
 				throw new Error(ErrorCode.UnknownRecordType).AddData(ErrorDataKeys.Actual, readChar);
 			}
 		}
+
+		private long ExpectNextSeqNo(ReadArgs args)
+		{
+			long actualSeqNo = 0;
+			while (true)
+			{
+				int readChar = args.ReadOne();
+				int digit = readChar - iDigit0;
+				if (digit >= 0 && digit < 10)
+				{
+					actualSeqNo = (actualSeqNo * 10) + digit;
+				}
+				else
+				{
+					if (readChar == iFieldSep)
+					{
+						break;
+					}
+					else
+					{
+						throw Error.Unexpected(ErrorCode.UnexpectedChars, '0', readChar);
+					}
+				}
+			}
+
+			if (actualSeqNo != args.dcRecords.Count)
+			{
+				throw Error.Unexpected(ErrorCode.UnexpectedSequenceNo, args.dcRecords.Count, actualSeqNo);
+			}
+
+			return actualSeqNo;
+		}
+
+		// for seq no > 0 in the Record Code only
+		protected long ExpectSeqNo(ReadArgs args)
+		{
+			int expectedSeqNo = args.dcRecords.Count;
+			Stack<int> stkSeqNo = new Stack<int>();
+			while (expectedSeqNo > 0)
+			{
+				stkSeqNo.Push(expectedSeqNo % 10);
+				expectedSeqNo /= 10;
+			}
+
+			int readChar = -1;
+			while (stkSeqNo.Count > 0)
+			{
+				readChar = args.ReadOne();
+				expectedSeqNo = stkSeqNo.Pop();
+				if ((expectedSeqNo + iDigit0) != readChar)
+				{
+					throw Error.UnexpectedChars('0', Convert.ToChar(readChar));
+				}
+			}
+
+			// read the fieldsep
+			if ((readChar = args.ReadOne()) != iFieldSep)
+			{
+				throw Error.UnexpectedChars(Constants.FieldSeparator, Convert.ToChar(readChar));
+			}
+
+			return args.dcRecords.Count;
+		}
+
 	}
 
 	class ReaderTypeDef : ReaderBase
@@ -66,9 +151,16 @@ namespace Csn
 
 		public override void Read(ReadArgs args)
 		{
-			// record code has been read,
-			TypeDefRecord rec = new TypeDefRecord(args.CurrentRC, base.ReadStringStrict(args));
+			// sequence no, opening quote of type name has been read,
+			TypeDefRecord rec = new TypeDefRecord(args.CurrentSeqNo, base.ReadStringStrict(args, false), ReadMembers(args));
+			args.SetupRecord(rec);
+			args.Read.Read(rec);
 
+			//ReadMembers(args, rec);
+		}
+
+		private string[] ReadMembers(ReadArgs args)
+		{
 			// members
 			int readChar = 0;
 			List<String> members = new List<string>();
@@ -81,11 +173,8 @@ namespace Csn
 				}
 				else if (readChar == iRecordSep)
 				{
-					rec.Members = members.ToArray();
-					args.SetupRecord(rec);
-					args.Read.Read(rec);
 					args.State = ReaderNewRecord.Singleton;
-					break;
+					return members.ToArray();
 				}
 				else
 				{
@@ -161,12 +250,13 @@ namespace Csn
 
 		public override void Read(ReadArgs args)
 		{
-			Record refRec = base.ReadRef(args);
-			if (refRec.Code.RecType != RecordType.TypeDef)
+			Record refRec = base.ReadRef(args, false);
+			TypeDefRecord refType = refRec as TypeDefRecord;
+			if (refType == null)
 			{
-				throw Error.Unexpected(ErrorCode.UnexpectedRecordType, RecordType.TypeDef, refRec.Code.RecType);
+				throw Error.Unexpected(ErrorCode.UnexpectedRecordType, RecordType.TypeDef, refRec.RecType);
 			}
-			InstanceRecord rec = new InstanceRecord(args.CurrentRC, (TypeDefRecord)refRec);
+			InstanceRecord rec = new InstanceRecord(args.CurrentSeqNo, refType);
 			args.SetupRecord(rec);
 			args.Read.Read(rec);
 

@@ -13,6 +13,7 @@ namespace Csn
 		NotEscapeChar,
 		UnexpectedEOF,
 		UnexpectedRecordType,
+		UnexpectedSequenceNo,
 	}
 
 	public enum ErrorDataKeys

@@ -164,6 +164,9 @@ namespace Performance
 					throw new InvalidOperationException();
 				}
 
+				public void Read(ArrayRecord arrRec)
+				{ }
+
 				public void Read(ArrayRefsRecord arrayRec)
 				{
 					throw new InvalidOperationException();

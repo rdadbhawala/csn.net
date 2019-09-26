@@ -15,8 +15,7 @@ namespace Csn
 		void Read(VersionRecord verRec);
 		void Read(TypeDefRecord typeRec);
 		void Read(InstanceRecord instRec);
-		void Read(ArrayRefsRecord arrayRec);
-		void Read(ArrayPrimitivesRecord arrRec);
+		void Read(ArrayRecord arrRec);
 
 		IReadValue GetReadValue();
 	}
