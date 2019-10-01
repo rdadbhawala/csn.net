@@ -48,6 +48,7 @@ namespace Csn
 
 		public override void Read(ReadArgs args)
 		{
+			args.SetValues();
 			args.CurrentSeqNo = ExpectNextSeqNo(args);
 
 			int readChar = args.ReadOne();

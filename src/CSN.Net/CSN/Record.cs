@@ -45,10 +45,11 @@ namespace Csn
 	{
 		public ValueRecord(long seqNo, RecordType recType) : base(seqNo, recType)
 		{
-			this.Values = new List<object>();
+			//this.Values = new List<object>();
 		}
 
-		public List<object> Values { get; private set; }
+		//public List<object> Values { get; private set; }
+		public object[] Values { get; internal set; }
 	}
 
 	public class InstanceRecord : ValueRecord
@@ -58,7 +59,7 @@ namespace Csn
 			this.Ref = refRec;
 		}
 
-		public TypeDefRecord Ref { get; internal set; }
+		public TypeDefRecord Ref { get; private set; }
 		public object Tag { get; set; }
 	}
 

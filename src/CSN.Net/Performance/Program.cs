@@ -27,6 +27,7 @@ namespace Performance
 			//PerfString.Program();
 			//PerfDouble.Program();
 			//PerfDateTime.Program();
+			//BenchmarkRunner.Run<ListNewOrClear>();
 
 			Console.ReadLine();
 		}

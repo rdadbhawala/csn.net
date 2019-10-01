@@ -23,10 +23,11 @@ namespace Csn
 			{
 				args.State.Read(args);
 			} while (args.State != ReaderEnd.Singleton);
+			args.SetValues();
 		}
 	}
 
-	class ReadArgs
+	internal class ReadArgs
 	{
 		// parser vars
 		readonly StreamReader sReader = null;
@@ -48,6 +49,43 @@ namespace Csn
 			dcRecords[rec.SequenceNo] = rec;
 			this.ValueRec = rec as ValueRecord;
 		}
+
+		#region value array
+
+		const int valSize = 100;
+		private object[] values = new object[valSize];
+		public int valPos = 0;
+		private int valLen = valSize;
+
+		private object[] GetValues()
+		{
+			object[] newArr = new object[valPos];
+			Array.Copy(values, newArr, valPos);
+			valPos = 0;
+			return newArr;
+		}
+
+		internal void SetValues()
+		{
+			if (ValueRec != null)
+			{
+				ValueRec.Values = GetValues();
+			}
+		}
+
+		public void AddValue(object obj)
+		{
+			if (valPos == valLen)
+			{
+				object[] newArr = new object[valPos + valSize];
+				Array.Copy(values, newArr, valPos);
+				values = newArr;
+				valLen += valSize;
+			}
+			values[valPos++] = obj;
+		}
+
+		#endregion
 
 		#region stream buffer
 
@@ -99,8 +137,7 @@ namespace Csn
 				strChars = newCharArr;
 				strLen += 1000;
 			}
-			strChars[strPos] = readChar;
-			strPos++;
+			strChars[strPos++] = readChar;
 		}
 
 		public String StrGet()
@@ -271,17 +308,17 @@ namespace Csn
 			switch (readChar)
 			{
 				case iBoolTrue:
-					vr.Values.Add(true);
-					rv.ReadValue(vr, vr.Values.Count, true);
+					args.AddValue(true);
+					rv.ReadValue(vr, args.valPos, true);
 					break;
 				case iBoolFalse:
-					vr.Values.Add(false);
-					rv.ReadValue(vr, vr.Values.Count, false);
+					args.AddValue(false);
+					rv.ReadValue(vr, args.valPos, false);
 					break;
 				case iStringEncl:
 					String str = base.ReadStringStrict(args, false);
-					vr.Values.Add(str);
-					rv.ReadValue(vr, vr.Values.Count, str);
+					args.AddValue(str);
+					rv.ReadValue(vr, args.valPos, str);
 					break;
 				case iRefPrefix:
 					Record rc = base.ReadRef(args, false);
@@ -289,11 +326,10 @@ namespace Csn
 					{
 						throw Error.UnexpectedRecordType(RecordType.Instance, rc.RecType);
 					}
-					vr.Values.Add(rc);
-					rv.ReadValue(vr, vr.Values.Count, rc);
+					args.AddValue(rc);
+					rv.ReadValue(vr, args.valPos, rc);
 					return;
 				case iDateTimePrefix:
-					//base.ReadTill(args, new int[] { iFieldSep, iRecordSep });
 					DateTime dt = new DateTime(
 						ReadDateTimeDigits(args, 4),
 						ReadDateTimeDigits(args, 2),
@@ -303,21 +339,21 @@ namespace Csn
 						ReadDateTimeDigits(args, 2),
 						ReadDateTimeDigits(args, 3)
 					);
-					vr.Values.Add(dt);
-					rv.ReadValue(vr, vr.Values.Count, dt);
+					args.AddValue(dt);
+					rv.ReadValue(vr, args.valPos, dt);
 					break;
 				case iFieldSep:
-					vr.Values.Add(null);
-					rv.ReadValueNull(vr, vr.Values.Count);
+					args.AddValue(null);
+					rv.ReadValueNull(vr, args.valPos);
 					return;
 				case iRecordSep:
-					vr.Values.Add(null);
-					rv.ReadValueNull(vr, vr.Values.Count);
+					args.AddValue(null);
+					rv.ReadValueNull(vr, args.valPos);
 					args.State = ReaderNewRecord.Singleton;
 					return;
 				case -1:
-					vr.Values.Add(null);
-					rv.ReadValueNull(vr, vr.Values.Count);
+					args.AddValue(null);
+					rv.ReadValueNull(vr, args.valPos);
 					args.State = ReaderEnd.Singleton;
 					return;
 				default:
@@ -400,8 +436,8 @@ namespace Csn
 			if (!isDecimal)
 			{
 				valueLong *= multiply;
-				vr.Values.Add(valueLong);
-				args.Read.GetReadValue().ReadValue(vr, vr.Values.Count, valueLong);
+				args.AddValue(valueLong);
+				args.Read.GetReadValue().ReadValue(vr, args.valPos, valueLong);
 				args.StrReset();
 			}
 			else
@@ -438,8 +474,8 @@ namespace Csn
 				} while (true);
 
 				double realValue = double.Parse(args.StrGet());
-				args.ValueRec.Values.Add(realValue);
-				args.Read.GetReadValue().ReadValue(vr, vr.Values.Count, realValue);
+				args.AddValue(realValue);
+				args.Read.GetReadValue().ReadValue(vr, args.valPos, realValue);
 			}
 		}
 
